@@ -12,10 +12,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
 <style>
-/* ============================================================
-   ANONYBOX — DESIGN SYSTEM
-   ============================================================ */
-
 :root {
   --ink-0:#08090C; --ink-1:#0C0D12; --ink-2:#111219; --ink-3:#171923; --ink-4:#1E202B; --ink-5:#262835;
   --slate-1:#F5F6FA; --slate-2:#C7C9D4; --slate-3:#A0A3B1; --slate-4:#6B6E80; --slate-5:#4A4D5C;
@@ -61,47 +57,17 @@
 }
 
 :root {
-  --cur-arrow:
-    url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 24 24'%3E%3Cpath d='M4 2 L4 20 L9 15 L12 22 L15 21 L12 14 L19 14 Z' fill='%2334D399' stroke='%2308090C' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E") 4 2,
-    default;
-  --cur-pointer:
-    url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.6c-3.55 0-6.4 2.85-6.4 6.4v10.8l2.05-1.65 1.85 1.65 2.5-1.75 2.5 1.75 1.85-1.65 2.05 1.65V9c0-3.55-2.85-6.4-6.4-6.4Z' fill='%2334D399' stroke='%2308090C' stroke-width='1.2' stroke-linejoin='round'/%3E%3Ccircle cx='9.35' cy='10' r='1.05' fill='%2308090C'/%3E%3Ccircle cx='14.65' cy='10' r='1.05' fill='%2308090C'/%3E%3C/svg%3E") 12 3,
-    pointer;
-  --cur-text:
-    url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='24' viewBox='0 0 20 24'%3E%3Cpath d='M6 4h8M6 20h8M10 4v16' stroke='%2334D399' stroke-width='2.2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E") 10 12,
-    text;
-  --cur-not-allowed:
-    url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9' fill='%23F43F5E' stroke='%2308090C' stroke-width='1.5'/%3E%3Cpath d='M6.5 6.5l11 11' stroke='%2308090C' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") 12 12,
-    not-allowed;
+  --cur-arrow:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 24 24'%3E%3Cpath d='M4 2 L4 20 L9 15 L12 22 L15 21 L12 14 L19 14 Z' fill='%2334D399' stroke='%2308090C' stroke-width='1.4' stroke-linejoin='round'/%3E%3C/svg%3E") 4 2, default;
+  --cur-pointer:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.6c-3.55 0-6.4 2.85-6.4 6.4v10.8l2.05-1.65 1.85 1.65 2.5-1.75 2.5 1.75 1.85-1.65 2.05 1.65V9c0-3.55-2.85-6.4-6.4-6.4Z' fill='%2334D399' stroke='%2308090C' stroke-width='1.2' stroke-linejoin='round'/%3E%3Ccircle cx='9.35' cy='10' r='1.05' fill='%2308090C'/%3E%3Ccircle cx='14.65' cy='10' r='1.05' fill='%2308090C'/%3E%3C/svg%3E") 12 3, pointer;
+  --cur-text:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='24' viewBox='0 0 20 24'%3E%3Cpath d='M6 4h8M6 20h8M10 4v16' stroke='%2334D399' stroke-width='2.2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E") 10 12, text;
+  --cur-not-allowed:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9' fill='%23F43F5E' stroke='%2308090C' stroke-width='1.5'/%3E%3Cpath d='M6.5 6.5l11 11' stroke='%2308090C' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") 12 12, not-allowed;
 }
 
 html, body { cursor: var(--cur-arrow); }
-input, textarea, [contenteditable="true"], [contenteditable=""],
-#message-input, #group-search, #profile-name {
-  cursor: var(--cur-text) !important;
-  caret-color: #34D399 !important;
-}
-input[type="checkbox"], input[type="radio"], input[type="range"],
-input[type="file"], input[type="color"], input[type="button"],
-input[type="submit"], input[type="reset"], input[type="image"] {
-  cursor: var(--cur-pointer) !important;
-}
-button, a, [role="button"], label, select, summary,
-.group-card-content, .chat-group-button, .chat-back-button, .chat-menu-button,
-.header-action, .profile-button, .action, .reaction-chip,
-.section-head__action, .share-btn, .chat-menu button,
-.msg-actions button, .msg-actions .action-item,
-.bottom-nav button, .confirm-buttons button, .session-btn,
-.reply-preview__close, .group-info-header button, .emoji-row button,
-.message-bubble, .skip-link, .avatar-edit-overlay,
-.avatar-remove-btn, .mic-button, .recording-action,
-.voice-play-btn {
-  cursor: var(--cur-pointer) !important;
-}
-button:disabled, [aria-disabled="true"],
-input:disabled, textarea:disabled {
-  cursor: var(--cur-not-allowed) !important;
-}
+input, textarea, [contenteditable="true"], [contenteditable=""], #message-input, #group-search, #profile-name { cursor: var(--cur-text) !important; caret-color: #34D399 !important; }
+input[type="checkbox"], input[type="radio"], input[type="range"], input[type="file"], input[type="color"], input[type="button"], input[type="submit"], input[type="reset"], input[type="image"] { cursor: var(--cur-pointer) !important; }
+button, a, [role="button"], label, select, summary, .group-card-content, .chat-group-button, .chat-back-button, .chat-menu-button, .header-action, .profile-button, .action, .reaction-chip, .section-head__action, .share-btn, .chat-menu button, .msg-actions button, .msg-actions .action-item, .bottom-nav button, .confirm-buttons button, .session-btn, .reply-preview__close, .group-info-header button, .emoji-row button, .message-bubble, .skip-link, .avatar-edit-overlay, .avatar-remove-btn, .mic-button, .recording-action, .voice-play-btn { cursor: var(--cur-pointer) !important; }
+button:disabled, [aria-disabled="true"], input:disabled, textarea:disabled { cursor: var(--cur-not-allowed) !important; }
 .message-box, .search { cursor: var(--cur-text); }
 .spotlight { pointer-events: none !important; }
 
@@ -125,28 +91,69 @@ input,textarea{border:0;background:none;outline:none;-webkit-appearance:none;app
 .ic{display:inline-block;inline-size:1em;block-size:1em;flex-shrink:0;vertical-align:-0.14em;overflow:visible}
 
 .ambient{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
-.ambient::before{
-  content:"";position:absolute;inset:-10%;
-  background:
-    radial-gradient(42% 34% at 8% 4%,rgba(16,185,129,.20),transparent 62%),
-    radial-gradient(36% 30% at 96% 8%,rgba(5,150,105,.14),transparent 60%),
-    radial-gradient(60% 40% at 50% 110%,rgba(45,212,191,.06),transparent 60%);
-  filter:blur(60px) saturate(140%);
-  animation:drift 32s var(--ease-in-out) infinite alternate;
-}
-.ambient::after{
-  content:"";position:absolute;inset:0;
-  background-image:
-    linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);
-  background-size:48px 48px;
-  mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 25%,transparent 75%);
-  -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 25%,transparent 75%);
-}
-.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-}
+.ambient::before{content:"";position:absolute;inset:-10%;background:radial-gradient(42% 34% at 8% 4%,rgba(16,185,129,.20),transparent 62%),radial-gradient(36% 30% at 96% 8%,rgba(5,150,105,.14),transparent 60%),radial-gradient(60% 40% at 50% 110%,rgba(45,212,191,.06),transparent 60%);filter:blur(60px) saturate(140%);animation:drift 32s var(--ease-in-out) infinite alternate}
+.ambient::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 25%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,#000 25%,transparent 75%)}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
 @keyframes drift{0%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-2%,1.5%,0) scale(1.04)}100%{transform:translate3d(1.5%,-1%,0) scale(1.02)}}
+
+/* AURORA animée */
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora::before{content:"";position:absolute;inset:-50%;background:conic-gradient(from 0deg at 50% 50%,rgba(16,185,129,.15) 0deg,transparent 90deg,rgba(45,212,191,.12) 180deg,transparent 270deg,rgba(16,185,129,.15) 360deg);animation:auroraSpin 40s linear infinite;filter:blur(80px)}
+@keyframes auroraSpin{to{transform:rotate(360deg)}}
+
+/* ÉTOILES FILANTES */
+.shooting-star{position:fixed;z-index:1;pointer-events:none;inline-size:2px;block-size:2px;background:#fff;border-radius:50%;box-shadow:0 0 6px #34D399,0 0 12px #34D399;animation:shootStar 1.4s linear forwards}
+.shooting-star::after{content:"";position:absolute;left:0;top:0;width:80px;height:1px;background:linear-gradient(90deg,#34D399,transparent);transform-origin:left;transform:rotate(-35deg)}
+@keyframes shootStar{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(-400px,250px) scale(.2);opacity:0}}
+
+/* PARTICULES */
+@keyframes particleBurst{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+.particle{position:fixed;pointer-events:none;z-index:9999;inline-size:8px;block-size:8px;border-radius:50%;background:#34D399;box-shadow:0 0 12px #34D399,0 0 24px rgba(52,211,153,.5);animation:particleBurst 700ms cubic-bezier(.16,1,.3,1) forwards}
+
+/* STREAK BADGE */
+.streak-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--radius-full);background:linear-gradient(135deg,#F59E0B,#F97316);color:#fff;font-size:11px;font-weight:800;letter-spacing:.05em;box-shadow:0 4px 14px rgba(245,158,11,.5);animation:streakFlame 2s ease-in-out infinite;margin-left:auto}
+@keyframes streakFlame{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.05);filter:brightness(1.2)}}
+.streak-badge .ic{font-size:14px}
+.streak-badge[data-cold="1"]{background:var(--surface-tint-3);color:var(--fg-tertiary);box-shadow:none;animation:none}
+
+/* BADGE NON LU */
+.bottom-nav button .nav-badge{position:absolute;top:2px;right:14px;min-inline-size:18px;block-size:18px;padding:0 5px;border-radius:999px;background:#EF4444;color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;box-shadow:0 0 0 2px var(--bg-canvas),0 0 12px rgba(239,68,68,.6);animation:badgePop .3s var(--ease-spring) both;z-index:2}
+.bottom-nav button .nav-badge.pulse{animation:badgePulse 1.4s ease-in-out infinite}
+@keyframes badgePop{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes badgePulse{0%,100%{transform:scale(1);box-shadow:0 0 0 2px var(--bg-canvas),0 0 12px rgba(239,68,68,.6)}50%{transform:scale(1.15);box-shadow:0 0 0 2px var(--bg-canvas),0 0 20px rgba(239,68,68,.9)}}
+
+/* DAILY REWARD / LEVEL UP */
+.daily-reward-overlay{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:rgba(0,0,0,.85);backdrop-filter:blur(20px);animation:fadeIn .3s ease-out;padding:20px}
+.daily-reward-box{padding:40px 32px;border-radius:32px;text-align:center;background:linear-gradient(145deg,#0F3A2C,#0A2018);border:2px solid rgba(110,231,183,.4);box-shadow:0 0 80px rgba(52,211,153,.6);animation:rewardPop .5s cubic-bezier(.34,1.56,.64,1) both;max-inline-size:320px;width:100%}
+@keyframes rewardPop{from{transform:scale(.5) rotate(-10deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.daily-reward-emoji{font-size:72px;display:block;margin-bottom:16px;animation:rewardSpin 1s ease-out}
+@keyframes rewardSpin{from{transform:scale(0) rotate(720deg)}to{transform:scale(1) rotate(0)}}
+.daily-reward-box h2{font-size:22px;font-weight:800;background:linear-gradient(135deg,#6EE7B7,#34D399,#2DD4BF);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:8px}
+.daily-reward-box p{font-size:14px;color:var(--fg-secondary);margin-bottom:20px}
+.daily-reward-box button{padding:12px 28px;border-radius:999px;background:linear-gradient(135deg,#34D399,#059669);color:#fff;font-size:14px;font-weight:700;box-shadow:0 8px 24px rgba(5,150,105,.5);cursor:var(--cur-pointer)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* XP BAR */
+.xp-card{margin-top:16px;padding:16px 20px;border-radius:var(--radius-xl);background:linear-gradient(160deg,rgba(52,211,153,.1),rgba(10,10,20,.9));border:1px solid rgba(110,231,183,.2);width:100%}
+.xp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:12px;font-weight:700}
+.xp-level{font-family:var(--font-mono);color:var(--emerald-6);letter-spacing:.08em}
+.xp-bar-track{height:8px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden;position:relative}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,#34D399,#2DD4BF);border-radius:99px;transition:width 600ms cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 12px rgba(52,211,153,.6);position:relative;overflow:hidden}
+.xp-bar-fill::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);animation:xpShine 2s linear infinite}
+@keyframes xpShine{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.xp-next{margin-top:8px;font-size:10px;color:var(--fg-tertiary);text-align:right}
+
+/* MENTION */
+.message-row.mention .message-bubble{background:linear-gradient(135deg,rgba(245,158,11,.25),rgba(245,158,11,.1)) !important;border:1px solid rgba(245,158,11,.5) !important;box-shadow:0 0 20px rgba(245,158,11,.4) !important}
+.message-row.mention .message-text::before{content:"@ ";color:#F59E0B;font-weight:800}
+.mention-flash{animation:mentionFlash 1.5s ease-out}
+@keyframes mentionFlash{0%,100%{background:transparent}50%{background:rgba(245,158,11,.15)}}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;width:100%}
+.stat-card{padding:14px 8px;border-radius:var(--radius-lg);background:var(--surface-tint-1);border:1px solid var(--border-subtle);text-align:center}
+.stat-value{font-family:var(--font-mono);font-size:22px;font-weight:800;color:var(--emerald-6);letter-spacing:-.02em;display:block;margin-bottom:2px}
+.stat-label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-quaternary)}
 
 .app{position:relative;z-index:var(--z-content);width:100%;max-width:var(--app-max);min-height:100dvh;margin-inline:auto;padding-inline:var(--space-5)}
 .skip-link{position:fixed;top:var(--space-3);left:50%;transform:translate(-50%,-200%);z-index:var(--z-toast);padding:var(--space-2) var(--space-4);background:var(--accent-primary);color:var(--accent-fg);font-size:var(--text-sm);font-weight:600;border-radius:var(--radius-full);transition:transform var(--dur-base) var(--ease-out)}
@@ -167,15 +174,7 @@ input,textarea{border:0;background:none;outline:none;-webkit-appearance:none;app
 .profile-button:hover{background:var(--surface-tint-2);border-color:var(--border-default);color:var(--fg-primary)}
 .profile-button:active{transform:scale(.94)}
 .profile-button .profile-button__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit}
-.profile-button::after{
-  content:attr(data-mask);
-  position:absolute;
-  bottom:-2px;left:50%;transform:translateX(-50%);z-index:3;
-  font-family:var(--font-mono);font-size:8.5px;font-weight:600;letter-spacing:.05em;
-  color:var(--emerald-6);background:var(--bg-canvas);
-  padding:1px 5px;border-radius:var(--radius-full);
-  border:1px solid rgba(110,231,183,.24);white-space:nowrap;pointer-events:none;
-}
+.profile-button::after{content:attr(data-mask);position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);z-index:3;font-family:var(--font-mono);font-size:8.5px;font-weight:600;letter-spacing:.05em;color:var(--emerald-6);background:var(--bg-canvas);padding:1px 5px;border-radius:var(--radius-full);border:1px solid rgba(110,231,183,.24);white-space:nowrap;pointer-events:none}
 
 .page-header{padding-block:var(--space-3) var(--space-6)}
 .page-header h2{margin-top:var(--space-1);font-size:var(--text-2xl);font-weight:700;letter-spacing:var(--tracking-tight)}
@@ -183,7 +182,7 @@ input,textarea{border:0;background:none;outline:none;-webkit-appearance:none;app
 .header-action:hover{transform:scale(1.06) rotate(90deg)}
 .header-action:active{transform:scale(.94) rotate(90deg)}
 
-.privacy-banner{display:flex;align-items:center;gap:var(--space-3);margin-top:var(--space-5);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(45,212,191,.03));border:1px solid rgba(110,231,183,.16);font-size:var(--text-xs);color:var(--fg-secondary);animation:fadeIn .5s var(--ease-out) both}
+.privacy-banner{display:flex;align-items:center;gap:var(--space-3);margin-top:var(--space-5);padding:var(--space-3) var(--space-4);border-radius:var(--radius-md);background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(45,212,191,.03));border:1px solid rgba(110,231,183,.16);font-size:var(--text-xs);color:var(--fg-secondary);animation:fadeIn .5s var(--ease-out) both;flex-wrap:wrap}
 .privacy-banner__icon{display:grid;place-items:center;inline-size:32px;block-size:32px;flex-shrink:0;border-radius:var(--radius-sm);background:rgba(16,185,129,.12);color:var(--emerald-6);font-size:16px}
 .privacy-banner__body{flex:1;min-width:0}
 .privacy-banner__body strong{display:block;font-size:var(--text-xs);font-weight:700;color:var(--fg-primary);letter-spacing:-.005em}
@@ -302,26 +301,14 @@ input,textarea{border:0;background:none;outline:none;-webkit-appearance:none;app
 .group-info-header button:hover{background:var(--surface-tint-2);color:var(--fg-primary)}
 .group-info-header h2{font-size:var(--text-lg);font-weight:700}
 .group-info-content{display:flex;flex-direction:column;align-items:center;text-align:center;max-inline-size:400px;margin-inline:auto;padding:var(--space-12) var(--space-6);inline-size:100%}
-
 .large-group-avatar{position:relative;display:grid;place-items:center;inline-size:104px;block-size:104px;font-size:52px;color:#fff;border-radius:var(--radius-full);background:linear-gradient(145deg,#0F3A2C,#0A2018);border:1px solid rgba(110,231,183,.28);box-shadow:0 24px 56px rgba(5,150,105,.4),inset 0 2px 0 rgba(255,255,255,.1);overflow:hidden}
 .large-group-avatar::after{content:"";position:absolute;inset:-5px;border-radius:inherit;padding:3px;background:conic-gradient(from 0deg,var(--emerald-6),var(--teal-4),var(--emerald-6));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spin 12s linear infinite;pointer-events:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 .large-group-avatar .avatar-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;z-index:2}
-
-.avatar-edit-overlay{
-  position:absolute;inset:0;z-index:3;
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  background:rgba(0,0,0,.62);
-  color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
-  border:0;border-radius:inherit;
-  opacity:0;transition:opacity var(--dur-fast) var(--ease-out);
-  cursor:var(--cur-pointer);
-  flex-direction:column;
-}
+.avatar-edit-overlay{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(0,0,0,.62);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:0;border-radius:inherit;opacity:0;transition:opacity var(--dur-fast) var(--ease-out);cursor:var(--cur-pointer);flex-direction:column}
 .avatar-edit-overlay .ic{font-size:22px}
 .avatar-edit-overlay:hover,.avatar-edit-overlay:focus-visible{opacity:1}
 @media (hover:none){ .avatar-edit-overlay{opacity:1;background:rgba(0,0,0,.35)} }
-
 .group-info-content h3{margin-top:var(--space-6);font-size:var(--text-2xl);font-weight:700;letter-spacing:var(--tracking-tight)}
 .group-info-content>p{margin-top:var(--space-2);font-size:var(--text-sm);color:var(--fg-tertiary)}
 .info-row{display:flex;align-items:center;justify-content:space-between;inline-size:100%;margin-top:var(--space-3);padding:var(--space-4) var(--space-5);border-radius:var(--radius-md);background:var(--surface-tint-1);border:1px solid var(--border-subtle);font-size:var(--text-sm);color:var(--fg-secondary)}
@@ -331,16 +318,17 @@ input,textarea{border:0;background:none;outline:none;-webkit-appearance:none;app
 .info-row strong{font-weight:600;color:var(--fg-primary);letter-spacing:.02em}
 #info-group-code{font-family:var(--font-mono);letter-spacing:.08em}
 .info-online-dot{display:inline-block;inline-size:8px;block-size:8px;border-radius:50%;background:var(--success);box-shadow:0 0 8px var(--success)}
-
 .share-btn{display:inline-flex;align-items:center;gap:var(--space-2);margin-top:var(--space-6);padding:var(--space-3) var(--space-5);font-size:var(--text-sm);font-weight:600;color:var(--accent-fg);background:var(--grad-brand);border-radius:var(--radius-full);box-shadow:0 8px 24px rgba(5,150,105,.4);transition:transform var(--dur-fast) var(--ease-spring)}
 .share-btn .ic{font-size:16px}
 .share-btn:hover{transform:translateY(-2px)}
 .share-btn:active{transform:scale(.96)}
 
 .messages{position:relative;z-index:1;display:flex;flex-direction:column;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:var(--space-5) var(--space-4);scroll-behavior:smooth}
-.message-row{display:flex;flex-direction:column;align-items:flex-start;inline-size:100%;margin-bottom:var(--space-3);animation:messageIn var(--dur-slow) var(--ease-spring) both}
-@keyframes messageIn{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
-.message-bubble{position:relative;max-inline-size:82%;padding:var(--space-3) var(--space-4) var(--space-2);border-radius:20px 20px 20px 6px;background:var(--surface-tint-2);border:1px solid var(--border-subtle);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);font-size:var(--text-base);line-height:var(--leading-snug);word-break:break-word;box-shadow:var(--elevation-1);transition:background var(--dur-fast) var(--ease-out)}
+.message-row{display:flex;flex-direction:column;align-items:flex-start;inline-size:100%;margin-bottom:var(--space-3);animation:messageIn 500ms cubic-bezier(.34,1.56,.64,1) both}
+@keyframes messageIn{0%{opacity:0;transform:translateY(20px) scale(0.7)}60%{opacity:1;transform:translateY(-4px) scale(1.05)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.message-row.mine{animation:messageInMine 500ms cubic-bezier(.34,1.56,.64,1) both}
+@keyframes messageInMine{0%{opacity:0;transform:translateX(40px) scale(0.6) rotate(-3deg)}70%{opacity:1;transform:translateX(-4px) scale(1.06) rotate(1deg)}100%{opacity:1;transform:translateX(0) scale(1) rotate(0)}}
+.message-bubble{position:relative;max-inline-size:82%;padding:var(--space-3) var(--space-4) var(--space-2);border-radius:20px 20px 20px 6px;background:var(--surface-tint-2);border:1px solid var(--border-subtle);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);font-size:var(--text-base);line-height:var(--leading-snug);word-break:break-word;box-shadow:var(--elevation-1);transition:background var(--dur-fast) var(--ease-out),box-shadow var(--dur-base) var(--ease-out)}
 .message-bubble:hover{background:var(--surface-tint-3)}
 .message-text{display:block;white-space:pre-wrap;text-wrap:pretty}
 .message-text a{color:var(--emerald-6);text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
@@ -349,6 +337,8 @@ input,textarea{border:0;background:none;outline:none;-webkit-appearance:none;app
 .message-row.mine .message-bubble{border-radius:20px 20px 6px 20px;background:var(--grad-brand);border-color:transparent;box-shadow:0 8px 24px rgba(5,150,105,.4),inset 0 1px 0 rgba(255,255,255,.15)}
 .message-row.mine .message-time{color:rgba(255,255,255,.72)}
 .message-row.mine .message-text a{color:#fff;text-decoration-color:rgba(255,255,255,.5)}
+.message-row.unread-glow .message-bubble{box-shadow:0 0 0 1px rgba(52,211,153,.4),0 0 20px rgba(52,211,153,.5),0 0 40px rgba(52,211,153,.25);animation:glowPulse 2s ease-in-out infinite}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 0 1px rgba(52,211,153,.4),0 0 20px rgba(52,211,153,.4)}50%{box-shadow:0 0 0 2px rgba(52,211,153,.7),0 0 30px rgba(52,211,153,.7),0 0 50px rgba(52,211,153,.4)}}
 
 .reply-quote{display:flex;flex-direction:column;gap:2px;margin-bottom:var(--space-2);padding:var(--space-2) var(--space-3);border-left:2px solid var(--emerald-5);background:rgba(255,255,255,.05);border-radius:0 var(--radius-xs) var(--radius-xs) 0;font-size:var(--text-xs);line-height:1.3}
 .message-row.mine .reply-quote{border-left-color:rgba(255,255,255,.7);background:rgba(0,0,0,.15)}
@@ -488,7 +478,6 @@ body.chat-open .message-box{z-index:501 !important}
 body.chat-open #message-input{z-index:502 !important;position:relative}
 
 .confirm-overlay{position:fixed;inset:0;z-index:var(--z-modal);display:grid;place-items:center;padding:var(--space-5);background:rgba(4,5,8,.72);backdrop-filter:blur(12px) saturate(150%);-webkit-backdrop-filter:blur(12px) saturate(150%);animation:fadeIn var(--dur-base) var(--ease-out)}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .confirm-box{position:relative;overflow:hidden;inline-size:100%;max-inline-size:370px;padding:var(--space-8) var(--space-6) var(--space-6);text-align:center;border-radius:var(--radius-2xl);background:rgba(20,21,28,.96);border:1px solid var(--border-strong);box-shadow:var(--elevation-4);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);animation:modalEnter var(--dur-slow) var(--ease-spring)}
 .confirm-box::before{content:"";position:absolute;inset:0 20% auto;block-size:1px;background:linear-gradient(90deg,transparent,rgba(110,231,183,.6),transparent)}
 @keyframes modalEnter{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
@@ -547,6 +536,7 @@ html body .message-box:focus-within{border-color:#34D399 !important;box-shadow:0
   .bottom-nav{inline-size:calc(100vw - var(--space-6))}
   .home-screen::after{top:108px;right:14px;inline-size:44px;block-size:44px}
   .session-actions{grid-template-columns:1fr}
+  .streak-badge{font-size:10px;padding:4px 8px}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
@@ -557,161 +547,38 @@ html body .message-box:focus-within{border-color:#34D399 !important;box-shadow:0
 
 <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
   <defs>
-    <symbol id="i-ghost" viewBox="0 0 24 24">
-      <path d="M12 2.6c-3.55 0-6.4 2.85-6.4 6.4v10.8l2.05-1.65 1.85 1.65 2.5-1.75 2.5 1.75 1.85-1.65 2.05 1.65V9c0-3.55-2.85-6.4-6.4-6.4Z" fill="currentColor"/>
-      <circle cx="9.35" cy="10" r="1.05" fill="#08090C"/>
-      <circle cx="14.65" cy="10" r="1.05" fill="#08090C"/>
-    </symbol>
-    <symbol id="i-camera" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3.5 7.5h3l1.6-2h7.8l1.6 2h3a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20.5 19h-17A1.5 1.5 0 0 1 2 17.5v-9A1.5 1.5 0 0 1 3.5 7.5Z"/>
-        <circle cx="12" cy="13" r="3.6"/>
-      </g>
-    </symbol>
-    <symbol id="i-mic" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="9" y="3" width="6" height="12" rx="3"/>
-        <path d="M5 11a7 7 0 0 0 14 0"/>
-        <path d="M12 18v3"/>
-      </g>
-    </symbol>
+    <symbol id="i-ghost" viewBox="0 0 24 24"><path d="M12 2.6c-3.55 0-6.4 2.85-6.4 6.4v10.8l2.05-1.65 1.85 1.65 2.5-1.75 2.5 1.75 1.85-1.65 2.05 1.65V9c0-3.55-2.85-6.4-6.4-6.4Z" fill="currentColor"/><circle cx="9.35" cy="10" r="1.05" fill="#08090C"/><circle cx="14.65" cy="10" r="1.05" fill="#08090C"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 7.5h3l1.6-2h7.8l1.6 2h3a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20.5 19h-17A1.5 1.5 0 0 1 2 17.5v-9A1.5 1.5 0 0 1 3.5 7.5Z"/><circle cx="12" cy="13" r="3.6"/></g></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></g></symbol>
     <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z" fill="currentColor"/></symbol>
     <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor"/></symbol>
-    <symbol id="i-user" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="8" r="3.6"/>
-        <path d="M4.8 20c0-3.8 3.2-6.6 7.2-6.6s7.2 2.8 7.2 6.6"/>
-      </g>
-    </symbol>
-    <symbol id="i-mask" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 6.5c2.4-.6 5.2-.9 8-.9s5.6.3 8 .9c0 6.8-3.5 12-8 12S4 13.3 4 6.5Z"/>
-        <circle cx="9.2" cy="11.2" r="1.3" fill="currentColor" stroke="none"/>
-        <circle cx="14.8" cy="11.2" r="1.3" fill="currentColor" stroke="none"/>
-        <path d="M10.8 15.6c.4.4.8.6 1.2.6s.8-.2 1.2-.6"/>
-      </g>
-    </symbol>
-    <symbol id="i-users" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="9" cy="8" r="3.2"/>
-        <path d="M2.6 19.4c0-3.4 2.9-5.9 6.4-5.9s6.4 2.5 6.4 5.9"/>
-        <path d="M16.4 5.5c1.6.4 2.7 1.8 2.7 3.4 0 1.5-.9 2.7-2.2 3.2"/>
-        <path d="M17.9 13.7c2.3.4 3.8 2.1 4 4.4"/>
-      </g>
-    </symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.8 20c0-3.8 3.2-6.6 7.2-6.6s7.2 2.8 7.2 6.6"/></g></symbol>
+    <symbol id="i-mask" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5c2.4-.6 5.2-.9 8-.9s5.6.3 8 .9c0 6.8-3.5 12-8 12S4 13.3 4 6.5Z"/><circle cx="9.2" cy="11.2" r="1.3" fill="currentColor" stroke="none"/><circle cx="14.8" cy="11.2" r="1.3" fill="currentColor" stroke="none"/><path d="M10.8 15.6c.4.4.8.6 1.2.6s.8-.2 1.2-.6"/></g></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.6 19.4c0-3.4 2.9-5.9 6.4-5.9s6.4 2.5 6.4 5.9"/><path d="M16.4 5.5c1.6.4 2.7 1.8 2.7 3.4 0 1.5-.9 2.7-2.2 3.2"/><path d="M17.9 13.7c2.3.4 3.8 2.1 4 4.4"/></g></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></g></symbol>
-    <symbol id="i-link" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M10.5 13.5a5 5 0 0 0 7.1 0l3-3a5 5 0 0 0-7.1-7.1l-1.2 1.2"/>
-        <path d="M13.5 10.5a5 5 0 0 0-7.1 0l-3 3a5 5 0 0 0 7.1 7.1l1.2-1.2"/>
-      </g>
-    </symbol>
-    <symbol id="i-info" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="9"/>
-        <path d="M12 11v5.2"/>
-        <circle cx="12" cy="7.8" r=".85" fill="currentColor" stroke="none"/>
-      </g>
-    </symbol>
-    <symbol id="i-copy" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="8" y="8" width="12" height="12" rx="2.4"/>
-        <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>
-      </g>
-    </symbol>
-    <symbol id="i-share" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 3.5v11.5"/><path d="m7.8 7.7 4.2-4.2 4.2 4.2"/>
-        <path d="M5 14v5.2a1.8 1.8 0 0 0 1.8 1.8h10.4a1.8 1.8 0 0 0 1.8-1.8V14"/>
-      </g>
-    </symbol>
-    <symbol id="i-exit" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M14 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/>
-        <path d="M18.5 12H10"/><path d="m15.5 8.5 3.5 3.5-3.5 3.5"/>
-      </g>
-    </symbol>
-    <symbol id="i-trash" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4.5 7h15"/><path d="M9.5 7V5.2c0-.94.76-1.7 1.7-1.7h1.6c.94 0 1.7.76 1.7 1.7V7"/>
-        <path d="M6.5 7v11.3A2.7 2.7 0 0 0 9.2 21h5.6a2.7 2.7 0 0 0 2.7-2.7V7"/>
-        <path d="M10.2 11v6M13.8 11v6"/>
-      </g>
-    </symbol>
-    <symbol id="i-send" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21.3 3.3 10.8 13.8"/><path d="M21.3 3.3 14.9 20.6l-4.1-6.8L3.9 9.7 21.3 3.3Z"/>
-      </g>
-    </symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 13.5a5 5 0 0 0 7.1 0l3-3a5 5 0 0 0-7.1-7.1l-1.2 1.2"/><path d="M13.5 10.5a5 5 0 0 0-7.1 0l-3 3a5 5 0 0 0 7.1 7.1l1.2-1.2"/></g></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.2"/><circle cx="12" cy="7.8" r=".85" fill="currentColor" stroke="none"/></g></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2.4"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></g></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v11.5"/><path d="m7.8 7.7 4.2-4.2 4.2 4.2"/><path d="M5 14v5.2a1.8 1.8 0 0 0 1.8 1.8h10.4a1.8 1.8 0 0 0 1.8-1.8V14"/></g></symbol>
+    <symbol id="i-exit" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/><path d="M18.5 12H10"/><path d="m15.5 8.5 3.5 3.5-3.5 3.5"/></g></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 7h15"/><path d="M9.5 7V5.2c0-.94.76-1.7 1.7-1.7h1.6c.94 0 1.7.76 1.7 1.7V7"/><path d="M6.5 7v11.3A2.7 2.7 0 0 0 9.2 21h5.6a2.7 2.7 0 0 0 2.7-2.7V7"/><path d="M10.2 11v6M13.8 11v6"/></g></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 3.3 10.8 13.8"/><path d="M21.3 3.3 14.9 20.6l-4.1-6.8L3.9 9.7 21.3 3.3Z"/></g></symbol>
     <symbol id="i-close" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6 18 18M18 6 6 18"/></g></symbol>
-    <symbol id="i-back" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 5-7 7 7 7"/></g>
-    </symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 5-7 7 7 7"/></g></symbol>
     <symbol id="i-chevron" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></g></symbol>
     <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="12" cy="18.5" r="1.7" fill="currentColor"/></symbol>
-    <symbol id="i-key" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="8" cy="15" r="4"/><path d="m11.2 11.8 8.8-8.8"/><path d="m17.2 5.8 1.8 1.8"/><path d="m14.4 8.6 1.8 1.8"/>
-      </g>
-    </symbol>
-    <symbol id="i-home" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3.5 10.5 12 3l8.5 7.5"/><path d="M5.6 9.5V21h12.8V9.5"/><path d="M10 21v-6h4v6"/>
-      </g>
-    </symbol>
-    <symbol id="i-search" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.3-4.3"/></g>
-    </symbol>
-    <symbol id="i-warn" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M10.3 3.9 2.6 17.4a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>
-        <path d="M12 9.2v4"/><circle cx="12" cy="16.4" r=".85" fill="currentColor" stroke="none"/>
-      </g>
-    </symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="m11.2 11.8 8.8-8.8"/><path d="m17.2 5.8 1.8 1.8"/><path d="m14.4 8.6 1.8 1.8"/></g></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10.5 12 3l8.5 7.5"/><path d="M5.6 9.5V21h12.8V9.5"/><path d="M10 21v-6h4v6"/></g></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.3-4.3"/></g></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 2.6 17.4a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9.2v4"/><circle cx="12" cy="16.4" r=".85" fill="currentColor" stroke="none"/></g></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 10 18 19.5 7.5"/></g></symbol>
-    <symbol id="i-reply" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 7 4 12l5 5"/><path d="M4 12h11.5a4.5 4.5 0 0 1 4.5 4.5V19"/>
-      </g>
-    </symbol>
-    <symbol id="i-save" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M5 3h11l4 4v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/>
-        <path d="M8 3v6h7V3"/><rect x="7.5" y="13" width="9" height="7" rx="1"/>
-      </g>
-    </symbol>
-    <symbol id="i-spinner" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
-        <path d="M12 3a9 9 0 0 1 9 9"/><path d="M21 12a9 9 0 0 1-9 9" opacity=".6"/>
-        <path d="M12 21a9 9 0 0 1-9-9" opacity=".35"/><path d="M3 12a9 9 0 0 1 9-9" opacity=".15"/>
-      </g>
-    </symbol>
-    <symbol id="i-lock" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="4.5" y="10.5" width="15" height="10" rx="2.2"/>
-        <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.3" fill="currentColor" stroke="none"/>
-      </g>
-    </symbol>
-    <symbol id="i-shield" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2.5 4.5 5.5v6c0 4.6 3.2 8.7 7.5 10 4.3-1.3 7.5-5.4 7.5-10v-6L12 2.5Z"/>
-        <path d="m9 12 2.2 2.2L15.5 10"/>
-      </g>
-    </symbol>
-    <symbol id="i-eye-off" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 3l18 18"/>
-        <path d="M10.6 6.2c.5-.1.9-.1 1.4-.1 4.4 0 7.7 3 9 5.9-.5 1.1-1.3 2.2-2.3 3.1"/>
-        <path d="M6.3 7.3C4.4 8.6 3.1 10.3 2.5 12c1.3 2.9 4.6 5.9 9 5.9 1.4 0 2.7-.3 3.8-.8"/>
-        <path d="M9.4 10c.4-1.3 1.4-2.2 2.6-2.2 1.6 0 2.9 1.3 2.9 2.9 0 1-.5 1.9-1.3 2.5"/>
-      </g>
-    </symbol>
-    <symbol id="i-refresh" viewBox="0 0 24 24">
-      <g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 12a8 8 0 0 1 13.6-5.7L20.5 8"/><path d="M20.5 4.5V8h-3.5"/>
-        <path d="M20 12a8 8 0 0 1-13.6 5.7L3.5 16"/><path d="M3.5 19.5V16h3.5"/>
-      </g>
-    </symbol>
+    <symbol id="i-reply" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7 4 12l5 5"/><path d="M4 12h11.5a4.5 4.5 0 0 1 4.5 4.5V19"/></g></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11l4 4v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M8 3v6h7V3"/><rect x="7.5" y="13" width="9" height="7" rx="1"/></g></symbol>
+    <symbol id="i-spinner" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3a9 9 0 0 1 9 9"/><path d="M21 12a9 9 0 0 1-9 9" opacity=".6"/><path d="M12 21a9 9 0 0 1-9-9" opacity=".35"/><path d="M3 12a9 9 0 0 1 9-9" opacity=".15"/></g></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.3" fill="currentColor" stroke="none"/></g></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 4.5 5.5v6c0 4.6 3.2 8.7 7.5 10 4.3-1.3 7.5-5.4 7.5-10v-6L12 2.5Z"/><path d="m9 12 2.2 2.2L15.5 10"/></g></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 6.2c.5-.1.9-.1 1.4-.1 4.4 0 7.7 3 9 5.9-.5 1.1-1.3 2.2-2.3 3.1"/><path d="M6.3 7.3C4.4 8.6 3.1 10.3 2.5 12c1.3 2.9 4.6 5.9 9 5.9 1.4 0 2.7-.3 3.8-.8"/><path d="M9.4 10c.4-1.3 1.4-2.2 2.6-2.2 1.6 0 2.9 1.3 2.9 2.9 0 1-.5 1.9-1.3 2.5"/></g></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.6-5.7L20.5 8"/><path d="M20.5 4.5V8h-3.5"/><path d="M20 12a8 8 0 0 1-13.6 5.7L3.5 16"/><path d="M3.5 19.5V16h3.5"/></g></symbol>
     <symbol id="i-r-heart" viewBox="0 0 24 24"><path d="M12 20.5c-1-.8-8-5.9-8-11.2A4.8 4.8 0 0 1 8.8 4.5 4.5 4.5 0 0 1 12 6.3a4.5 4.5 0 0 1 3.2-1.8 4.8 4.8 0 0 1 4.8 4.8c0 5.3-7 10.4-8 11.2Z" fill="currentColor"/></symbol>
     <symbol id="i-r-thumb" viewBox="0 0 24 24"><path d="M7 10.5v9.5h10.4a2 2 0 0 0 1.95-1.55l1.4-6A2 2 0 0 0 18.8 10H14l.9-4a2.2 2.2 0 0 0-2.15-2.7 1.5 1.5 0 0 0-1.35.8L7 10.5Z" fill="currentColor"/><rect x="2.5" y="10.5" width="3.5" height="9.5" rx="1" fill="currentColor"/></symbol>
     <symbol id="i-r-fire" viewBox="0 0 24 24"><path d="M12 2.5c1 3 4 4.5 4 8.5 0 1.2-.4 2-1 2.6.3-2-.5-4-2-5.2.3 2.4-1.7 3.4-1.7 5.6 0 .8.3 1.4.8 1.9-2 0-3.6-1.7-3.6-3.9 0-3 2-5.5 3.5-9.5Zm4.2 10.9c.4-.6.6-1.4.6-2.2.9 1.1 1.5 2.4 1.5 3.9a6.3 6.3 0 0 1-6.3 6.3A6 6 0 0 1 6 15.4c0-1.4.5-2.7 1.3-3.7 0 1.2.4 2.2 1.2 2.9a2.4 2.4 0 0 1 4.2-1.6c.4-.4.7-.9.9-1.4.9.2 1.6.8 2 1.5Z" fill="currentColor"/></symbol>
@@ -722,6 +589,7 @@ html body .message-box:focus-within{border-color:#34D399 !important;box-shadow:0
 </svg>
 
 <a class="skip-link" href="#main-content">Aller au contenu</a>
+<div class="aurora" aria-hidden="true"></div>
 <div class="ambient" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
@@ -746,6 +614,10 @@ html body .message-box:focus-within{border-color:#34D399 !important;box-shadow:0
       <div class="privacy-banner__body">
         <strong>Session anonyme active</strong>
         <span>Aucun identifiant persistant · Historique local uniquement</span>
+      </div>
+      <div id="streak-badge" class="streak-badge" data-cold="1" title="Série de connexions">
+        <svg class="ic" viewBox="0 0 24 24"><use href="#i-r-fire"/></svg>
+        <span id="streak-count">0 jour</span>
       </div>
       <span class="privacy-banner__mask" id="home-mask">#----</span>
     </div>
@@ -963,6 +835,16 @@ html body .message-box:focus-within{border-color:#34D399 !important;box-shadow:0
       </div>
       <h3>Identité anonyme</h3>
       <p>Ton pseudo est visible dans tes groupes.</p>
+
+      <div class="xp-card">
+        <div class="xp-header">
+          <span class="xp-level" id="xp-level">Niveau 1</span>
+          <span id="xp-count">0 XP</span>
+        </div>
+        <div class="xp-bar-track"><div class="xp-bar-fill" id="xp-bar" style="width:0%"></div></div>
+        <div class="xp-next" id="xp-next">Prochain niveau : 50 XP</div>
+      </div>
+
       <button id="user-avatar-remove" class="avatar-remove-btn" type="button" hidden>
         <svg class="ic" viewBox="0 0 24 24"><use href="#i-trash"/></svg>
         Retirer la photo
@@ -999,6 +881,22 @@ html body .message-box:focus-within{border-color:#34D399 !important;box-shadow:0
         <span class="k"><svg class="ic" viewBox="0 0 24 24"><use href="#i-users"/></svg>Groupes suivis</span>
         <span class="v" id="session-groups">0</span>
       </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-value" id="stat-msgs">0</span>
+          <span class="stat-label">Messages</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="stat-time">0m</span>
+          <span class="stat-label">Temps</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="stat-streak">0</span>
+          <span class="stat-label">Record</span>
+        </div>
+      </div>
+
       <div class="session-actions">
         <button class="session-btn" type="button" id="btn-toggle-blur">
           <svg class="ic" viewBox="0 0 24 24"><use href="#i-eye-off"/></svg>
@@ -1050,7 +948,7 @@ html body .message-box:focus-within{border-color:#34D399 !important;box-shadow:0
 
 <script type="module">
 /* ============================================================
-   ANONYBOX — Firebase RTDB + Base64 (aucune carte bancaire)
+   ANONYBOX — Firebase RTDB + Base64 + 6 BONUS ADDICTIFS
    ============================================================ */
 
 import { initializeApp }
@@ -1113,7 +1011,7 @@ try {
   auth = getAuth(app);
   db = getDatabase(app);
   firebaseAvailable = true;
-  console.log("Firebase initialisé (RTDB + Base64).");
+  console.log("Firebase initialisé (RTDB + Base64 + bonus).");
 } catch(e){ console.error("Init Firebase :", e); firebaseAvailable = false; }
 
 const $ = id => document.getElementById(id);
@@ -1134,15 +1032,9 @@ function formatDateLabel(ts){
   return d.toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:d.getFullYear()!==now.getFullYear()?"numeric":undefined});
 }
 function getDayKey(ts){ const d=new Date(ts); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
-function formatDuration(sec){
-  sec = Math.max(0, Math.round(sec||0));
-  return `${Math.floor(sec/60)}:${String(sec%60).padStart(2,"0")}`;
-}
-function generateSessionMask(){
-  const hex="0123456789ABCDEF"; let s="";
-  for (let i=0;i<4;i++) s+=hex[Math.floor(Math.random()*16)];
-  return "#"+s;
-}
+function formatDuration(sec){ sec = Math.max(0, Math.round(sec||0)); return `${Math.floor(sec/60)}:${String(sec%60).padStart(2,"0")}`; }
+
+function generateSessionMask(){ const hex="0123456789ABCDEF"; let s=""; for (let i=0;i<4;i++) s+=hex[Math.floor(Math.random()*16)]; return "#"+s; }
 function initSession(){
   sessionMask = sessionStorage.getItem(SESSION_KEY);
   if (!sessionMask){
@@ -1164,9 +1056,7 @@ function updateSessionDuration(){
   else if (mins<60) el.textContent = `${mins} min`;
   else { const h=Math.floor(mins/60), m=mins%60; el.textContent = `${h} h ${String(m).padStart(2,"0")}`; }
 }
-function updateSessionGroupsCount(){
-  const el=$("session-groups"); if (el) el.textContent = String(getSavedGroups().length);
-}
+function updateSessionGroupsCount(){ const el=$("session-groups"); if (el) el.textContent = String(getSavedGroups().length); }
 function getMyName(){ return localStorage.getItem("anonybox_username") || "Anonyme"; }
 function haptic(ms=8){ try{ if(navigator.vibrate) navigator.vibrate(ms); }catch{} }
 
@@ -1185,6 +1075,41 @@ function playPing(){
   }catch{}
 }
 
+function playSendSound(){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state === "suspended") audioCtx.resume();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = "triangle";
+    o.frequency.setValueAtTime(520, audioCtx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.09);
+    g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.05, audioCtx.currentTime + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.15);
+    o.connect(g).connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + 0.18);
+  }catch{}
+}
+
+function playMentionSound(){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state === "suspended") audioCtx.resume();
+    const now = audioCtx.currentTime;
+    [880, 1320, 1760].forEach((freq, i) => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = "sine"; o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, now + i * 0.07);
+      g.gain.exponentialRampToValueAtTime(0.08, now + i * 0.07 + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.07 + 0.15);
+      o.connect(g).connect(audioCtx.destination);
+      o.start(now + i * 0.07);
+      o.stop(now + i * 0.07 + 0.17);
+    });
+  }catch{}
+}
+
+/* ─── Toast / Confirm ─── */
 let toastTimer=null;
 function showToast(message, symbolId="i-check", tone="success"){
   const t=$("toast"), i=$("toast-icon"), m=$("toast-message");
@@ -1216,7 +1141,250 @@ function askConfirm({title="Confirmation",message="Es-tu sûr ?",iconId="i-warn"
   });
 }
 
-/* ─── Base64 utils ─── */
+/* ═════════════════════════════════════════════════════════════
+   BONUS 1 — Streak (jours consécutifs)
+   ═════════════════════════════════════════════════════════════ */
+function updateStreak(){
+  const KEY_LAST = "anonybox_streak_last";
+  const KEY_COUNT = "anonybox_streak_count";
+  const KEY_BEST = "anonybox_streak_best";
+  const today = new Date().toDateString();
+  const last = localStorage.getItem(KEY_LAST);
+  let count = parseInt(localStorage.getItem(KEY_COUNT) || "0", 10);
+  let best = parseInt(localStorage.getItem(KEY_BEST) || "0", 10);
+  let isNew = false;
+
+  if (last !== today){
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    if (last === yesterday) count += 1;
+    else count = 1;
+    localStorage.setItem(KEY_LAST, today);
+    localStorage.setItem(KEY_COUNT, String(count));
+    if (count > best){ best = count; localStorage.setItem(KEY_BEST, String(best)); }
+    isNew = true;
+  }
+
+  const badge = $("streak-badge"), countEl = $("streak-count");
+  if (badge && countEl){
+    countEl.textContent = `${count} jour${count > 1 ? "s" : ""}`;
+    badge.dataset.cold = count > 0 ? "0" : "1";
+    badge.title = `Série actuelle : ${count} jours · Record : ${best} jours`;
+  }
+
+  if (isNew && count > 1){
+    setTimeout(() => {
+      showToast(`🔥 Série de ${count} jours !`, "i-r-fire");
+      haptic([15, 30, 15]);
+      addXP(3);
+    }, 800);
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════
+   BONUS 2 — Badge non lu dans la nav
+   ═════════════════════════════════════════════════════════════ */
+let unreadCount = parseInt(localStorage.getItem("anonybox_unread") || "0", 10);
+
+function incrementUnread(){
+  unreadCount += 1;
+  localStorage.setItem("anonybox_unread", String(unreadCount));
+  renderNavBadge();
+  if (document.hidden) haptic([15, 40, 15]);
+}
+function clearUnread(){
+  unreadCount = 0;
+  localStorage.setItem("anonybox_unread", "0");
+  localStorage.setItem("anonybox_last_seen", String(Date.now()));
+  renderNavBadge();
+}
+function renderNavBadge(){
+  const btn = $("groups-nav");
+  if (!btn) return;
+  let badge = btn.querySelector(".nav-badge");
+  if (unreadCount > 0){
+    if (!badge){
+      badge = document.createElement("span");
+      badge.className = "nav-badge";
+      btn.appendChild(badge);
+    }
+    badge.textContent = unreadCount > 99 ? "99+" : String(unreadCount);
+    badge.classList.add("pulse");
+    document.title = `(${unreadCount}) AnonyBoX`;
+  } else {
+    if (badge) badge.remove();
+    document.title = "AnonyBoX";
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════
+   BONUS 3 — Récompense quotidienne
+   ═════════════════════════════════════════════════════════════ */
+const DAILY_REWARDS = [
+  { emoji:"🌟", title:"Belle journée !",       msg:"Tu brilles aujourd'hui." },
+  { emoji:"🔥", title:"En feu !",              msg:"Continue comme ça." },
+  { emoji:"🍀", title:"Porte-bonheur !",       msg:"La chance te sourit." },
+  { emoji:"⚡", title:"Éclair d'énergie !",    msg:"Tu vas tout déchirer." },
+  { emoji:"🎯", title:"Focus total !",         msg:"Rien ne t'arrête." },
+  { emoji:"🚀", title:"Décollage imminent !",  msg:"Objectif : les étoiles." },
+  { emoji:"💎", title:"Trésor rare !",         msg:"Tu es unique." },
+  { emoji:"🎁", title:"Cadeau surprise !",     msg:"Profite bien." }
+];
+
+function maybeDailyReward(){
+  const KEY = "anonybox_daily_reward";
+  const today = new Date().toDateString();
+  if (localStorage.getItem(KEY) === today) return;
+  localStorage.setItem(KEY, today);
+  const reward = DAILY_REWARDS[Math.floor(Math.random() * DAILY_REWARDS.length)];
+  setTimeout(() => showDailyReward(reward), 1800);
+}
+
+function showDailyReward(reward){
+  const overlay = document.createElement("div");
+  overlay.className = "daily-reward-overlay";
+  overlay.innerHTML = `
+    <div class="daily-reward-box">
+      <span class="daily-reward-emoji">${reward.emoji}</span>
+      <h2>${reward.title}</h2>
+      <p>${reward.msg}</p>
+      <button id="daily-reward-close">C'est parti !</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  haptic([20, 60, 30]);
+  playPing();
+  $("daily-reward-close").addEventListener("click", () => {
+    overlay.style.animation = "fadeIn .2s ease-out reverse";
+    setTimeout(() => overlay.remove(), 200);
+    haptic(15);
+  });
+}
+
+/* ═════════════════════════════════════════════════════════════
+   BONUS 4 — XP + Niveaux
+   ═════════════════════════════════════════════════════════════ */
+function xpForLevel(level){ return 50 + (level - 1) * 25; }
+function getXP(){ return parseInt(localStorage.getItem("anonybox_xp") || "0", 10); }
+function setXP(xp){ localStorage.setItem("anonybox_xp", String(xp)); renderXP(); }
+function computeLevel(xp){
+  let level = 1, remaining = xp;
+  while (remaining >= xpForLevel(level)){ remaining -= xpForLevel(level); level++; }
+  return level;
+}
+function addXP(amount){
+  const oldXP = getXP();
+  const newXP = oldXP + amount;
+  setXP(newXP);
+  const oldLevel = computeLevel(oldXP);
+  const newLevel = computeLevel(newXP);
+  if (newLevel > oldLevel) showLevelUp(newLevel);
+}
+function renderXP(){
+  const xp = getXP();
+  const level = computeLevel(xp);
+  let acc = 0;
+  for (let i = 1; i < level; i++) acc += xpForLevel(i);
+  const currentInLevel = xp - acc;
+  const needed = xpForLevel(level);
+  const pct = Math.min(100, (currentInLevel / needed) * 100);
+  const lvlEl = $("xp-level"), cntEl = $("xp-count"), barEl = $("xp-bar"), nextEl = $("xp-next");
+  if (lvlEl) lvlEl.textContent = `Niveau ${level}`;
+  if (cntEl) cntEl.textContent = `${xp} XP`;
+  if (barEl) barEl.style.width = pct + "%";
+  if (nextEl) nextEl.textContent = `Prochain niveau : ${needed - currentInLevel} XP`;
+}
+function showLevelUp(level){
+  const overlay = document.createElement("div");
+  overlay.className = "daily-reward-overlay";
+  overlay.innerHTML = `
+    <div class="daily-reward-box">
+      <span class="daily-reward-emoji">🎉</span>
+      <h2>Niveau ${level} !</h2>
+      <p>Tu progresses vite. Continue !</p>
+      <button id="levelup-close">Super !</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  haptic([30, 50, 30, 50, 30]);
+  playPing();
+  $("levelup-close").addEventListener("click", () => {
+    overlay.style.animation = "fadeIn .2s ease-out reverse";
+    setTimeout(() => overlay.remove(), 200);
+  });
+}
+
+/* ═════════════════════════════════════════════════════════════
+   BONUS 5 — Mention @pseudo
+   ═════════════════════════════════════════════════════════════ */
+function detectMention(text){
+  if (!text) return false;
+  const pseudo = getMyName().toLowerCase();
+  if (!pseudo || pseudo === "anonyme") return false;
+  return text.toLowerCase().includes("@" + pseudo);
+}
+
+/* ═════════════════════════════════════════════════════════════
+   BONUS 6 — Stats
+   ═════════════════════════════════════════════════════════════ */
+function incrementStat(key, amount = 1){
+  const current = parseInt(localStorage.getItem(key) || "0", 10);
+  localStorage.setItem(key, String(current + amount));
+}
+function renderStats(){
+  const msgs = parseInt(localStorage.getItem("anonybox_stat_msgs") || "0", 10);
+  const best = parseInt(localStorage.getItem("anonybox_streak_best") || "0", 10);
+  const totalTime = parseInt(localStorage.getItem("anonybox_stat_time") || "0", 10);
+  const sessionTime = sessionStart ? Math.floor((Date.now() - sessionStart) / 60000) : 0;
+  const minutes = totalTime + sessionTime;
+  const msgsEl = $("stat-msgs"), timeEl = $("stat-time"), streakEl = $("stat-streak");
+  if (msgsEl) msgsEl.textContent = msgs > 999 ? Math.round(msgs/1000) + "k" : String(msgs);
+  if (timeEl) timeEl.textContent = minutes > 60 ? Math.floor(minutes/60) + "h" : minutes + "m";
+  if (streakEl) streakEl.textContent = String(best);
+}
+function saveSessionTime(){
+  if (!sessionStart) return;
+  const elapsed = Math.floor((Date.now() - sessionStart) / 60000);
+  const total = parseInt(localStorage.getItem("anonybox_stat_time") || "0", 10);
+  localStorage.setItem("anonybox_stat_time", String(total + elapsed));
+}
+window.addEventListener("beforeunload", saveSessionTime);
+document.addEventListener("visibilitychange", () => { if (document.hidden) saveSessionTime(); });
+
+/* ═════════════════════════════════════════════════════════════
+   BONUS VISUELS — particules + étoiles filantes
+   ═════════════════════════════════════════════════════════════ */
+function burstParticles(originX, originY, count = 12){
+  for (let i = 0; i < count; i++){
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.style.left = originX + "px";
+    p.style.top = originY + "px";
+    const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
+    const dist = 60 + Math.random() * 80;
+    p.style.setProperty("--tx", `${Math.cos(angle) * dist}px`);
+    p.style.setProperty("--ty", `${Math.sin(angle) * dist}px`);
+    p.style.background = Math.random() > 0.5 ? "#34D399" : "#2DD4BF";
+    p.style.animationDelay = (Math.random() * 60) + "ms";
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 900);
+  }
+}
+
+function spawnShootingStar(){
+  const s = document.createElement("div");
+  s.className = "shooting-star";
+  s.style.left = (60 + Math.random() * 40) + "%";
+  s.style.top = (-10 + Math.random() * 30) + "%";
+  document.body.appendChild(s);
+  setTimeout(() => s.remove(), 1600);
+}
+function startShootingStars(){
+  setInterval(() => { if (Math.random() > 0.4) spawnShootingStar(); }, 2500);
+}
+
+/* ═════════════════════════════════════════════════════════════
+   Base64 utils
+   ═════════════════════════════════════════════════════════════ */
 function compressImageToBase64(file, maxSize=256, quality=0.7){
   return new Promise((resolve, reject) => {
     if (!file || !file.type.startsWith("image/")) return reject(new Error("Fichier non-image"));
@@ -1267,9 +1435,7 @@ if (firebaseAvailable && auth){
       loadUserAvatarFromFirebase();
       if (currentGroupCode) listenGroupAvatar(currentGroupCode);
       updateGroupAvatarEditVisibility();
-    } else {
-      firebaseAuthReady = false;
-    }
+    } else { firebaseAuthReady = false; }
   });
   signInAnonymously(auth)
     .then(r => console.log("Anonyme:", r.user.uid))
@@ -1296,9 +1462,7 @@ async function waitForFirebaseAuth(timeout=10000){
 
 /* ─── Navigation ─── */
 const SCREENS = ["home-screen","groups-screen","chat-screen","profile-screen"];
-function hideAllScreens(){
-  SCREENS.forEach(id => { const el = $(id); if (el){ el.classList.remove("active","show"); el.setAttribute("aria-hidden","true"); } });
-}
+function hideAllScreens(){ SCREENS.forEach(id => { const el = $(id); if (el){ el.classList.remove("active","show"); el.setAttribute("aria-hidden","true"); } }); }
 function showScreen(id){
   closeMessageActions();
   hideAllScreens();
@@ -1413,18 +1577,13 @@ async function createGroup(){
   let code = generateGroupCode();
   try{
     while ((await get(ref(db, `groups/${code}`))).exists()) code = generateGroupCode();
-    await set(ref(db, `groups/${code}`), {
-      name: cleanName, createdAt: Date.now(),
-      owner: currentUser.uid, members: { [currentUser.uid]: true }
-    });
+    await set(ref(db, `groups/${code}`), { name: cleanName, createdAt: Date.now(), owner: currentUser.uid, members: { [currentUser.uid]: true } });
     await set(ref(db, `groupCodes/${code}`), { code, name: cleanName, createdAt: Date.now() });
     saveGroup(code, cleanName);
+    addXP(10);
     showToast("Groupe créé !");
     await openGroup(code, cleanName);
-  }catch(err){
-    console.error("Création :", err);
-    showToast(firebaseReadableError(err), "i-warn", "danger");
-  }
+  }catch(err){ console.error("Création :", err); showToast(firebaseReadableError(err), "i-warn", "danger"); }
 }
 async function joinGroup(providedCode=null){
   let code = providedCode;
@@ -1443,12 +1602,10 @@ async function joinGroup(providedCode=null){
     const groupName = data.name || "Groupe AnonyBoX";
     await set(ref(db, `groups/${code}/members/${currentUser.uid}`), true);
     saveGroup(code, groupName);
+    addXP(5);
     showToast("Groupe rejoint !");
     await openGroup(code, groupName);
-  }catch(err){
-    console.error("Join :", err);
-    showToast(firebaseReadableError(err), "i-warn", "danger");
-  }
+  }catch(err){ console.error("Join :", err); showToast(firebaseReadableError(err), "i-warn", "danger"); }
 }
 async function openGroup(code, name="Groupe AnonyBoX"){
   cleanupChatListeners();
@@ -1457,6 +1614,7 @@ async function openGroup(code, name="Groupe AnonyBoX"){
   currentGroupOwner = null;
   document.querySelectorAll("[data-group-code]").forEach(el => el.textContent = currentGroupCode);
   document.querySelectorAll("[data-group-name]").forEach(el => el.textContent = currentGroupName);
+  clearUnread();
   showScreen("chat-screen");
   loadMessages(currentGroupCode);
   loadGroupInfo(currentGroupCode);
@@ -1485,10 +1643,7 @@ function setupPresence(code){
 }
 function listenPresence(code){
   if (!firebaseAvailable || !firebaseAuthReady || !currentUser || currentUser.isLocal) return;
-  presenceUnsubscribe = onValue(ref(db, `presence/${code}`), snap => {
-    currentPresence = snap.val() || {};
-    updatePresenceUI();
-  }, err => console.error("presence:", err));
+  presenceUnsubscribe = onValue(ref(db, `presence/${code}`), snap => { currentPresence = snap.val() || {}; updatePresenceUI(); }, err => console.error("presence:", err));
 }
 function updatePresenceUI(){
   const count = Object.keys(currentPresence).length;
@@ -1501,11 +1656,8 @@ function updatePresenceUI(){
 function listenTyping(code){
   if (!firebaseAvailable || !firebaseAuthReady || !currentUser || currentUser.isLocal) return;
   typingUnsubscribe = onValue(ref(db, `typing/${code}`), snap => {
-    const data = snap.val() || {};
-    const now = Date.now();
-    const others = Object.entries(data)
-      .filter(([uid, val]) => uid !== currentUser.uid && val && (now - val.ts) < 4000)
-      .map(([, val]) => val.name || "Quelqu'un");
+    const data = snap.val() || {}; const now = Date.now();
+    const others = Object.entries(data).filter(([uid, val]) => uid !== currentUser.uid && val && (now - val.ts) < 4000).map(([, val]) => val.name || "Quelqu'un");
     updateTypingUI(others);
   }, err => console.error("typing:", err));
 }
@@ -1513,12 +1665,7 @@ function updateTypingUI(names){
   const statusEl = $("chat-status"), statusText = $("chat-status-text");
   const dot = $("chat-status")?.querySelector(".presence-dot");
   if (!statusEl || !statusText) return;
-  if (names.length === 0){
-    statusEl.classList.remove("is-typing");
-    if (dot) dot.style.display = "";
-    updatePresenceUI();
-    return;
-  }
+  if (names.length === 0){ statusEl.classList.remove("is-typing"); if (dot) dot.style.display = ""; updatePresenceUI(); return; }
   statusEl.classList.add("is-typing");
   if (dot) dot.style.display = "none";
   const label = names.length === 1 ? `${names[0]} écrit` : `${names.slice(0,2).join(", ")} écrivent`;
@@ -1533,15 +1680,10 @@ function broadcastTyping(){
 }
 function listenReactions(code){
   if (!firebaseAvailable || !firebaseAuthReady || !currentUser || currentUser.isLocal) return;
-  reactionsUnsubscribe = onValue(ref(db, `reactions/${code}`), snap => {
-    currentReactions = snap.val() || {};
-    renderMessages(currentMessages);
-  }, err => console.error("reactions:", err));
+  reactionsUnsubscribe = onValue(ref(db, `reactions/${code}`), snap => { currentReactions = snap.val() || {}; renderMessages(currentMessages); }, err => console.error("reactions:", err));
 }
 async function toggleReaction(msgId, emoji){
-  if (!firebaseAvailable || !firebaseAuthReady || !currentUser || currentUser.isLocal){
-    showToast("Réactions indisponibles hors-ligne.", "i-warn", "danger"); return;
-  }
+  if (!firebaseAvailable || !firebaseAuthReady || !currentUser || currentUser.isLocal){ showToast("Réactions indisponibles hors-ligne.", "i-warn", "danger"); return; }
   const reactRef = ref(db, `reactions/${currentGroupCode}/${msgId}/${emoji}/${currentUser.uid}`);
   const snap = await get(reactRef);
   if (snap.exists()) await remove(reactRef);
@@ -1570,10 +1712,9 @@ function renderMessages(messages){
       lastDay = day;
     }
     const mine = currentUser && m.uid === currentUser.uid;
+    const mentioned = !mine && detectMention(m.text);
     let replyHTML = "";
-    if (m.replyTo){
-      replyHTML = `<div class="reply-quote"><strong>${escapeHTML(m.replyTo.name||"Anonyme")}</strong><span>${escapeHTML((m.replyTo.text||"").slice(0,80))}</span></div>`;
-    }
+    if (m.replyTo){ replyHTML = `<div class="reply-quote"><strong>${escapeHTML(m.replyTo.name||"Anonyme")}</strong><span>${escapeHTML((m.replyTo.text||"").slice(0,80))}</span></div>`; }
     const rx = currentReactions[m.id] || {};
     let reactionsHTML = "";
     const entries = Object.entries(rx).filter(([,v]) => v && Object.keys(v).length > 0);
@@ -1585,10 +1726,8 @@ function renderMessages(messages){
         return `<button type="button" class="reaction-chip ${isMine?"mine":""}" data-react="${escapeHTML(m.id)}|${escapeHTML(emoji)}">${icon(symbolId)} ${count}</button>`;
       }).join("")}</div>`;
     }
-    const bodyHTML = (m.type === "voice" && m.audioUrl)
-      ? renderVoicePlayer(m)
-      : `<div class="message-text">${formatMessage(m.text)}</div>`;
-    html += `<div class="message-row ${mine?"mine":"other"}" data-msg-id="${escapeHTML(m.id||"")}" data-msg-uid="${escapeHTML(m.uid||"")}">
+    const bodyHTML = (m.type === "voice" && m.audioUrl) ? renderVoicePlayer(m) : `<div class="message-text">${formatMessage(m.text)}</div>`;
+    html += `<div class="message-row ${mine?"mine":"other"} ${mentioned?"mention":""}" data-msg-id="${escapeHTML(m.id||"")}" data-msg-uid="${escapeHTML(m.uid||"")}">
       <div class="message-bubble">
         ${replyHTML}
         ${bodyHTML}
@@ -1609,6 +1748,15 @@ function renderMessages(messages){
       const [id, emoji] = chip.getAttribute("data-react").split("|");
       toggleReaction(id, emoji);
     });
+  });
+  // Glow sur nouveaux messages reçus
+  const now = Date.now();
+  container.querySelectorAll(".message-row.other").forEach(row => {
+    const id = row.dataset.msgId;
+    const msg = messages.find(m => m.id === id);
+    if (msg && (now - msg.timestamp) < 3000){
+      row.classList.add("unread-glow");
+    }
   });
 }
 
@@ -1698,11 +1846,7 @@ function setReply(msg){
   const previewText = msg.type === "voice" ? "🎤 Message vocal" : (msg.text || "");
   replyTarget = { id: msg.id, text: previewText, name: `${getMyName()} ${sessionMask}`, uid: msg.uid };
   const preview = $("reply-preview");
-  if (preview){
-    preview.style.display = "flex";
-    $("reply-preview-name").textContent = replyTarget.name;
-    $("reply-preview-text").textContent = previewText.slice(0, 120);
-  }
+  if (preview){ preview.style.display = "flex"; $("reply-preview-name").textContent = replyTarget.name; $("reply-preview-text").textContent = previewText.slice(0, 120); }
   $("message-input")?.focus();
 }
 function clearReply(){ replyTarget = null; const p = $("reply-preview"); if (p) p.style.display = "none"; }
@@ -1719,7 +1863,20 @@ function loadMessages(code){
     const prev = currentMessages;
     const prevIds = new Set(prev.map(m => m.id));
     const hasNew = messages.some(m => !prevIds.has(m.id) && m.uid !== currentUser.uid);
-    if (hasNew && prev.length > 0){ playPing(); haptic([6,30,6]); }
+    if (hasNew && prev.length > 0){
+      // Vérifier mention
+      const hasMention = messages.some(m => !prevIds.has(m.id) && m.uid !== currentUser.uid && detectMention(m.text));
+      if (hasMention){
+        playMentionSound();
+        haptic([30, 60, 30, 60, 30]);
+        const msgEl = $("messages");
+        if (msgEl){ msgEl.classList.add("mention-flash"); setTimeout(() => msgEl.classList.remove("mention-flash"), 1500); }
+        showToast("📣 On t'a mentionné !", "i-r-fire");
+      } else {
+        playPing(); haptic([6,30,6]);
+      }
+      if (document.hidden || !currentGroupCode) incrementUnread();
+    }
     saveLocalMessages(code, messages);
     renderMessages(messages);
   }, err => console.error("messages:", err));
@@ -1732,14 +1889,20 @@ async function sendMessage(){
   if (!text) return;
   if (!currentGroupCode){ showToast("Aucun groupe ouvert.", "i-warn", "danger"); return; }
   const message = { text, uid: currentUser?.uid || "local", timestamp: Date.now() };
-  if (replyTarget){
-    message.replyTo = { id: replyTarget.id, text: (replyTarget.text || "").slice(0, 120), name: replyTarget.name };
-  }
+  if (replyTarget){ message.replyTo = { id: replyTarget.id, text: (replyTarget.text || "").slice(0, 120), name: replyTarget.name }; }
   input.value = "";
   clearReply();
   haptic(8);
   input.focus();
   updateInputMode();
+
+  // BONUS : son + particules + XP
+  playSendSound();
+  const btn = $("send-message-button");
+  if (btn){ const r = btn.getBoundingClientRect(); burstParticles(r.left + r.width/2, r.top + r.height/2, 14); }
+  addXP(2);
+  incrementStat("anonybox_stat_msgs");
+
   if (firebaseAvailable && firebaseAuthReady && currentUser && !currentUser.isLocal){
     try{
       await push(ref(db, `messages/${currentGroupCode}`), message);
@@ -1767,9 +1930,7 @@ function loadGroups(){
     const data = snap.val(); if (!data) return;
     const myGroups = [];
     Object.entries(data).forEach(([code, g]) => {
-      if (g && g.members && g.members[currentUser.uid]){
-        myGroups.push({ code, name: g.name || "Groupe AnonyBoX", joinedAt: g.createdAt || Date.now() });
-      }
+      if (g && g.members && g.members[currentUser.uid]){ myGroups.push({ code, name: g.name || "Groupe AnonyBoX", joinedAt: g.createdAt || Date.now() }); }
     });
     const local = getSavedGroups();
     const merged = [...myGroups];
@@ -1798,18 +1959,13 @@ async function loadGroupInfo(code){
   }catch(err){ console.error("info:", err); }
 }
 
-/* ─── Avatars (Base64) ─── */
+/* ─── Avatars ─── */
 function applyAvatar(imgId, placeholderId, url){
   const img = $(imgId);
   const ph = placeholderId ? $(placeholderId) : null;
   if (!img) return;
-  if (url){
-    img.src = url; img.hidden = false;
-    if (ph) ph.style.display = "none";
-  } else {
-    img.hidden = true; img.removeAttribute("src");
-    if (ph) ph.style.display = "";
-  }
+  if (url){ img.src = url; img.hidden = false; if (ph) ph.style.display = "none"; }
+  else { img.hidden = true; img.removeAttribute("src"); if (ph) ph.style.display = ""; }
 }
 
 async function loadUserAvatarFromFirebase(){
@@ -1817,8 +1973,7 @@ async function loadUserAvatarFromFirebase(){
   try{
     const snap = await get(ref(db, `users/${currentUser.uid}/avatar`));
     if (snap.exists()){
-      const url = snap.val();
-      currentUserAvatarUrl = url;
+      const url = snap.val(); currentUserAvatarUrl = url;
       applyAvatar("user-avatar-img", "user-avatar-placeholder", url);
       applyAvatar("header-avatar-img", "header-avatar-placeholder", url);
       const removeBtn = $("user-avatar-remove"); if (removeBtn) removeBtn.hidden = false;
@@ -1833,15 +1988,11 @@ async function loadUserAvatarFromFirebase(){
 
 async function changeUserAvatar(file){
   if (!file) return;
-  if (!firebaseAvailable || !firebaseAuthReady || !currentUser || currentUser.isLocal){
-    showToast("Connecte-toi à Firebase pour changer ta photo.", "i-warn", "danger"); return;
-  }
+  if (!firebaseAvailable || !firebaseAuthReady || !currentUser || currentUser.isLocal){ showToast("Connecte-toi à Firebase pour changer ta photo.", "i-warn", "danger"); return; }
   try{
     showToast("Compression...", "i-spinner", "loading");
     const dataUrl = await compressImageToBase64(file, 256, 0.7);
-    if (dataUrl.length > 200 * 1024){
-      showToast("Image trop lourde. Essaie plus petit.", "i-warn", "danger"); return;
-    }
+    if (dataUrl.length > 200 * 1024){ showToast("Image trop lourde. Essaie plus petit.", "i-warn", "danger"); return; }
     showToast("Sauvegarde...", "i-spinner", "loading");
     await set(ref(db, `users/${currentUser.uid}/avatar`), dataUrl);
     currentUserAvatarUrl = dataUrl;
@@ -1849,11 +2000,9 @@ async function changeUserAvatar(file){
     applyAvatar("header-avatar-img", "header-avatar-placeholder", dataUrl);
     const removeBtn = $("user-avatar-remove"); if (removeBtn) removeBtn.hidden = false;
     haptic(15);
+    addXP(5);
     showToast("Photo de profil mise à jour !", "i-check");
-  }catch(err){
-    console.error("Upload user avatar:", err);
-    showToast("Impossible d'envoyer la photo.", "i-warn", "danger");
-  }
+  }catch(err){ console.error("Upload user avatar:", err); showToast("Impossible d'envoyer la photo.", "i-warn", "danger"); }
 }
 
 async function removeUserAvatar(){
@@ -1884,29 +2033,21 @@ function listenGroupAvatar(code){
 
 async function changeGroupAvatar(file){
   if (!file || !currentGroupCode) return;
-  if (!firebaseAvailable || !firebaseAuthReady || !currentUser || currentUser.isLocal){
-    showToast("Connexion Firebase requise.", "i-warn", "danger"); return;
-  }
-  if (currentGroupOwner !== currentUser.uid){
-    showToast("Seul le créateur peut modifier la photo.", "i-warn", "danger"); return;
-  }
+  if (!firebaseAvailable || !firebaseAuthReady || !currentUser || currentUser.isLocal){ showToast("Connexion Firebase requise.", "i-warn", "danger"); return; }
+  if (currentGroupOwner !== currentUser.uid){ showToast("Seul le créateur peut modifier la photo.", "i-warn", "danger"); return; }
   try{
     showToast("Compression...", "i-spinner", "loading");
     const dataUrl = await compressImageToBase64(file, 256, 0.7);
-    if (dataUrl.length > 200 * 1024){
-      showToast("Image trop lourde. Essaie plus petit.", "i-warn", "danger"); return;
-    }
+    if (dataUrl.length > 200 * 1024){ showToast("Image trop lourde. Essaie plus petit.", "i-warn", "danger"); return; }
     showToast("Sauvegarde...", "i-spinner", "loading");
     await set(ref(db, `groups/${currentGroupCode}/avatar`), dataUrl);
     currentGroupAvatarUrl = dataUrl;
     applyAvatar("chat-avatar-img", null, dataUrl);
     applyAvatar("info-group-avatar-img", null, dataUrl);
     haptic(15);
+    addXP(5);
     showToast("Photo du groupe mise à jour !", "i-check");
-  }catch(err){
-    console.error("Upload group avatar:", err);
-    showToast("Impossible d'envoyer la photo.", "i-warn", "danger");
-  }
+  }catch(err){ console.error("Upload group avatar:", err); showToast("Impossible d'envoyer la photo.", "i-warn", "danger"); }
 }
 
 function updateGroupAvatarEditVisibility(){
@@ -1916,7 +2057,7 @@ function updateGroupAvatarEditVisibility(){
   btn.hidden = !isOwner;
 }
 
-/* ─── Vocal (Base64) ─── */
+/* ─── Vocal ─── */
 function updateInputMode(){
   if (isRecording) return;
   const input = $("message-input"), mic = $("mic-button"), send = $("send-message-button");
@@ -1938,15 +2079,11 @@ function updateRecordingTimer(){
 }
 async function startRecording(){
   if (isRecording) return;
-  if (!navigator.mediaDevices || !window.MediaRecorder){
-    showToast("Enregistrement non supporté.", "i-warn", "danger"); return;
-  }
+  if (!navigator.mediaDevices || !window.MediaRecorder){ showToast("Enregistrement non supporté.", "i-warn", "danger"); return; }
   try{
     recordingStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    audioChunks = [];
-    recordingCancelled = false;
-    const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus"
-              : (MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "");
+    audioChunks = []; recordingCancelled = false;
+    const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : (MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "");
     const opts = mime ? { mimeType: mime, audioBitsPerSecond: 24000 } : { audioBitsPerSecond: 24000 };
     mediaRecorder = new MediaRecorder(recordingStream, opts);
     mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) audioChunks.push(e.data); };
@@ -1990,9 +2127,7 @@ async function stopAndSendVoice(){
   const result = await stopRecording();
   cleanupRecording();
   if (recordingCancelled || !result || !result.blob) return;
-  if (result.blob.size < 1200 || result.duration < 1){
-    showToast("Enregistrement trop court.", "i-warn", "danger"); return;
-  }
+  if (result.blob.size < 1200 || result.duration < 1){ showToast("Enregistrement trop court.", "i-warn", "danger"); return; }
   await sendVoiceMessage(result.blob, result.duration);
 }
 function cancelRecording(){
@@ -2008,19 +2143,9 @@ async function sendVoiceMessage(blob, duration){
   showToast("Compression...", "i-spinner", "loading");
   try{
     const dataUrl = await blobToBase64(blob);
-    if (dataUrl.length > 200 * 1024){
-      showToast("Vocal trop long. Essaie plus court.", "i-warn", "danger"); return;
-    }
-    const message = {
-      type: "voice",
-      audioUrl: dataUrl,
-      duration: duration,
-      uid: currentUser?.uid || "local",
-      timestamp: Date.now()
-    };
-    if (replyTarget){
-      message.replyTo = { id: replyTarget.id, text: replyTarget.text || "🎤 Message vocal", name: replyTarget.name };
-    }
+    if (dataUrl.length > 200 * 1024){ showToast("Vocal trop long. Essaie plus court.", "i-warn", "danger"); return; }
+    const message = { type: "voice", audioUrl: dataUrl, duration: duration, uid: currentUser?.uid || "local", timestamp: Date.now() };
+    if (replyTarget){ message.replyTo = { id: replyTarget.id, text: replyTarget.text || "🎤 Message vocal", name: replyTarget.name }; }
     if (firebaseAvailable && firebaseAuthReady && currentUser && !currentUser.isLocal){
       showToast("Envoi...", "i-spinner", "loading");
       await push(ref(db, `messages/${currentGroupCode}`), message);
@@ -2033,11 +2158,10 @@ async function sendVoiceMessage(blob, duration){
     }
     clearReply();
     haptic(15);
+    addXP(5);
+    incrementStat("anonybox_stat_msgs");
     showToast("Vocal envoyé !", "i-check");
-  }catch(err){
-    console.error("Voice send:", err);
-    showToast("Envoi du vocal impossible.", "i-warn", "danger");
-  }
+  }catch(err){ console.error("Voice send:", err); showToast("Envoi du vocal impossible.", "i-warn", "danger"); }
 }
 function setupVoiceDelegation(){
   const container = $("messages");
@@ -2048,17 +2172,11 @@ function setupVoiceDelegation(){
     e.stopPropagation();
     const wrap = btn.closest(".voice-message"); if (!wrap) return;
     const audio = wrap.querySelector("audio"); if (!audio) return;
-    document.querySelectorAll(".voice-message audio").forEach(a => {
-      if (a !== audio && !a.paused){ try{ a.pause(); a.currentTime = 0; }catch{} }
-    });
+    document.querySelectorAll(".voice-message audio").forEach(a => { if (a !== audio && !a.paused){ try{ a.pause(); a.currentTime = 0; }catch{} } });
     if (audio.paused) audio.play().catch(err => { console.error(err); showToast("Lecture impossible.", "i-warn", "danger"); });
     else audio.pause();
   }, true);
-  const setIcon = (audio, href) => {
-    const wrap = audio.closest(".voice-message");
-    const use = wrap?.querySelector(".voice-play-btn use");
-    if (use) use.setAttribute("href", href);
-  };
+  const setIcon = (audio, href) => { const wrap = audio.closest(".voice-message"); const use = wrap?.querySelector(".voice-play-btn use"); if (use) use.setAttribute("href", href); };
   container.addEventListener("play", e => { if (e.target.tagName === "AUDIO") setIcon(e.target, "#i-pause"); }, true);
   container.addEventListener("pause", e => { if (e.target.tagName === "AUDIO") setIcon(e.target, "#i-play"); }, true);
   container.addEventListener("ended", e => {
@@ -2109,12 +2227,7 @@ async function deleteCurrentGroup(){
   if (firebaseAvailable && firebaseAuthReady && currentUser && !currentUser.isLocal){
     try{
       const snap = await get(ref(db, `groups/${code}`));
-      if (snap.exists()){
-        const g = snap.val();
-        if (g.owner && g.owner !== currentUser.uid){
-          showToast("Seul le créateur peut supprimer ce groupe.", "i-warn", "danger"); return;
-        }
-      }
+      if (snap.exists()){ const g = snap.val(); if (g.owner && g.owner !== currentUser.uid){ showToast("Seul le créateur peut supprimer ce groupe.", "i-warn", "danger"); return; } }
       await remove(ref(db, `messages/${code}`));
       await remove(ref(db, `presence/${code}`));
       await remove(ref(db, `typing/${code}`));
@@ -2159,6 +2272,7 @@ function saveProfile(){
   }
   paintSessionMask();
   showToast("Pseudo enregistré !");
+  addXP(2);
 }
 async function newIdentity(){
   const ok = await askConfirm({ title:"Nouvelle identité", message:"Un nouvel identifiant de session sera généré.", iconId:"i-refresh", tone:"neutral", okText:"Régénérer" });
@@ -2186,13 +2300,7 @@ function initBlur(){
     const l = $("menu-toggle-blur-label"); if (l) l.textContent = "Débrouiller les noms";
   }
 }
-function loadUnreadMessages(){
-  const u = parseInt(localStorage.getItem("anonybox_unread") || "0", 10);
-  document.querySelectorAll(".unread-badge").forEach(b => {
-    b.textContent = u > 99 ? "99+" : u;
-    b.style.display = u > 0 ? "flex" : "none";
-  });
-}
+function loadUnreadMessages(){ renderNavBadge(); }
 
 /* ─── Errors ─── */
 function getFirebaseErrorMessage(){
@@ -2252,14 +2360,8 @@ function focusMessageInput(){
 function bindMessageBoxFocus(){
   const box = $("message-box"), input = $("message-input");
   if (!box || !input) return;
-  box.addEventListener("pointerdown", e => {
-    if (e.target.closest("button")) return;
-    if (e.target !== input) setTimeout(() => input.focus(), 0);
-  });
-  box.addEventListener("touchend", e => {
-    if (e.target.closest("button")) return;
-    if (e.target !== input) setTimeout(() => input.focus(), 0);
-  }, { passive: true });
+  box.addEventListener("pointerdown", e => { if (e.target.closest("button")) return; if (e.target !== input) setTimeout(() => input.focus(), 0); });
+  box.addEventListener("touchend", e => { if (e.target.closest("button")) return; if (e.target !== input) setTimeout(() => input.focus(), 0); }, { passive: true });
 }
 
 /* ─── Events ─── */
@@ -2279,10 +2381,10 @@ function bindEvents(){
   document.querySelectorAll("[data-share-code]").forEach(b => b.addEventListener("click", shareGroupCode));
 
   $("home-nav")?.addEventListener("click", showHome);
-  $("groups-nav")?.addEventListener("click", () => { renderSavedGroups(); showScreen("groups-screen"); });
-  $("profile-nav")?.addEventListener("click", () => { loadProfileName(); updateSessionDuration(); showScreen("profile-screen"); });
-  $("profile-button")?.addEventListener("click", () => { loadProfileName(); updateSessionDuration(); showScreen("profile-screen"); });
-  $("see-groups-button")?.addEventListener("click", () => { renderSavedGroups(); showScreen("groups-screen"); });
+  $("groups-nav")?.addEventListener("click", () => { renderSavedGroups(); clearUnread(); showScreen("groups-screen"); });
+  $("profile-nav")?.addEventListener("click", () => { loadProfileName(); updateSessionDuration(); renderXP(); renderStats(); showScreen("profile-screen"); });
+  $("profile-button")?.addEventListener("click", () => { loadProfileName(); updateSessionDuration(); renderXP(); renderStats(); showScreen("profile-screen"); });
+  $("see-groups-button")?.addEventListener("click", () => { renderSavedGroups(); clearUnread(); showScreen("groups-screen"); });
 
   const menuBtn = $("chat-menu-button");
   if (menuBtn) menuBtn.addEventListener("click", e => { e.stopPropagation(); toggleChatMenu(); });
@@ -2312,30 +2414,19 @@ function bindEvents(){
 
   const userEditBtn = $("user-avatar-edit"), userInput = $("user-avatar-input");
   if (userEditBtn && userInput) userEditBtn.addEventListener("click", e => { e.stopPropagation(); userInput.click(); });
-  if (userInput) userInput.addEventListener("change", async e => {
-    const file = e.target.files?.[0]; if (!file) return;
-    await changeUserAvatar(file);
-    e.target.value = "";
-  });
+  if (userInput) userInput.addEventListener("change", async e => { const file = e.target.files?.[0]; if (!file) return; await changeUserAvatar(file); e.target.value = ""; });
   $("user-avatar-remove")?.addEventListener("click", removeUserAvatar);
 
   const groupEditBtn = $("info-group-avatar-edit"), groupInput = $("group-avatar-input");
   if (groupEditBtn && groupInput) groupEditBtn.addEventListener("click", e => { e.stopPropagation(); if (groupEditBtn.hidden) return; groupInput.click(); });
-  if (groupInput) groupInput.addEventListener("change", async e => {
-    const file = e.target.files?.[0]; if (!file) return;
-    await changeGroupAvatar(file);
-    e.target.value = "";
-  });
+  if (groupInput) groupInput.addEventListener("change", async e => { const file = e.target.files?.[0]; if (!file) return; await changeGroupAvatar(file); e.target.value = ""; });
 
   $("mic-button")?.addEventListener("click", e => { e.stopPropagation(); startRecording(); });
   $("recording-cancel")?.addEventListener("click", e => { e.stopPropagation(); cancelRecording(); });
   $("recording-stop")?.addEventListener("click", e => { e.stopPropagation(); stopAndSendVoice(); });
 
   document.addEventListener("keydown", e => {
-    if (e.key === "Escape"){
-      toggleChatMenu(false); toggleGroupInfoPanel(false); closeMessageActions(); clearReply();
-      if (isRecording) cancelRecording();
-    }
+    if (e.key === "Escape"){ toggleChatMenu(false); toggleGroupInfoPanel(false); closeMessageActions(); clearReply(); if (isRecording) cancelRecording(); }
   });
 
   bindMessageBoxFocus();
@@ -2350,10 +2441,16 @@ document.addEventListener("DOMContentLoaded", () => {
   bindEvents();
   loadProfileName();
   updateSessionDuration();
+  renderXP();
+  renderStats();
   showHome();
   setupVoiceDelegation();
   updateInputMode();
+  updateStreak();
+  maybeDailyReward();
+  startShootingStars();
   setInterval(updateSessionDuration, 30000);
+  setInterval(renderStats, 30000);
 });
 
 window.anonybox = {
@@ -2364,10 +2461,11 @@ window.anonybox = {
   newIdentity, toggleBlur, focusMessageInput,
   changeUserAvatar, removeUserAvatar, changeGroupAvatar,
   startRecording, stopAndSendVoice, cancelRecording,
+  updateStreak, renderXP, renderStats, addXP,
   getSessionMask: () => sessionMask
 };
 
-console.log("AnonyBoX — Base64 prêt. Session :", sessionStorage.getItem(SESSION_KEY));
+console.log("AnonyBoX — Base64 + 6 bonus addictifs prêt. Session :", sessionStorage.getItem(SESSION_KEY));
 </script>
 </body>
-   </html>
+                                                                                                                                                       </html>
