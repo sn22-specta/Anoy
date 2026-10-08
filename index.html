@@ -19,8 +19,6 @@
   --fg:#E9EDEF;--fg-2:#D1D7DB;--fg-3:#8696A0;--fg-4:#667781;
   --border:rgba(233,237,239,.08);--border-2:rgba(233,237,239,.12);--border-strong:rgba(233,237,239,.20);
   --danger:#F15C6D;--warning:#FFBC38;--verify:#53BDEB;--pink:#F15C6D;
-  --whatsapp:#25D366;--whatsapp-deep:#128C7E;
-  --telegram:#2AABEE;--telegram-deep:#229ED9;
   --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Outfit','Helvetica Neue',sans-serif;
   --mono:'JetBrains Mono','SF Mono',ui-monospace,Menlo,monospace;
   --r-sm:6px;--r-md:8px;--r-lg:12px;--r-xl:16px;--r-2xl:20px;--r-full:9999px;
@@ -30,6 +28,9 @@
   --nav-h:64px;--hdr-h:60px;--app-max:480px;
   --safe-b:env(safe-area-inset-bottom,0px);
   --safe-t:env(safe-area-inset-top,0px);
+  /* Grille groupes */
+  --grid-size:88px;
+  --grid-gap:14px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overscroll-behavior:none}
@@ -57,6 +58,7 @@ input::placeholder,textarea::placeholder{color:var(--fg-4)}
 @keyframes likePop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
 @keyframes menuEnter{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
 @keyframes qrIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes iconPop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
 
 .app{position:relative;z-index:10;width:100%;max-width:var(--app-max);min-height:100dvh;margin:0 auto;background:var(--bg-2)}
 @media(min-width:481px){body{background:#0a1115}.app{box-shadow:0 0 40px rgba(0,0,0,.5)}}
@@ -148,9 +150,9 @@ body.chatting .nav{display:none}
 .modal__hint{text-align:center;font-size:12px;color:var(--fg-4);margin-top:8px;padding:0 24px}
 .modal__actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:20px}
 .modal__actions button{height:44px;border-radius:var(--r-lg);font-size:15px;font-weight:600}
-.btn-ghost{background:rgba(255,255,255,.08);color:var(--fg);border:0}
+.btn-ghost{background:rgba(255,255,255,.08);color:var(--fg)}
 .btn-ghost:active{background:rgba(255,255,255,.14)}
-.btn-primary{background:var(--accent-light);color:#0B141A;border:0}
+.btn-primary{background:var(--accent-light);color:#0B141A}
 .btn-primary:active{background:var(--accent-bright)}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed}
 
@@ -351,14 +353,192 @@ body.chatting .nav{display:none}
 .chat__btn:active{transform:scale(.92);background:var(--accent-bright)}
 .chat__btn.ghost{background:rgba(255,255,255,.08);color:var(--accent-bright)}
 
-/* GROUPES */
-.search{display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;border-radius:var(--r-full);background:var(--bg-input);margin:8px 12px}
-.search .ic{font-size:18px;color:var(--fg-3)}
-.search input{flex:1;min-width:0;font-size:15px;color:var(--fg)}
-.grid{position:relative;width:calc(100% - 16px);margin:0 8px;min-height:340px;border-radius:var(--r-lg);background:var(--bg-card);overflow:hidden}
-.gicon{position:absolute;width:80px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:4px;border-radius:var(--r-lg);touch-action:none;transition:opacity .15s}
-.gicon__box{position:relative;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-size:28px;color:#fff;background:linear-gradient(145deg,#0F3A2C,#08160F);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.35)}
-.gicon__label{font-size:12px;font-weight:500;text-align:center;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff}
+/* ═══════════════════════════════════════════════════════════════
+   GROUPES — GRILLE DÉPLAÇABLE TYPE WHATSAPP / iOS
+   ═══════════════════════════════════════════════════════════════ */
+.groups-help{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 16px;margin:8px 12px 12px;
+  background:rgba(74,222,167,.08);
+  border-radius:var(--r-full);
+  font-size:12px;color:var(--accent-bright);font-weight:500;
+}
+.groups-help .ic{font-size:14px}
+
+.grid-wrap{
+  position:relative;
+  padding:12px 8px 100px;
+  min-height:calc(100dvh - var(--hdr-h) - var(--nav-h) - var(--safe-t) - var(--safe-b) - 160px);
+  overflow:hidden;
+}
+
+/* Fond de grille subtil */
+.grid-wrap::before{
+  content:"";
+  position:absolute;inset:0;
+  background-image:
+    radial-gradient(circle, rgba(74,222,167,.06) 1px, transparent 1.2px);
+  background-size: calc(var(--grid-size) + var(--grid-gap)) calc(var(--grid-size) + var(--grid-gap));
+  background-position: calc(var(--grid-gap)/2 + 8px) calc(var(--grid-gap)/2 + 12px);
+  pointer-events:none;
+  opacity:.55;
+}
+
+.grid{
+  position:relative;
+  width:100%;
+  min-height:100%;
+}
+
+/* Cellule de groupe — style iOS/WhatsApp */
+.gicon{
+  position:absolute;
+  width:var(--grid-size);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  padding:0;
+  border-radius:20px;
+  touch-action:none;
+  cursor:grab;
+  transition:transform .22s var(--spring), box-shadow .22s var(--ease);
+  will-change:transform, left, top;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.gicon.dragging{
+  cursor:grabbing;
+  z-index:1000;
+  transform:scale(1.18) translateZ(0);
+  filter:drop-shadow(0 12px 24px rgba(0,0,0,.55));
+  transition:transform .1s ease-out;
+}
+.gicon.snap{
+  transition:left .28s var(--spring), top .28s var(--spring), transform .22s var(--spring);
+}
+
+.gicon__box{
+  position:relative;
+  width:66px;height:66px;
+  border-radius:50%;
+  display:grid;place-items:center;
+  font-size:30px;
+  color:#fff;
+  background:linear-gradient(145deg,#0F3A2C,#08160F);
+  overflow:hidden;
+  box-shadow:
+    0 4px 12px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.12),
+    0 0 0 2px rgba(74,222,167,.14);
+  transition:box-shadow .22s var(--ease), transform .22s var(--ease);
+}
+.gicon__box::before{
+  content:"";
+  position:absolute;inset:0;border-radius:50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.18),transparent 55%);
+  pointer-events:none;
+}
+.gicon__box img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+.gicon.dragging .gicon__box{
+  box-shadow:
+    0 12px 28px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,255,255,.18),
+    0 0 0 3px var(--accent-bright),
+    0 0 24px rgba(74,222,167,.5);
+}
+
+.gicon__label{
+  font-size:12px;
+  font-weight:500;
+  text-align:center;
+  width:100%;
+  padding:0 4px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#fff;
+  text-shadow:0 1px 3px rgba(0,0,0,.6);
+  transition:opacity .15s;
+}
+.gicon.dragging .gicon__label{opacity:.5}
+
+/* Pastille en ligne */
+.gicon__online{
+  position:absolute;
+  bottom:2px;right:2px;
+  width:14px;height:14px;
+  border-radius:50%;
+  background:var(--accent-bright);
+  border:2.5px solid var(--bg-2);
+  box-shadow:0 0 8px rgba(74,222,167,.7);
+  animation:pulse 2s ease-in-out infinite;
+}
+
+/* Badge notifications */
+.gicon__badge{
+  position:absolute;
+  top:-2px;right:-2px;
+  min-width:20px;height:20px;
+  padding:0 6px;
+  border-radius:10px;
+  background:var(--danger);
+  color:#fff;
+  font-size:11px;
+  font-weight:700;
+  display:grid;place-items:center;
+  border:2px solid var(--bg-2);
+  box-shadow:0 2px 6px rgba(241,92,109,.5);
+}
+
+/* État vide — centré */
+.grid-empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px 30px;text-align:center;
+  min-height:400px;
+  animation:screenEnter .3s var(--ease);
+}
+.grid-empty__icon{
+  width:96px;height:96px;border-radius:50%;
+  background:linear-gradient(145deg,#0F3A2C,#08160F);
+  display:grid;place-items:center;
+  font-size:44px;color:var(--accent-bright);
+  margin-bottom:20px;
+  box-shadow:0 8px 24px rgba(0,0,0,.35),inset 0 2px 0 rgba(255,255,255,.08);
+  animation:breathe 4s ease-in-out infinite;
+}
+.grid-empty h3{font-size:18px;font-weight:600;color:#fff;margin-bottom:8px}
+.grid-empty p{font-size:14px;color:var(--fg-3);line-height:1.5;max-width:280px;margin-bottom:20px}
+.grid-empty__actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.grid-empty__actions button{
+  padding:12px 20px;border-radius:var(--r-full);font-size:14px;font-weight:600;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:transform .15s var(--spring);
+}
+.grid-empty__actions button:active{transform:scale(.95)}
+.grid-empty__actions button.primary{background:var(--accent-light);color:#0B141A}
+.grid-empty__actions button.ghost{background:rgba(255,255,255,.08);color:#fff}
+
+/* Menu contextuel pour un groupe (long press) */
+.gicon-menu{
+  position:fixed;z-index:3500;
+  background:var(--bg-card);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-3);padding:6px;
+  min-width:200px;
+  animation:menuEnter .15s var(--spring);
+}
+.gicon-menu button{
+  display:flex;align-items:center;gap:14px;width:100%;
+  padding:12px 14px;border-radius:var(--r-md);
+  color:var(--fg);font-size:15px;text-align:left;
+  transition:background .12s;
+}
+.gicon-menu button:active{background:rgba(255,255,255,.08)}
+.gicon-menu button .ic{font-size:18px;color:var(--accent-bright);flex-shrink:0}
+.gicon-menu button.danger{color:var(--danger)}
+.gicon-menu button.danger .ic{color:var(--danger)}
+.gicon-menu hr{border:0;height:1px;background:var(--border);margin:4px 6px}
 
 /* TOAST */
 .toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + var(--safe-b) + 16px);transform:translateX(-50%);z-index:5000;display:none;align-items:center;gap:8px;max-width:calc(100vw - 32px);padding:10px 16px;border-radius:var(--r-full);font-size:14px;font-weight:500;background:#2A3942;box-shadow:var(--shadow-3);backdrop-filter:blur(8px);color:#fff}
@@ -440,6 +620,7 @@ body.on-feed .fab{display:grid}
 <symbol id="i-share" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></g></symbol>
 <symbol id="i-camera" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1l1.5-2h8l1.5 2h1A2.5 2.5 0 0 1 21 8.5v9A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5v-9Z"/><circle cx="12" cy="13" r="4"/></g></symbol>
 <symbol id="i-qr" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM20 14v3M14 20h3M20 20h.01"/></g></symbol>
+<symbol id="i-arrows" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18M3 7l4-4 4 4"/><path d="M17 21V3M13 17l4 4 4-4"/></g></symbol>
 
 <symbol id="logo-whatsapp" viewBox="0 0 24 24">
   <path fill="#FFFFFF" d="M9.516.012C4.206.262.017 4.652.033 9.929a9.798 9.798 0 001.085 4.465L.06 19.495a.387.387 0 00.47.453l5.034-1.184a9.981 9.981 0 004.284 1.032c5.427.083 9.951-4.195 10.12-9.58C20.15 4.441 15.351-.265 9.516.011zm6.007 15.367a7.784 7.784 0 01-5.52 2.27 7.77 7.77 0 01-3.474-.808l-.701-.347-3.087.726.65-3.131-.346-.672A7.62 7.62 0 012.197 9.9c0-2.07.812-4.017 2.286-5.48a7.85 7.85 0 015.52-2.271c2.086 0 4.046.806 5.52 2.27a7.672 7.672 0 012.287 5.48c0 2.052-.825 4.03-2.287 5.481z"/>
@@ -498,11 +679,15 @@ body.on-feed .fab{display:grid}
     <h2 class="hdr__title">Mes groupes</h2>
     <button class="hdr__btn" id="btn-create-group-2" type="button"><svg class="ic" viewBox="0 0 24 24"><use href="#i-plus"/></svg></button>
   </header>
-  <div class="search">
-    <svg class="ic" viewBox="0 0 24 24"><use href="#i-search"/></svg>
-    <input id="groups-search" type="search" placeholder="Rechercher un groupe...">
+
+  <div class="groups-help" id="groups-help">
+    <svg class="ic" viewBox="0 0 24 24"><use href="#i-arrows"/></svg>
+    <span>Maintiens un groupe et glisse-le où tu veux</span>
   </div>
-  <div id="groups-grid" class="grid"></div>
+
+  <div class="grid-wrap">
+    <div id="groups-grid" class="grid"></div>
+  </div>
 </section>
 
 <section id="s-feed" class="screen">
@@ -878,7 +1063,7 @@ body.on-feed .fab{display:grid}
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script type="module">
 /* ═══════════════════════════════════════════════════════════════
-   ANONYBOX v23 — 100% Firebase + Groupes corrigés
+   ANONYBOX v24 — 100% Firebase + Groupes déplaçables
    ═══════════════════════════════════════════════════════════════ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
@@ -942,7 +1127,7 @@ let currentCommentsPostId = null;
 let openPostMenuEl = null;
 let booted = false;
 let renderMsgDone = false;
-let userReady = false;   // ⭐ flag : profil + prefs chargés
+let userReady = false;
 
 /* ═══ Firebase init ═══ */
 let app, auth, db, fbReady = false, fbFailed = false;
@@ -1045,7 +1230,7 @@ async function bootstrap() {
   await loadUserProfile();
   await loadUserPrefs();
   userReady = true;
-  console.log("[AnonyBoX] Prêt · groupes chargés:", myGroups.length);
+  console.log("[AnonyBoX] Prêt · groupes:", myGroups.length, "· positions:", Object.keys(myPositions).length);
   startUserListener();
   await loadVerified();
   paintSession();
@@ -1080,7 +1265,7 @@ async function handleJoinUrlParam() {
   }, 800);
 }
 
-/* ═══ PROFIL UTILISATEUR ═══ */
+/* ═══ PROFIL ═══ */
 async function loadUserProfile() {
   const data = await fbGet(`users/${currentUser.uid}`, null);
   if (data) {
@@ -1106,14 +1291,9 @@ async function loadUserPrefs() {
   ]);
   myFavorites = Array.isArray(favs) ? favs : Object.keys(favs || {});
   myFollowing = Array.isArray(following) ? following : Object.keys(following || {});
-  // ⭐ Groupes : objet {code: {code, name}} OU tableau
-  if (Array.isArray(groups)) {
-    myGroups = groups.filter(g => g && g.code);
-  } else if (groups && typeof groups === "object") {
-    myGroups = Object.values(groups).filter(g => g && g.code);
-  } else {
-    myGroups = [];
-  }
+  if (Array.isArray(groups)) myGroups = groups.filter(g => g && g.code);
+  else if (groups && typeof groups === "object") myGroups = Object.values(groups).filter(g => g && g.code);
+  else myGroups = [];
   myPositions = positions && typeof positions === "object" ? positions : {};
   blurred = blurredVal === true;
 }
@@ -1286,42 +1466,24 @@ async function joinGroup() {
   const code = $("join-code").value.trim().toUpperCase();
   if (!code || !/^[A-Z0-9]{4,12}$/.test(code)) { toast("Code invalide.", "danger"); return; }
   if (!fbReady || !currentUser || currentUser.isLocal) {
-    toast("Connexion en cours… Réessaie dans 2 secondes.", "warn");
-    return;
+    toast("Connexion en cours… Réessaie dans 2 secondes.", "warn"); return;
   }
-  const btn = $("join-ok");
-  const oldText = btn.textContent;
+  const btn = $("join-ok"); const oldText = btn.textContent;
   btn.disabled = true; btn.textContent = "…";
   try {
-    console.log("[Group] Recherche du groupe :", code);
+    console.log("[Group] Recherche :", code);
     const s = await fbRetry(() => get(ref(db, `groups/${code}`)));
-    if (!s.exists()) {
-      toast("Groupe introuvable.", "danger");
-      return;
-    }
+    if (!s.exists()) { toast("Groupe introuvable.", "danger"); return; }
     const g = s.val();
-    console.log("[Group] Trouvé :", g.name);
-
-    // 1. Ajoute l'utilisateur aux membres du groupe
     await fbRetry(() => set(ref(db, `groups/${code}/members/${currentUser.uid}`), true));
-    console.log("[Group] Membre ajouté");
-
-    // 2. Ajoute le groupe à la liste perso de l'utilisateur
-    const savedOk = await saveGroupToUser(code, g.name || "Groupe");
-    if (!savedOk) {
-      toast("Groupe rejoint mais sauvegarde partielle.", "warn");
-    } else {
-      toast("Groupe rejoint !");
-    }
-
+    await saveGroupToUser(code, g.name || "Groupe");
     closeJoin();
+    toast("Groupe rejoint !");
     openChat(code, g.name, g.owner);
   } catch (e) {
     console.error("[Group] Erreur join :", e);
     toast("Erreur : " + (e?.message || e?.code || "inconnue"), "danger");
-  } finally {
-    btn.disabled = false; btn.textContent = oldText;
-  }
+  } finally { btn.disabled = false; btn.textContent = oldText; }
 }
 
 /* ═══ Créer un groupe ═══ */
@@ -1331,130 +1493,289 @@ $("btn-create-group")?.addEventListener("click", openCreate);
 $("btn-create-group-2")?.addEventListener("click", openCreate);
 $("cg-cancel")?.addEventListener("click", closeCreate);
 function genCode() { const c = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let s = ""; for (let i=0;i<6;i++) s += c[Math.floor(Math.random()*c.length)]; return s; }
-
 $("cg-ok")?.addEventListener("click", async () => {
   const name = $("cg-name").value.trim() || "Groupe AnonyBoX";
   const desc = $("cg-desc").value.trim();
   const pin = $("cg-pin").value.trim();
-
   if (!fbReady || !currentUser || currentUser.isLocal) {
-    toast("Connexion en cours… Réessaie dans 2 secondes.", "warn");
-    return;
+    toast("Connexion en cours… Réessaie dans 2 secondes.", "warn"); return;
   }
-  if (!name) { toast("Donne un nom au groupe.", "danger"); return; }
-
-  const btn = $("cg-ok");
-  const oldText = btn.textContent;
+  const btn = $("cg-ok"); const oldText = btn.textContent;
   btn.disabled = true; btn.textContent = "…";
-
   let code = genCode();
   try {
-    // Éviter les collisions
     let tries = 0;
     while (tries < 5) {
       const exist = await fbRetry(() => get(ref(db, `groups/${code}`)));
       if (!exist.exists()) break;
-      code = genCode();
-      tries++;
+      code = genCode(); tries++;
     }
-
     const groupData = {
-      name,
-      desc: desc || "",
-      pin: pin || null,
+      name, desc: desc || "", pin: pin || null,
       isPublic: $("cg-public").checked,
-      createdAt: now(),
-      owner: currentUser.uid,
+      createdAt: now(), owner: currentUser.uid,
       members: { [currentUser.uid]: true }
     };
-
-    console.log("[Group] Création :", code);
     await fbRetry(() => set(ref(db, `groups/${code}`), groupData));
-    console.log("[Group] Groupe écrit dans Firebase");
-
     await fbRetry(() => set(ref(db, `groupCodes/${code}`), { code, name, createdAt: now() }));
-    console.log("[Group] Code enregistré");
-
-    const savedOk = await saveGroupToUser(code, name);
-    if (!savedOk) {
-      toast("Groupe créé mais non sauvegardé dans ton profil.", "warn");
-    } else {
-      toast("Salon créé · Code : " + code);
-    }
-
+    await saveGroupToUser(code, name);
     closeCreate();
     $("cg-name").value = ""; $("cg-desc").value = ""; $("cg-pin").value = ""; $("cg-public").checked = false;
+    toast("Salon créé · Code : " + code);
     openChat(code, name, currentUser.uid);
   } catch (e) {
     console.error("[Group] Erreur create :", e);
     toast("Erreur : " + (e?.message || e?.code || "inconnue"), "danger");
-  } finally {
-    btn.disabled = false; btn.textContent = oldText;
-  }
+  } finally { btn.disabled = false; btn.textContent = oldText; }
 });
 
 /* ═══════════════════════════════════════════════════════════════
-   ⭐ FIX PRINCIPAL : sauvegarde ciblée d'un seul groupe
-   ⭐ NE remplace PAS tout le tableau → évite d'écraser les autres
+   ⭐ GROUPES : Sauvegarde ciblée + positions dans Firebase
    ═══════════════════════════════════════════════════════════════ */
 async function saveGroupToUser(code, name) {
-  if (!currentUser || currentUser.isLocal || !fbReady) {
-    console.warn("[Group] saveGroupToUser : user pas prêt");
-    return false;
-  }
-
-  // 1. Ajout local immédiat (UI réactive)
+  if (!currentUser || currentUser.isLocal || !fbReady) return false;
   if (!myGroups.find(g => g.code === code)) {
     myGroups.unshift({ code, name });
     renderGroupsGrid();
   }
-
-  // 2. Écriture CIBLÉE : users/{uid}/groups/{code} = { code, name }
-  //    Ne touche PAS aux autres groupes
   try {
     await fbRetry(() => set(ref(db, `users/${currentUser.uid}/groups/${code}`), { code, name }));
-    console.log("[Group] ✅ Sauvegardé dans Firebase :", code);
+    console.log("[Group] ✅ Sauvegardé :", code);
     return true;
   } catch (e) {
     console.error("[Group] ❌ Save failed :", e);
-    // Rollback local
     myGroups = myGroups.filter(g => g.code !== code);
     renderGroupsGrid();
     return false;
   }
 }
-
 async function removeGroupFromUser(code) {
   myGroups = myGroups.filter(g => g.code !== code);
+  delete myPositions[code];
   renderGroupsGrid();
   if (!currentUser || currentUser.isLocal) return;
   try {
     await fbRetry(() => remove(ref(db, `users/${currentUser.uid}/groups/${code}`)));
+    await fbRetry(() => remove(ref(db, `users/${currentUser.uid}/positions/${code}`)));
   } catch (e) { console.warn("[Group] remove failed", e); }
+}
+async function savePosition(code, x, y) {
+  myPositions[code] = { x, y };
+  if (!currentUser || currentUser.isLocal || !fbReady) return;
+  try {
+    await fbRetry(() => set(ref(db, `users/${currentUser.uid}/positions/${code}`), { x, y }));
+    console.log("[Group] Position sauvée :", code, "→", Math.round(x), Math.round(y));
+  } catch (e) { console.warn("[Group] Position save failed", e); }
+}
+
+/* ═══ Rendu de la grille avec drag & drop ═══ */
+let gridRect = null;
+let cellSize = 88;
+let cellGap = 14;
+let cols = 3;
+
+function computeGridMetrics() {
+  const wrap = document.querySelector(".grid-wrap");
+  if (!wrap) return;
+  const w = wrap.clientWidth - 16;
+  const cs = getComputedStyle(document.documentElement);
+  cellSize = parseFloat(cs.getPropertyValue("--grid-size")) || 88;
+  cellGap = parseFloat(cs.getPropertyValue("--grid-gap")) || 14;
+  cols = Math.max(3, Math.floor((w + cellGap) / (cellSize + cellGap)));
+  cols = Math.min(cols, 4);
+}
+
+function snapX(x) {
+  const step = cellSize + cellGap;
+  const col = Math.round((x - 8) / step);
+  return Math.max(8, col * step + 8);
+}
+function snapY(y) {
+  const step = cellSize + cellGap;
+  const row = Math.round((y - 16) / step);
+  return Math.max(16, row * step + 16);
+}
+function defaultPos(i) {
+  const step = cellSize + cellGap;
+  const col = i % cols;
+  const row = Math.floor(i / cols);
+  return { x: col * step + 8, y: row * step + 16 };
 }
 
 function renderGroupsGrid() {
   const grid = $("groups-grid"); if (!grid) return;
-  const gs = myGroups;
-  if (!gs.length) {
-    grid.style.display = "grid"; grid.style.placeItems = "center";
-    grid.innerHTML = `<div style="text-align:center;padding:40px 20px">
-      <div style="font-size:40px;color:var(--fg-4);margin-bottom:14px">${ic("i-users",40)}</div>
-      <strong style="display:block;font-size:15px;font-weight:600;color:#fff">Aucun groupe</strong>
-      <small style="display:block;font-size:13px;color:var(--fg-3);margin-top:6px">Crée ton premier groupe ou rejoins-en un.</small>
+  computeGridMetrics();
+
+  if (!myGroups.length) {
+    grid.style.display = "block";
+    grid.innerHTML = `<div class="grid-empty">
+      <div class="grid-empty__icon">${ic("i-users",44)}</div>
+      <h3>Aucun groupe pour l'instant</h3>
+      <p>Crée ton premier salon anonyme ou rejoins-en un avec un code d'invitation.</p>
+      <div class="grid-empty__actions">
+        <button class="primary" type="button" id="empty-create">${ic("i-plus",16)} Créer</button>
+        <button class="ghost" type="button" id="empty-join">${ic("i-link",16)} Rejoindre</button>
+      </div>
     </div>`;
+    grid.querySelector("#empty-create")?.addEventListener("click", openCreate);
+    grid.querySelector("#empty-join")?.addEventListener("click", openJoin);
     return;
   }
-  grid.style.display = "block"; grid.style.position = "relative";
-  grid.innerHTML = gs.map((g, i) => {
-    const pos = myPositions[g.code] || { x: (i % 3) * 95 + 12, y: Math.floor(i / 3) * 95 + 16 };
-    return `<button class="gicon" data-code="${esc(g.code)}" data-name="${esc(g.name)}" type="button" style="left:${pos.x}px;top:${pos.y}px">
-      <span class="gicon__box"><svg class="ic" viewBox="0 0 24 24" style="font-size:28px"><use href="#i-ghost"/></svg></span>
+
+  grid.style.display = "block";
+  grid.innerHTML = myGroups.map((g, i) => {
+    const pos = myPositions[g.code] || defaultPos(i);
+    const seed = g.code.charCodeAt(0) + g.code.charCodeAt(g.code.length-1);
+    const isOnline = (seed % 3) === 0;
+    return `<button class="gicon" data-code="${esc(g.code)}" data-name="${esc(g.name)}" type="button"
+      style="left:${pos.x}px;top:${pos.y}px;touch-action:none"
+      aria-label="${esc(g.name)}">
+      <span class="gicon__box">
+        <svg class="ic" viewBox="0 0 24 24" style="width:28px;height:28px"><use href="#i-ghost"/></svg>
+        ${isOnline ? `<span class="gicon__online"></span>` : ""}
+      </span>
       <span class="gicon__label">${esc(g.name)}</span>
     </button>`;
   }).join("");
-  grid.querySelectorAll(".gicon").forEach(b => b.addEventListener("click", () => openChat(b.dataset.code, b.dataset.name, null)));
+
+  // Rattache les events de drag + tap à chaque groupe
+  grid.querySelectorAll(".gicon").forEach(el => attachGroupInteractions(el));
+  requestAnimationFrame(() => { gridRect = grid.getBoundingClientRect(); });
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   DRAG & DROP des groupes (pointer events)
+   ═══════════════════════════════════════════════════════════════ */
+let draggingEl = null;
+let dragStartX = 0, dragStartY = 0;
+let dragOriginX = 0, dragOriginY = 0;
+let dragPointerId = null;
+let dragHasMoved = false;
+let dragPressTimer = null;
+let dragLongPress = false;
+let dragInitialTapTime = 0;
+let dragBoundMove = null, dragBoundUp = null;
+
+function attachGroupInteractions(el) {
+  el.addEventListener("pointerdown", onGroupPointerDown);
+}
+
+function onGroupPointerDown(e) {
+  // Ignore les clics sur boutons internes
+  if (e.button !== undefined && e.button !== 0) return;
+
+  const el = e.currentTarget;
+  const code = el.dataset.code;
+  const wrap = document.querySelector(".grid-wrap");
+  if (!wrap) return;
+
+  dragInitialTapTime = Date.now();
+  dragHasMoved = false;
+  dragLongPress = false;
+  draggingEl = el;
+  dragPointerId = e.pointerId;
+
+  const elRect = el.getBoundingClientRect();
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  dragOriginX = parseFloat(el.style.left) || 0;
+  dragOriginY = parseFloat(el.style.top) || 0;
+
+  el.setPointerCapture?.(e.pointerId);
+
+  // Timer pour activer le drag après 250ms (évite le scroll accidentel)
+  dragPressTimer = setTimeout(() => {
+    dragLongPress = true;
+    el.classList.add("dragging");
+    el.classList.remove("snap");
+    hap(15);
+  }, 220);
+
+  const onMove = (ev) => {
+    if (ev.pointerId !== dragPointerId) return;
+    const dx = ev.clientX - dragStartX;
+    const dy = ev.clientY - dragStartY;
+    if (!dragHasMoved && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
+      dragHasMoved = true;
+      if (!dragLongPress) {
+        // Mouvement rapide → active aussi le drag (fluidité)
+        dragLongPress = true;
+        el.classList.add("dragging");
+        el.classList.remove("snap");
+        clearTimeout(dragPressTimer);
+      }
+    }
+    if (dragLongPress) {
+      ev.preventDefault?.();
+      const grid = $("groups-grid");
+      const gridBox = grid.getBoundingClientRect();
+      const wrapBox = wrap.getBoundingClientRect();
+      // Position relative à la grille
+      const relX = ev.clientX - gridBox.left - cellSize / 2;
+      const relY = ev.clientY - gridBox.top - cellSize / 2;
+      // Clamp dans la zone
+      const maxX = wrapBox.width - cellSize - 8;
+      const maxY = Math.max(0, wrapBox.height - cellSize - 20);
+      const nx = Math.max(4, Math.min(maxX, relX));
+      const ny = Math.max(4, Math.min(maxY, relY));
+      el.style.left = nx + "px";
+      el.style.top = ny + "px";
+    }
+  };
+
+  const onUp = (ev) => {
+    if (ev.pointerId !== dragPointerId) return;
+    clearTimeout(dragPressTimer);
+    document.removeEventListener("pointermove", onMove);
+    document.removeEventListener("pointerup", onUp);
+    document.removeEventListener("pointercancel", onUp);
+    el.releasePointerCapture?.(ev.pointerId);
+
+    if (dragLongPress) {
+      // Snap à la grille
+      const currentX = parseFloat(el.style.left) || dragOriginX;
+      const currentY = parseFloat(el.style.top) || dragOriginY;
+      const sx = snapX(currentX);
+      const sy = snapY(currentY);
+      el.classList.add("snap");
+      el.classList.remove("dragging");
+      el.style.left = sx + "px";
+      el.style.top = sy + "px";
+      setTimeout(() => el.classList.remove("snap"), 300);
+      savePosition(code, sx, sy);
+      hap(8);
+    } else {
+      // Simple tap → ouvre le chat
+      const elapsed = Date.now() - dragInitialTapTime;
+      if (elapsed < 400) {
+        openChat(el.dataset.code, el.dataset.name, null);
+      }
+    }
+
+    draggingEl = null;
+    dragPointerId = null;
+    dragHasMoved = false;
+    dragLongPress = false;
+  };
+
+  dragBoundMove = onMove;
+  dragBoundUp = onUp;
+  document.addEventListener("pointermove", onMove, { passive: false });
+  document.addEventListener("pointerup", onUp);
+  document.addEventListener("pointercancel", onUp);
+}
+
+// Ajuste les positions au resize
+let resizeTO = null;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTO);
+  resizeTO = setTimeout(() => {
+    computeGridMetrics();
+    renderGroupsGrid();
+  }, 250);
+});
+
+/* ═══ Recherche groupes ═══ */
 $("groups-search")?.addEventListener("input", e => {
   const q = e.target.value.trim().toLowerCase();
   const grid = $("groups-grid");
@@ -1683,8 +2004,7 @@ async function leaveGroup() {
 async function deleteGroup() {
   if (!currentGroupCode) return;
   if (currentGroupOwner && currentGroupOwner !== currentUser?.uid) {
-    toast("Seul le créateur peut supprimer.", "danger");
-    return;
+    toast("Seul le créateur peut supprimer.", "danger"); return;
   }
   if (!confirm("Supprimer ce groupe ? Action irréversible.")) return;
   try {
@@ -1983,8 +2303,7 @@ function openPostMenu(btn, id) {
   `;
   document.body.appendChild(menu);
   const mw = menu.offsetWidth || 200;
-  let left = rect.right - mw;
-  if (left < 10) left = 10;
+  let left = rect.right - mw; if (left < 10) left = 10;
   let top = rect.bottom + 6;
   if (top + menu.offsetHeight > window.innerHeight - 10) top = rect.top - menu.offsetHeight - 6;
   menu.style.left = left + "px"; menu.style.top = top + "px";
@@ -2136,12 +2455,10 @@ $("ed-publish")?.addEventListener("click", publishPost);
 async function publishPost() {
   const btn = $("ed-publish");
   if (btn.disabled) return;
-  btn.disabled = true;
-  btn.textContent = "…";
+  btn.disabled = true; btn.textContent = "…";
   if (!fbReady) {
     toast("Connexion requise pour publier.", "danger");
-    btn.disabled = false; btn.textContent = "Publier";
-    return;
+    btn.disabled = false; btn.textContent = "Publier"; return;
   }
   const cap = $("ed-caption").value.trim();
   const base = {
@@ -2149,9 +2466,8 @@ async function publishPost() {
     caption: cap, createdAt: now(), likes: {}, reposts: {}, comments: {}
   };
   let payload;
-  if (editorMode === "text") {
-    payload = { ...base, mediaType: "text" };
-  } else {
+  if (editorMode === "text") payload = { ...base, mediaType: "text" };
+  else {
     const q = $("ed-poll-q").value.trim();
     const opts = [...$("ed-poll-opts").querySelectorAll("input")].map(i => i.value.trim()).filter(Boolean).slice(0,4);
     payload = { ...base, mediaType: "poll", pollQuestion: q, pollOptions: opts, pollVotes: {} };
@@ -2171,10 +2487,7 @@ async function publishPost() {
     const code = e?.code || "";
     if (code === "PERMISSION_DENIED") toast("Permission refusée. Vérifie les règles Firebase.", "danger");
     else toast("Échec : " + (e?.message || code || "inconnu"), "danger");
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "Publier";
-  }
+  } finally { btn.disabled = false; btn.textContent = "Publier"; }
 }
 
 /* ═══ Modales ═══ */
@@ -2247,18 +2560,23 @@ document.addEventListener("keydown", e => {
 window.abx = {
   openChat, show, joinGroup, openEditor, closeEditor, toast,
   publishPost, openShareSheet, buildJoinUrl,
+  resetPositions: async () => {
+    myPositions = {};
+    await fbSet(`users/${currentUser.uid}/positions`, {});
+    renderGroupsGrid();
+    toast("Positions réinitialisées");
+  },
   debug: () => ({
-    fbReady,
-    uid: currentUser?.uid,
-    userReady,
+    fbReady, uid: currentUser?.uid, userReady,
     postsCount: feedItems.length,
     groups: myGroups,
-    favorites: myFavorites,
-    following: myFollowing
+    positions: myPositions,
+    favorites: myFavorites
   })
 };
-console.log("[AnonyBoX] v23 — Groupes corrigés ✓");
+console.log("[AnonyBoX] v24 — Groupes déplaçables ✓");
 console.log("Tape abx.debug() pour vérifier l'état");
+console.log("Tape abx.resetPositions() pour tout réaligner");
 </script>
 </body>
-                                           </html>
+  </html>
