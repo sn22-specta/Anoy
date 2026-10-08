@@ -12,7 +12,6 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;600;700&display=swap">
 <style>
 :root{
-  /* Accent sobre - pas de glow */
   --accent:#10B981;--accent-light:#34D399;--accent-bright:#4ADEA7;--accent-deep:#047857;
   --bg:#0B141A;--bg-2:#0F171E;--bg-card:#171F27;--bg-elevated:#1A222B;--bg-input:#222D36;
   --bg-chat:#0B141A;--bg-bubble-in:#1F2A33;--bg-bubble-out:#005C4B;
@@ -21,7 +20,6 @@
   --danger:#EF5A6D;--warning:#E5B944;--verify:#4A9DEB;--pink:#EF5A6D;
   --purple:#8B5CF6;--orange:#E8843A;
 
-  /* Typographie premium conservée */
   --font:'Sora',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   --font-display:'Instrument Serif',Georgia,serif;
   --mono:'JetBrains Mono','SF Mono',ui-monospace,Menlo,monospace;
@@ -67,6 +65,8 @@ input::placeholder,textarea::placeholder{color:var(--fg-4)}
 @keyframes postIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 @keyframes typingDot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-3px);opacity:1}}
 @keyframes bounceIn{0%{transform:scale(0)}60%{transform:scale(1.1)}100%{transform:scale(1)}}
+@keyframes viewBump{0%{transform:scale(1)}40%{transform:scale(1.22)}100%{transform:scale(1)}}
+@keyframes livePulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.55}}
 
 .app{position:relative;z-index:10;width:100%;max-width:var(--app-max);min-height:100dvh;margin:0 auto;background:var(--bg-2)}
 @media(min-width:481px){body{background:#090e12}.app{box-shadow:0 0 40px rgba(0,0,0,.6)}}
@@ -474,6 +474,44 @@ body.chatting .nav{display:none}
 .post__act.save{margin-left:auto}
 .post__act.save.on{color:var(--accent-bright)}
 .post__act.save.on svg{fill:var(--accent-bright);stroke:var(--accent-bright)}
+
+/* ═══ VUES EN TEMPS RÉEL (style X) ═══ */
+.post__views{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:8px 10px 8px 6px;
+  font-size:.78rem;font-weight:500;
+  color:var(--fg-3);
+  font-variant-numeric:tabular-nums;
+  flex-shrink:0;
+  transition:color .35s ease;
+  position:relative;
+}
+.post__views svg{
+  width:16px;height:16px;
+  fill:none;stroke:currentColor;
+  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+  opacity:.85;
+}
+.post__views .num{
+  min-width:1ch;
+  font-family:var(--mono);
+  letter-spacing:.01em;
+}
+.post__views.bump{
+  color:var(--accent-bright);
+  animation:viewBump .6s var(--spring);
+}
+.post__views.bump svg{opacity:1}
+.post__views.live::after{
+  content:"";
+  position:absolute;
+  top:6px;right:4px;
+  width:5px;height:5px;
+  border-radius:50%;
+  background:var(--accent-bright);
+  animation:livePulse 1.6s infinite;
+  box-shadow:0 0 6px var(--accent-bright);
+}
 .post__poll{padding:4px 16px 14px}
 .post__poll-q{font-weight:600;font-size:.9375rem;margin-bottom:12px;color:#fff;letter-spacing:-.01em}
 .post__poll-opt{position:relative;width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;margin-bottom:8px;border-radius:var(--r-md);background:var(--bg-card);color:var(--fg);font-family:inherit;font-size:.875rem;text-align:left;cursor:pointer;overflow:hidden;font-weight:500;transition:background .15s;border:1px solid var(--border-2)}
@@ -829,6 +867,7 @@ body.on-feed .fab{display:grid}
 <symbol id="i-key" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="8" cy="14" r="4"/><path d="m12 14 8-8M18 4l2 2M16 6l2 2"/></g></symbol>
 <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="12" height="12" rx="2.4"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></g></symbol>
 <symbol id="i-exit" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/><path d="M18.5 12H10"/><path d="m15.5 8.5 3.5 3.5-3.5 3.5"/></g></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></g></symbol>
 <symbol id="i-eye-off" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 4.24A9.12 9.12 0 0 1 12 4c7 0 10 8 10 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><path d="M6.61 6.61A18.5 18.5 0 0 0 2 12s3 8 10 8a9.12 9.12 0 0 0 5.39-1.61"/><path d="m2 2 20 20"/></g></symbol>
 <symbol id="i-share" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></g></symbol>
 <symbol id="i-camera" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1l1.5-2h8l1.5 2h1A2.5 2.5 0 0 1 21 8.5v9A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5v-9Z"/><circle cx="12" cy="13" r="4"/></g></symbol>
@@ -1348,12 +1387,12 @@ body.on-feed .fab{display:grid}
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script type="module">
 /* ═══════════════════════════════════════════════════════════════
-   ANONYBOX v30 — Interface sobre + fonctionnalités v29
+   ANONYBOX v31 — Interface sobre + VUES EN TEMPS RÉEL (style X)
    ═══════════════════════════════════════════════════════════════ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
-import { getDatabase, ref, set, get, remove, push, onValue, onDisconnect, update } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
+import { getDatabase, ref, set, get, remove, push, onValue, onDisconnect, update, increment } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAGrCghSoJf7ULhi1Zi1RqeYmt4bE63a3M",
@@ -1389,6 +1428,16 @@ const genId = () => "id_" + now() + "_" + Math.random().toString(36).slice(2,8);
 const buildJoinUrl = code => `${APP_BASE_URL}?join=${encodeURIComponent(code)}`;
 const buildShareText = (name, code) =>
   `🔒 Rejoins mon salon AnonyBoX\n\n📛 Groupe : ${name}\n🎫 Code : ${code}\n🔗 Lien : ${buildJoinUrl(code)}\n\nAnonyBoX — messagerie anonyme chiffrée`;
+
+/* ═══ VUES : formatage style X (1.2K / 3.4M) ═══ */
+function fmtViews(n){
+  n = Number(n) || 0;
+  if (n < 1000) return String(n);
+  if (n < 10000) return (n/1000).toFixed(1).replace(/\.0$/, "") + "K";
+  if (n < 1000000) return Math.round(n/1000) + "K";
+  if (n < 10000000) return (n/1000000).toFixed(1).replace(/\.0$/, "") + "M";
+  return Math.round(n/1000000) + "M";
+}
 
 function dayKey(ts) {
   const d = new Date(ts);
@@ -1448,6 +1497,12 @@ let currentEmojiTab = "emoji";
 
 let groupTypingTimeout = null;
 let dmTypingTimeout = null;
+
+/* ═══ VUES : état de tracking (style X) ═══ */
+const viewedPosts = new Set();      // dédup local : "postId|uid_date"
+const lastViewCounts = {};          // postId -> dernier compteur vu (pour bump)
+const activeViewers = {};           // postId -> timestamp dernière activité (pour pastille "live")
+let viewObserver = null;
 
 /* ═══ Firebase ═══ */
 let app, auth, db, fbReady = false, fbFailed = false;
@@ -1748,7 +1803,10 @@ function renderProfileGrid() {
   g.innerHTML = items.map(p => {
     const isPoll = p.mediaType === "poll";
     const text = p.caption || (isPoll ? "📊 " + (p.pollQuestion||"Sondage") : "");
-    return `<div class="profile__cell" data-pid="${esc(p.id)}"><div class="profile__cell--text"><span>${esc(text)}</span></div><span style="position:absolute;top:6px;right:6px;font-size:11px;background:rgba(0,0,0,.7);padding:2px 6px;border-radius:6px;color:#fff;font-family:var(--mono);font-weight:600">♥ ${Object.keys(p.likes||{}).length}</span></div>`;
+    const vc = p.views || 0;
+    return `<div class="profile__cell" data-pid="${esc(p.id)}"><div class="profile__cell--text"><span>${esc(text)}</span></div>
+      <span style="position:absolute;top:6px;right:6px;font-size:11px;background:rgba(0,0,0,.7);padding:2px 6px;border-radius:6px;color:#fff;font-family:var(--mono);font-weight:600">♥ ${Object.keys(p.likes||{}).length} · ${ic("i-eye",10)} ${fmtViews(vc)}</span>
+    </div>`;
   }).join("");
   g.querySelectorAll("[data-pid]").forEach(c => c.addEventListener("click", () => {
     show("s-feed");
@@ -3070,7 +3128,10 @@ $("poll-ok")?.addEventListener("click", async () => {
   } catch { toast("Erreur.", "danger"); }
 });
 
-/* ═══ FEED ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   FEED + VUES EN TEMPS RÉEL (style X)
+   ═══════════════════════════════════════════════════════════════ */
+
 function startFeedListener() {
   if (!fbReady) { renderFeed(); return; }
   try { unsubFeed?.(); } catch {}
@@ -3081,6 +3142,65 @@ function startFeedListener() {
     if ($("s-profile").classList.contains("active")) updateProfile();
   }, err => { console.error(err); toast("Lecture du fil impossible", "danger"); });
 }
+
+/* ═══ Tracking de vues (style X : 1 vue par user / jour / post) ═══ */
+function todayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+async function trackView(postId) {
+  if (!fbReady || !currentUser || !postId) return;
+  if (String(postId).startsWith("tmp_")) return;
+
+  const dayKey_ = `${currentUser.uid}_${todayKey()}`;
+  const localKey = `${postId}|${dayKey_}`;
+  if (viewedPosts.has(localKey)) return;
+  viewedPosts.add(localKey);
+
+  try {
+    const logRef = ref(db, `posts/${postId}/viewLog/${dayKey_}`);
+    const snap = await get(logRef);
+    if (snap.exists()) return;                 // déjà vu aujourd'hui
+    await set(logRef, true);                    // marque la vue
+    // Incrément atomique du compteur (Firebase increment)
+    await set(ref(db, `posts/${postId}/views`), increment(1));
+    // Petite impulsion visuelle locale
+    activeViewers[postId] = Date.now();
+  } catch (e) {
+    console.warn("[View] track fail", e);
+  }
+}
+
+/* IntersectionObserver : ne compte la vue qu'une fois le post vraiment visible (style X) */
+function setupViewObserver() {
+  const posts = document.querySelectorAll("#feed-list .post");
+  if (!posts.length) return;
+
+  if (!("IntersectionObserver" in window)) {
+    // Fallback : compte tout de suite
+    posts.forEach(el => trackView(el.dataset.id));
+    return;
+  }
+
+  if (viewObserver) viewObserver.disconnect();
+  viewObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+        const id = entry.target.dataset.id;
+        if (id) trackView(id);
+        viewObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: [0.5] });
+
+  posts.forEach(el => {
+    // Ne compte que les posts créés il y a > 1s (évite de compter nos propres brouillons à l'instant du rendu)
+    const id = el.dataset.id;
+    if (!id) return;
+    viewObserver.observe(el);
+  });
+}
+
 function renderFeed() {
   const list = $("feed-list"); if (!list) return;
   let items = [...feedItems].sort((a,b) => b.createdAt - a.createdAt);
@@ -3096,7 +3216,10 @@ function renderFeed() {
   }
   list.innerHTML = items.map(p => renderPost(p)).join("");
   list.querySelectorAll(".post").forEach(el => bindPost(el, el.dataset.id));
+  // Nouveau : observer les vues dès que le DOM est prêt
+  setupViewObserver();
 }
+
 function renderPost(p) {
   const mine = p.uid === currentUser?.uid;
   const followed = myFollowing.includes(p.author);
@@ -3109,6 +3232,14 @@ function renderPost(p) {
   const isFav = myFavorites.includes(p.id);
   const cmtCount = Object.keys(p.comments||{}).length;
   const fresh = (Date.now() - (p.createdAt||0) < 3000) ? "fresh" : "";
+
+  /* ── VUES EN TEMPS RÉEL ── */
+  const viewCount = Number(p.views) || 0;
+  const prevViews = lastViewCounts[p.id];
+  const isBump = prevViews !== undefined && prevViews !== viewCount;
+  lastViewCounts[p.id] = viewCount;
+  const isLive = activeViewers[p.id] && (Date.now() - activeViewers[p.id] < 12000);
+  const viewsClasses = ["post__views", isBump ? "bump" : "", isLive ? "live" : ""].filter(Boolean).join(" ");
 
   let media = "";
   if (isPoll) {
@@ -3148,9 +3279,11 @@ function renderPost(p) {
       <button class="post__act rt ${p.reposts?.[currentUser?.uid]?"on":""}" data-rt type="button">${ic("i-repost",18)}<span>${rtCount||""}</span></button>
       <button class="post__act like ${liked?"liked":""}" data-like type="button">${ic("i-heart",18)}<span>${likedCount||""}</span></button>
       <button class="post__act save ${isFav?"on":""}" data-save type="button">${ic("i-bookmark",18)}</button>
+      <span class="${viewsClasses}" title="${viewCount} vue${viewCount>1?"s":""}">${ic("i-eye",16)}<span class="num">${fmtViews(viewCount)}</span></span>
     </div>
   </article>`;
 }
+
 function bindPost(el, id) {
   const p = feedItems.find(x => x.id === id); if (!p) return;
   el.querySelectorAll("[data-open-profile]").forEach(zone => {
@@ -3181,6 +3314,7 @@ function bindPost(el, id) {
     votePollFeed(pid, parseInt(opt,10));
   }));
 }
+
 async function toggleLike(id) {
   if (!fbReady) return;
   const p = feedItems.find(x => x.id === id); if (!p) return;
@@ -3273,6 +3407,7 @@ async function deletePost(id) {
   try {
     if (fbReady) await remove(ref(db, `posts/${id}`));
     feedItems = feedItems.filter(x => x.id !== id);
+    delete lastViewCounts[id];
     renderFeed(); updateProfile();
     toast("Publication supprimée");
   } catch (e) { toast("Erreur.", "danger"); }
@@ -3396,7 +3531,8 @@ async function publishPost() {
   const cap = $("ed-caption").value.trim();
   const base = {
     uid: currentUser.uid, author: myName, mask: myMask, avatar: myAvatar,
-    caption: cap, createdAt: now(), likes: {}, reposts: {}, comments: {}
+    caption: cap, createdAt: now(), likes: {}, reposts: {}, comments: {},
+    views: 0, viewLog: {}   // ← NOUVEAU : compteur de vues initialisé
   };
   let payload;
   if (editorMode === "text") payload = { ...base, mediaType: "text" };
@@ -3573,6 +3709,7 @@ document.addEventListener("keydown", e => {
   }
 });
 
+/* ═══ API publique de debug ═══ */
 window.abx = {
   openChat, show, joinGroup, openEditor, closeEditor, toast,
   publishPost, openShareSheet, buildJoinUrl, openDm, openUserProfile,
@@ -3582,16 +3719,25 @@ window.abx = {
     renderGroupsGrid();
     toast("Positions réinitialisées");
   },
+  resetViews: () => {
+    viewedPosts.clear();
+    Object.keys(lastViewCounts).forEach(k => delete lastViewCounts[k]);
+    Object.keys(activeViewers).forEach(k => delete activeViewers[k]);
+    toast("Compteur de vues local réinitialisé");
+  },
   debug: () => ({
     fbReady, uid: currentUser?.uid, userReady,
     postsCount: feedItems.length,
     groups: myGroups,
     conversations: Object.keys(dmConversations || {}).length,
-    dmPeer: currentDmPeer?.uid
+    dmPeer: currentDmPeer?.uid,
+    viewedThisSession: viewedPosts.size,
+    trackedViews: Object.keys(lastViewCounts).length
   })
 };
-console.log("[AnonyBoX] v30 — Interface sobre + Typo premium");
+console.log("[AnonyBoX] v31 — Vues en temps réel style X activées");
 console.log("Tape abx.debug() pour vérifier l'état");
+console.log("abx.resetViews() pour repartir à zéro (local)");
 </script>
 </body>
-  </html>
+                                                                                                                                                                                                                                                                                                                                                                                              </html>
