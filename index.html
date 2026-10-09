@@ -475,27 +475,30 @@ body.chatting .nav{display:none}
 .post__act.save.on{color:var(--accent-bright)}
 .post__act.save.on svg{fill:var(--accent-bright);stroke:var(--accent-bright)}
 
-/* ═══ VUES EN TEMPS RÉEL (style X) ═══ */
+/* ═══ VUES EN TEMPS RÉEL (style X : barres verticales) ═══ */
 .post__views{
-  display:inline-flex;align-items:center;gap:5px;
-  padding:8px 10px 8px 6px;
-  font-size:.78rem;font-weight:500;
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 12px;
+  border-radius:var(--r-md);
+  font-size:.8125rem;font-weight:500;
   color:var(--fg-3);
   font-variant-numeric:tabular-nums;
   flex-shrink:0;
-  transition:color .35s ease;
+  background:transparent;
+  transition:color .35s ease,background .15s;
   position:relative;
+  cursor:default;
 }
 .post__views svg{
-  width:16px;height:16px;
-  fill:none;stroke:currentColor;
-  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
-  opacity:.85;
+  width:18px;height:18px;
+  fill:currentColor;
+  stroke:none;
+  opacity:.9;
+  flex-shrink:0;
 }
 .post__views .num{
   min-width:1ch;
-  font-family:var(--mono);
-  letter-spacing:.01em;
+  letter-spacing:.005em;
 }
 .post__views.bump{
   color:var(--accent-bright);
@@ -505,13 +508,19 @@ body.chatting .nav{display:none}
 .post__views.live::after{
   content:"";
   position:absolute;
-  top:6px;right:4px;
+  top:4px;right:2px;
   width:5px;height:5px;
   border-radius:50%;
   background:var(--accent-bright);
   animation:livePulse 1.6s infinite;
   box-shadow:0 0 6px var(--accent-bright);
 }
+/* Vue compacte utilisée dans les cartes de profil */
+.post__views--mini{
+  padding:8px 6px 8px 2px;
+}
+.post__views--mini .num{font-size:.78rem}
+
 .post__poll{padding:4px 16px 14px}
 .post__poll-q{font-weight:600;font-size:.9375rem;margin-bottom:12px;color:#fff;letter-spacing:-.01em}
 .post__poll-opt{position:relative;width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;margin-bottom:8px;border-radius:var(--r-md);background:var(--bg-card);color:var(--fg);font-family:inherit;font-size:.875rem;text-align:left;cursor:pointer;overflow:hidden;font-weight:500;transition:background .15s;border:1px solid var(--border-2)}
@@ -561,11 +570,14 @@ body.chatting .nav{display:none}
   content:"";position:absolute;left:20%;right:20%;bottom:0;height:2px;
   background:var(--accent-bright);border-radius:2px 2px 0 0;
 }
-.profile__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:3px}
-.profile__cell{position:relative;aspect-ratio:1;border-radius:var(--r-sm);overflow:hidden;background:var(--bg-card);cursor:pointer}
-.profile__cell:active{opacity:.8}
-.profile__cell--text{display:flex;align-items:center;justify-content:center;padding:12px;text-align:center;background:var(--bg-card);font-size:.75rem;font-weight:500;color:var(--fg-2);line-height:1.4}
-.profile__cell--text span{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+/* NOUVEAU : profil affiche les posts en cartes complètes (comme le fil) */
+.profile__posts{
+  display:flex;flex-direction:column;
+  padding:0 0 96px;
+  background:transparent;
+}
+.profile__posts .post{padding:4px 0}
+.profile__posts .post:first-child{border-top:0}
 
 /* ═══ CHAT ═══ */
 .chat__bar{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:6px;padding:0 8px;height:var(--hdr-h);padding-top:var(--safe-t);background:var(--bg-2);border-bottom:1px solid var(--border);flex-shrink:0}
@@ -869,6 +881,8 @@ body.on-feed .fab{display:grid}
 <symbol id="i-exit" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/><path d="M18.5 12H10"/><path d="m15.5 8.5 3.5 3.5-3.5 3.5"/></g></symbol>
 <symbol id="i-eye" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></g></symbol>
 <symbol id="i-eye-off" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 4.24A9.12 9.12 0 0 1 12 4c7 0 10 8 10 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><path d="M6.61 6.61A18.5 18.5 0 0 0 2 12s3 8 10 8a9.12 9.12 0 0 0 5.39-1.61"/><path d="m2 2 20 20"/></g></symbol>
+<!-- NOUVEAU : icône de vues style X (barres verticales) -->
+<symbol id="i-views" viewBox="0 0 24 24"><g fill="currentColor"><rect x="3" y="13" width="3.2" height="8" rx=".6"/><rect x="8.4" y="8" width="3.2" height="13" rx=".6"/><rect x="13.8" y="10.5" width="3.2" height="10.5" rx=".6"/><rect x="19.2" y="4" width="3.2" height="17" rx=".6"/></g></symbol>
 <symbol id="i-share" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></g></symbol>
 <symbol id="i-camera" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h1l1.5-2h8l1.5 2h1A2.5 2.5 0 0 1 21 8.5v9A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5v-9Z"/><circle cx="12" cy="13" r="4"/></g></symbol>
 <symbol id="i-qr" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM20 14v3M14 20h3M20 20h.01"/></g></symbol>
@@ -996,7 +1010,8 @@ body.on-feed .fab{display:grid}
       <button data-ptab="reposts" type="button">Reposts</button>
     </div>
   </div>
-  <div class="profile__grid" id="profile-grid"></div>
+  <!-- NOUVEAU : liste de cartes complètes (mêmes cartes que le fil) -->
+  <div class="profile__posts" id="profile-posts"></div>
 </section>
 
 <section id="s-chat" class="screen chat-screen">
@@ -1387,7 +1402,7 @@ body.on-feed .fab{display:grid}
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script type="module">
 /* ═══════════════════════════════════════════════════════════════
-   ANONYBOX v31 — Interface sobre + VUES EN TEMPS RÉEL (style X)
+   ANONYBOX v32 — Feed X-like : vues barres, format FR, profil=cartes
    ═══════════════════════════════════════════════════════════════ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
@@ -1429,14 +1444,19 @@ const buildJoinUrl = code => `${APP_BASE_URL}?join=${encodeURIComponent(code)}`;
 const buildShareText = (name, code) =>
   `🔒 Rejoins mon salon AnonyBoX\n\n📛 Groupe : ${name}\n🎫 Code : ${code}\n🔗 Lien : ${buildJoinUrl(code)}\n\nAnonyBoX — messagerie anonyme chiffrée`;
 
-/* ═══ VUES : formatage style X (1.2K / 3.4M) ═══ */
+/* ═══ VUES : formatage FRANÇAIS style X (2,1K · 337K · 1,2M) ═══ */
 function fmtViews(n){
   n = Number(n) || 0;
+  const fmt = v => {
+    // Format français : virgule décimale, pas de zéro inutile
+    const s = v.toFixed(1).replace(/\.0$/, "");
+    return s.replace(".", ",");
+  };
   if (n < 1000) return String(n);
-  if (n < 10000) return (n/1000).toFixed(1).replace(/\.0$/, "") + "K";
-  if (n < 1000000) return Math.round(n/1000) + "K";
-  if (n < 10000000) return (n/1000000).toFixed(1).replace(/\.0$/, "") + "M";
-  return Math.round(n/1000000) + "M";
+  if (n < 10000) return fmt(n/1000) + "K";        // 1,2K  ·  9,9K
+  if (n < 1000000) return Math.round(n/1000) + "K"; // 12K  ·  337K
+  if (n < 10000000) return fmt(n/1000000) + "M";    // 1,2M  ·  9,9M
+  return Math.round(n/1000000) + "M";               // 12M  ·  337M
 }
 
 function dayKey(ts) {
@@ -1498,11 +1518,12 @@ let currentEmojiTab = "emoji";
 let groupTypingTimeout = null;
 let dmTypingTimeout = null;
 
-/* ═══ VUES : état de tracking (style X) ═══ */
-const viewedPosts = new Set();      // dédup local : "postId|uid_date"
-const lastViewCounts = {};          // postId -> dernier compteur vu (pour bump)
-const activeViewers = {};           // postId -> timestamp dernière activité (pour pastille "live")
+/* ═══ VUES : tracking ═══ */
+const viewedPosts = new Set();
+const lastViewCounts = {};
+const activeViewers = {};
 let viewObserver = null;
+let profileViewObserver = null;
 
 /* ═══ Firebase ═══ */
 let app, auth, db, fbReady = false, fbFailed = false;
@@ -1578,7 +1599,7 @@ function toast(msg, tone = "success") {
   toastTO = setTimeout(() => t.classList.remove("on"), 2600);
 }
 
-/* ═══ Navigation + HISTORY API ═══ */
+/* ═══ Navigation ═══ */
 const SCREENS = ["s-home","s-messages","s-groups","s-feed","s-profile","s-chat","s-dm"];
 const navStack = [];
 
@@ -1780,45 +1801,42 @@ function updateProfile() {
     if (k === "fav") b.textContent = `Favoris (${fav})`;
     if (k === "reposts") b.textContent = `Reposts (${reposts})`;
   });
-  renderProfileGrid();
+  renderProfilePosts();
 }
-function renderProfileGrid() {
-  const g = $("profile-grid"); if (!g) return;
+
+/* ═══ NOUVEAU : profil = cartes complètes (comme dans X) ═══ */
+function renderProfilePosts() {
+  const container = $("profile-posts");
+  if (!container) return;
+
   let items = [];
   if (profileTab === "posts") items = feedItems.filter(p => p.uid === currentUser?.uid);
   else if (profileTab === "fav") items = feedItems.filter(p => myFavorites.includes(p.id));
   else if (profileTab === "reposts") items = feedItems.filter(p => p.reposts?.[currentUser?.uid]);
   items = items.sort((a,b) => b.createdAt - a.createdAt);
+
   if (!items.length) {
     const msg = profileTab === "posts" ? "Publie ton premier éclat depuis l'onglet Fil"
       : profileTab === "fav" ? "Mets en favori des publications pour les retrouver ici"
       : "Aucune republication";
-    g.innerHTML = `<div style="grid-column:1/-1;padding:48px 24px;text-align:center;border-radius:var(--r-lg);background:var(--bg-card);border:1px solid var(--border)">
+    container.innerHTML = `<div style="padding:48px 24px;text-align:center">
       <div style="font-size:36px;color:var(--fg-4);margin-bottom:12px">${ic("i-globe",36)}</div>
       <strong style="display:block;font-size:.9375rem;font-weight:600;color:#fff">Aucun élément</strong>
       <small style="display:block;font-size:.8125rem;color:var(--fg-3);margin-top:6px;font-weight:400">${msg}</small>
     </div>`;
     return;
   }
-  g.innerHTML = items.map(p => {
-    const isPoll = p.mediaType === "poll";
-    const text = p.caption || (isPoll ? "📊 " + (p.pollQuestion||"Sondage") : "");
-    const vc = p.views || 0;
-    return `<div class="profile__cell" data-pid="${esc(p.id)}"><div class="profile__cell--text"><span>${esc(text)}</span></div>
-      <span style="position:absolute;top:6px;right:6px;font-size:11px;background:rgba(0,0,0,.7);padding:2px 6px;border-radius:6px;color:#fff;font-family:var(--mono);font-weight:600">♥ ${Object.keys(p.likes||{}).length} · ${ic("i-eye",10)} ${fmtViews(vc)}</span>
-    </div>`;
-  }).join("");
-  g.querySelectorAll("[data-pid]").forEach(c => c.addEventListener("click", () => {
-    show("s-feed");
-    document.querySelectorAll("#feed-tabs button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === "all"));
-    currentTab = "all";
-    renderFeed();
-  }));
+
+  // On réutilise exactement le même rendu que dans le fil → cohérence totale
+  container.innerHTML = items.map(p => renderPost(p, { context: "profile" })).join("");
+  container.querySelectorAll(".post").forEach(el => bindPost(el, el.dataset.id));
+  setupViewObserver(container);
 }
+
 document.querySelectorAll(".profile__tabs button").forEach(b => b.addEventListener("click", () => {
   profileTab = b.dataset.ptab;
   document.querySelectorAll(".profile__tabs button").forEach(x => x.classList.toggle("on", x === b));
-  renderProfileGrid();
+  renderProfilePosts();
 }));
 
 /* ═══ Vérification + Premium ═══ */
@@ -3139,14 +3157,12 @@ function startFeedListener() {
     const d = snap.val() || {};
     feedItems = Object.entries(d).map(([id, v]) => ({ id, ...v })).sort((a,b) => b.createdAt - a.createdAt);
     renderFeed();
-    if ($("s-profile").classList.contains("active")) updateProfile();
+    if ($("s-profile").classList.contains("active")) { updateProfile(); }
   }, err => { console.error(err); toast("Lecture du fil impossible", "danger"); });
 }
 
-/* ═══ Tracking de vues (style X : 1 vue par user / jour / post) ═══ */
-function todayKey() {
-  return new Date().toISOString().slice(0, 10);
-}
+/* ═══ Tracking de vues (1 vue / user / jour / post) ═══ */
+function todayKey() { return new Date().toISOString().slice(0, 10); }
 
 async function trackView(postId) {
   if (!fbReady || !currentUser || !postId) return;
@@ -3160,24 +3176,20 @@ async function trackView(postId) {
   try {
     const logRef = ref(db, `posts/${postId}/viewLog/${dayKey_}`);
     const snap = await get(logRef);
-    if (snap.exists()) return;                 // déjà vu aujourd'hui
-    await set(logRef, true);                    // marque la vue
-    // Incrément atomique du compteur (Firebase increment)
+    if (snap.exists()) return;
+    await set(logRef, true);
     await set(ref(db, `posts/${postId}/views`), increment(1));
-    // Petite impulsion visuelle locale
     activeViewers[postId] = Date.now();
-  } catch (e) {
-    console.warn("[View] track fail", e);
-  }
+  } catch (e) { console.warn("[View] track fail", e); }
 }
 
-/* IntersectionObserver : ne compte la vue qu'une fois le post vraiment visible (style X) */
-function setupViewObserver() {
-  const posts = document.querySelectorAll("#feed-list .post");
+/* IntersectionObserver : ne compte qu'à partir de 50% visible */
+function setupViewObserver(root) {
+  const scope = root || document;
+  const posts = scope.querySelectorAll(".post[data-id]");
   if (!posts.length) return;
 
   if (!("IntersectionObserver" in window)) {
-    // Fallback : compte tout de suite
     posts.forEach(el => trackView(el.dataset.id));
     return;
   }
@@ -3193,12 +3205,7 @@ function setupViewObserver() {
     });
   }, { threshold: [0.5] });
 
-  posts.forEach(el => {
-    // Ne compte que les posts créés il y a > 1s (évite de compter nos propres brouillons à l'instant du rendu)
-    const id = el.dataset.id;
-    if (!id) return;
-    viewObserver.observe(el);
-  });
+  posts.forEach(el => { if (el.dataset.id) viewObserver.observe(el); });
 }
 
 function renderFeed() {
@@ -3216,11 +3223,12 @@ function renderFeed() {
   }
   list.innerHTML = items.map(p => renderPost(p)).join("");
   list.querySelectorAll(".post").forEach(el => bindPost(el, el.dataset.id));
-  // Nouveau : observer les vues dès que le DOM est prêt
-  setupViewObserver();
+  setupViewObserver(list);
 }
 
-function renderPost(p) {
+/* ═══ Rendu d'un post (partagé fil + profil) ═══ */
+function renderPost(p, opts = {}) {
+  const context = opts.context || "feed";
   const mine = p.uid === currentUser?.uid;
   const followed = myFollowing.includes(p.author);
   const liked = p.likes && p.likes[currentUser?.uid];
@@ -3233,13 +3241,18 @@ function renderPost(p) {
   const cmtCount = Object.keys(p.comments||{}).length;
   const fresh = (Date.now() - (p.createdAt||0) < 3000) ? "fresh" : "";
 
-  /* ── VUES EN TEMPS RÉEL ── */
+  /* ── VUES (barres verticales style X) ── */
   const viewCount = Number(p.views) || 0;
   const prevViews = lastViewCounts[p.id];
   const isBump = prevViews !== undefined && prevViews !== viewCount;
   lastViewCounts[p.id] = viewCount;
   const isLive = activeViewers[p.id] && (Date.now() - activeViewers[p.id] < 12000);
-  const viewsClasses = ["post__views", isBump ? "bump" : "", isLive ? "live" : ""].filter(Boolean).join(" ");
+  const viewsClasses = [
+    "post__views",
+    context === "profile" ? "post__views--mini" : "",
+    isBump ? "bump" : "",
+    isLive ? "live" : ""
+  ].filter(Boolean).join(" ");
 
   let media = "";
   if (isPoll) {
@@ -3262,6 +3275,8 @@ function renderPost(p) {
       <div class="post__poll-meta">${total} vote${total>1?"s":""}${myVote?" · Tu as voté":""}</div>
     </div>`;
   }
+
+  /* Ordre X : commentaire · repost · like · VUES · favori */
   return `<article class="post ${fresh}" data-id="${esc(p.id)}">
     <div class="post__head">
       <div class="post__avatar" data-open-profile="${esc(p.uid)}">${av}</div>
@@ -3269,7 +3284,7 @@ function renderPost(p) {
         <b>${esc(p.author||"Anonyme")}${verified?` <span style="color:var(--verify);font-size:.75em">✓</span>`:""}</b>
         <small>@${esc((p.author||"anonyme").toLowerCase().replace(/\s+/g,"."))}${p.mask?" · "+esc(p.mask):""} · ${rel(p.createdAt)}</small>
       </div>
-      ${!mine?`<button class="post__follow ${followed?"on":""}" data-follow="${esc(p.author)}" type="button">${followed?"Abonné":"Suivre"}</button>`:""}
+      ${(!mine && context === "feed")?`<button class="post__follow ${followed?"on":""}" data-follow="${esc(p.author)}" type="button">${followed?"Abonné":"Suivre"}</button>`:""}
       <button class="post__more" data-more type="button">${ic("i-more",18)}</button>
     </div>
     ${p.caption?`<div class="post__text ${!isPoll?"post__text--only":""}">${esc(p.caption)}</div>`:""}
@@ -3278,8 +3293,8 @@ function renderPost(p) {
       <button class="post__act cmt" data-cmt type="button">${ic("i-comment",18)}<span>${cmtCount||""}</span></button>
       <button class="post__act rt ${p.reposts?.[currentUser?.uid]?"on":""}" data-rt type="button">${ic("i-repost",18)}<span>${rtCount||""}</span></button>
       <button class="post__act like ${liked?"liked":""}" data-like type="button">${ic("i-heart",18)}<span>${likedCount||""}</span></button>
+      <span class="${viewsClasses}" title="${viewCount} vue${viewCount>1?"s":""}">${ic("i-views",18)}<span class="num">${fmtViews(viewCount)}</span></span>
       <button class="post__act save ${isFav?"on":""}" data-save type="button">${ic("i-bookmark",18)}</button>
-      <span class="${viewsClasses}" title="${viewCount} vue${viewCount>1?"s":""}">${ic("i-eye",16)}<span class="num">${fmtViews(viewCount)}</span></span>
     </div>
   </article>`;
 }
@@ -3532,7 +3547,7 @@ async function publishPost() {
   const base = {
     uid: currentUser.uid, author: myName, mask: myMask, avatar: myAvatar,
     caption: cap, createdAt: now(), likes: {}, reposts: {}, comments: {},
-    views: 0, viewLog: {}   // ← NOUVEAU : compteur de vues initialisé
+    views: 0, viewLog: {}
   };
   let payload;
   if (editorMode === "text") payload = { ...base, mediaType: "text" };
@@ -3713,6 +3728,7 @@ document.addEventListener("keydown", e => {
 window.abx = {
   openChat, show, joinGroup, openEditor, closeEditor, toast,
   publishPost, openShareSheet, buildJoinUrl, openDm, openUserProfile,
+  fmtViews,
   resetPositions: async () => {
     myPositions = {};
     await fbSet(`users/${currentUser.uid}/positions`, {});
@@ -3735,9 +3751,8 @@ window.abx = {
     trackedViews: Object.keys(lastViewCounts).length
   })
 };
-console.log("[AnonyBoX] v31 — Vues en temps réel style X activées");
-console.log("Tape abx.debug() pour vérifier l'état");
-console.log("abx.resetViews() pour repartir à zéro (local)");
+console.log("[AnonyBoX] v32 — Feed X-like : barres de vues · format FR · profil=cartes");
+console.log("Tape abx.debug() pour vérifier · abx.fmtViews(2140) = '2,1K'");
 </script>
 </body>
-                                                                                                                                                                                                                                                                                                                                                                                              </html>
+                                                                                                                                                                                               </html>
