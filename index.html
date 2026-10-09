@@ -582,7 +582,8 @@ body.chatting .nav{display:none}
 .share__code-pill .val{font-family:var(--mono);font-size:1.0625rem;font-weight:700;color:var(--fg);letter-spacing:.14em}
 .share__link{display:flex;align-items:center;gap:8px;width:100%;padding:11px 14px;border-radius:var(--r-md);background:var(--bg-card);font-family:var(--mono);font-size:.75rem;color:var(--fg-2);border:1px solid var(--border-2)}
 .share__link span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.share__link span a{color:var(--accent-bright);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.share__link span a{color:var(--accent-bright);text-decoration:none;cursor:pointer}
+.share__link span a:hover{text-decoration:underline}
 .share__link button{padding:6px 12px;border-radius:var(--r-sm);background:var(--bg-elevated);color:var(--fg-2);font-size:.75rem;font-weight:600;flex-shrink:0;border:1px solid var(--border-2)}
 .share__options{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:6px 0 14px}
 .share__opt{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 6px;border-radius:var(--r-md);background:var(--bg-elevated);color:var(--fg);border:1px solid var(--border)}
@@ -1191,7 +1192,6 @@ body.on-recits .fab--story{display:grid}
   </div>
 </div>
 
-<!-- SHEET PARTAGE EN IMAGE (bouton "Copier" retiré) -->
 <div class="sheet" id="sheet-share-image">
   <div class="sheet__grip"></div>
   <div class="sheet__head" style="padding-bottom:14px;flex-direction:row;justify-content:space-between;align-items:center">
@@ -1206,6 +1206,9 @@ body.on-recits .fab--story{display:grid}
       <button class="share-image-opt" data-shi="whatsapp" type="button"><span class="share-image-opt__icon wa">💬</span><small>WhatsApp</small></button>
       <button class="share-image-opt" data-shi="telegram" type="button"><span class="share-image-opt__icon tg">✈️</span><small>Telegram</small></button>
       <button class="share-image-opt" data-shi="download" type="button"><span class="share-image-opt__icon dl">⬇️</span><small>Télécharger</small></button>
+    </div>
+    <div class="share-image-options" style="grid-template-columns:1fr">
+      <button class="share-image-opt" data-shi="copy" type="button" style="flex-direction:row;justify-content:center;gap:10px;padding:12px 16px"><span class="share-image-opt__icon cp" style="width:34px;height:34px;font-size:16px">📋</span><small>Copier l'image</small></button>
     </div>
   </div>
 </div>
@@ -1328,7 +1331,7 @@ body.on-recits .fab--story{display:grid}
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script type="module">
 /* ═══════════════════════════════════════════════════════════════
-   ANONYBOX v42 — Aperçu WhatsApp · Icônes dessinées · Image HD ×3
+   ANONYBOX v41 — Icônes canvas · Lien cliquable · Image HD
    ═══════════════════════════════════════════════════════════════ */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
@@ -2642,28 +2645,13 @@ function drawGhostLogo(ctx, cx, cy, size, color) {
   ctx.fill();
   ctx.restore();
 }
-/* ═══ Double checkmark (✓✓ style WhatsApp) ═══ */
-function drawDoubleCheck(ctx, cx, cy, size, color) {
-  ctx.save();
-  ctx.strokeStyle = color;
-  ctx.lineWidth = Math.max(2, size * 0.12);
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-  ctx.beginPath();
-  ctx.moveTo(cx - size * 0.55, cy);
-  ctx.lineTo(cx - size * 0.20, cy + size * 0.32);
-  ctx.lineTo(cx + size * 0.45, cy - size * 0.35);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(cx - size * 0.15, cy);
-  ctx.lineTo(cx + size * 0.20, cy + size * 0.32);
-  ctx.lineTo(cx + size * 0.85, cy - size * 0.35);
-  ctx.stroke();
-  ctx.restore();
-}
 
 /* ═══════════════════════════════════════════════════════════════
-   HELPERS CANVAS
+   PARTAGE DE TRACE EN IMAGE — v41
+   • DPR x3 (netteté HD)
+   • Coins arrondis 40px
+   • Icônes dessinées (plus d'emojis)
+   • Lien anonybox.app souligné
    ═══════════════════════════════════════════════════════════════ */
 function loadImageToCanvas(src) {
   return new Promise((res, rej) => {
@@ -2718,91 +2706,268 @@ function drawAvatarFallback(ctx, x, y, size, name) {
   ctx.restore();
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   GÉNÉRATION IMAGE — Format aperçu WhatsApp (style TikTok)
-   ═══════════════════════════════════════════════════════════════ */
 async function generatePostImage(p) {
   const W = 1080;
-  const RADIUS = 36;
+  const PAD = 48;
+  const RADIUS = 44;
+  const contentW = W - PAD * 2;
+  // DPR x3 pour une image encore plus nette
   const DPR = 3;
 
   const measureCv = document.createElement("canvas");
   const mctx = measureCv.getContext("2d");
   const caption = (p.caption || "").trim();
-  mctx.font = "500 42px Sora, sans-serif";
-  const captionLines = caption ? wrapTextLines(mctx, caption, W - 140) : [];
-  const captionH = captionLines.length * 60;
+  mctx.font = "400 38px Sora, sans-serif";
+  const captionLines = caption ? wrapTextLines(mctx, caption, contentW - 96) : [];
+  const captionH = captionLines.length * 56;
 
   const hasPoll = p.mediaType === "poll";
-  const pollH = hasPoll ? 90 + (p.pollOptions?.length || 0) * 100 : 0;
+  const pollH = hasPoll ? 110 + (p.pollOptions?.length || 0) * 100 : 0;
 
-  const HEADER_H = 160;
-  const CAPTION_H = captionLines.length ? captionH + 100 : 0;
-  const POLL_SECTION_H = hasPoll ? pollH + 60 : 0;
-  const BAR_H = 200;
-  const H = HEADER_H + CAPTION_H + POLL_SECTION_H + BAR_H + 70;
+  const H = 360 + 60 + 130 + 40
+    + (captionH ? captionH + 34 : 0)
+    + (hasPoll ? pollH + 24 : 0)
+    + 110 + 60 + 200 + 60;
 
   const canvas = document.createElement("canvas");
   canvas.width = W * DPR;
   canvas.height = H * DPR;
   const ctx = canvas.getContext("2d");
   ctx.scale(DPR, DPR);
+  ctx.clearRect(0, 0, W, H);
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
+
+  // Fond principal arrondi
+  ctx.save();
+  roundRectPath(ctx, 0, 0, W, H, RADIUS);
+  ctx.clip();
+
+  const bgGrad = ctx.createLinearGradient(0, 0, W, H);
+  bgGrad.addColorStop(0, "#0F1A22");
+  bgGrad.addColorStop(0.5, "#0B141A");
+  bgGrad.addColorStop(1, "#0A1016");
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  const halo = ctx.createRadialGradient(W/2, 60, 0, W/2, 60, W * 0.75);
+  halo.addColorStop(0, "rgba(74,222,167,0.16)");
+  halo.addColorStop(0.5, "rgba(74,222,167,0.04)");
+  halo.addColorStop(1, "rgba(74,222,167,0)");
+  ctx.fillStyle = halo;
+  ctx.fillRect(0, 0, W, H * 0.55);
+
+  const halo2 = ctx.createRadialGradient(W/2, H, 0, W/2, H, W * 0.7);
+  halo2.addColorStop(0, "rgba(0,0,0,0.35)");
+  halo2.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = halo2;
+  ctx.fillRect(0, H * 0.5, W, H * 0.5);
+
+  ctx.fillStyle = "rgba(74,222,167,0.05)";
+  for (let px = 30; px < W - 30; px += 44) {
+    for (let py = 30; py < H - 30; py += 44) {
+      ctx.beginPath();
+      ctx.arc(px, py, 1.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+
+  // Bordure dégradée épaisse
+  ctx.save();
+  roundRectPath(ctx, 2, 2, W - 4, H - 4, RADIUS);
+  const borderGrad = ctx.createLinearGradient(0, 0, 0, H);
+  borderGrad.addColorStop(0, "rgba(74,222,167,0.60)");
+  borderGrad.addColorStop(0.4, "rgba(74,222,167,0.15)");
+  borderGrad.addColorStop(0.8, "rgba(255,255,255,0.06)");
+  borderGrad.addColorStop(1, "rgba(74,222,167,0.35)");
+  ctx.strokeStyle = borderGrad;
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.restore();
 
   ctx.save();
   roundRectPath(ctx, 0, 0, W, H, RADIUS);
   ctx.clip();
 
-  // Fond global
-  ctx.fillStyle = "#0B141A";
-  ctx.fillRect(0, 0, W, H);
+  let y = 0;
 
-  // ═══ ZONE 1 — HEADER (preview média) ═══
-  const headerGrad = ctx.createLinearGradient(0, 0, W, HEADER_H);
-  headerGrad.addColorStop(0, "#0F3A2C");
-  headerGrad.addColorStop(1, "#08160F");
-  ctx.fillStyle = headerGrad;
-  ctx.fillRect(0, 0, W, HEADER_H);
+  // BADGE "TRACE ANONYME"
+  const badgeText = "TRACE ANONYME";
+  ctx.font = "700 18px 'JetBrains Mono', monospace";
+  const badgeTextW = ctx.measureText(badgeText).width;
+  const badgeW = badgeTextW + 44;
+  const badgeH = 44;
+  const badgeX = W - PAD - badgeW;
+  const badgeY = 44;
 
-  const halo = ctx.createRadialGradient(W/2, HEADER_H/2, 0, W/2, HEADER_H/2, W * 0.55);
-  halo.addColorStop(0, "rgba(74,222,167,0.28)");
-  halo.addColorStop(0.6, "rgba(74,222,167,0.05)");
-  halo.addColorStop(1, "rgba(74,222,167,0)");
-  ctx.fillStyle = halo;
-  ctx.fillRect(0, 0, W, HEADER_H);
+  ctx.save();
+  roundRectPath(ctx, badgeX, badgeY, badgeW, badgeH, badgeH / 2);
+  const badgeGrad = ctx.createLinearGradient(badgeX, badgeY, badgeX + badgeW, badgeY + badgeH);
+  badgeGrad.addColorStop(0, "rgba(74,222,167,0.20)");
+  badgeGrad.addColorStop(1, "rgba(74,222,167,0.08)");
+  ctx.fillStyle = badgeGrad;
+  ctx.fill();
+  ctx.strokeStyle = "rgba(74,222,167,0.35)";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.restore();
 
-  drawGhostLogo(ctx, W/2 - 80, HEADER_H/2, 68, "#4ADEA7");
-  ctx.font = "italic 400 52px 'Instrument Serif', Georgia, serif";
-  ctx.fillStyle = "#FFFFFF";
-  ctx.textAlign = "left";
+  ctx.fillStyle = "#4ADEA7";
+  ctx.beginPath();
+  ctx.arc(badgeX + 20, badgeY + badgeH / 2, 5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(74,222,167,0.4)";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(badgeX + 20, badgeY + badgeH / 2, 9, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.font = "700 18px 'JetBrains Mono', monospace";
+  ctx.fillStyle = "#4ADEA7";
   ctx.textBaseline = "middle";
-  ctx.fillText("AnonyBoX", W/2 - 30, HEADER_H/2 + 2);
+  ctx.textAlign = "left";
+  ctx.fillText(badgeText, badgeX + 34, badgeY + badgeH / 2 + 1);
 
-  // Séparateur sous le header
-  const sepGrad = ctx.createLinearGradient(0, 0, W, 0);
+  // Ornements gauche/droite
+  const ornY = 130, ornH = 80;
+  const ornGradL = ctx.createLinearGradient(0, ornY, 0, ornY + ornH);
+  ornGradL.addColorStop(0, "rgba(74,222,167,0)");
+  ornGradL.addColorStop(0.5, "rgba(74,222,167,0.9)");
+  ornGradL.addColorStop(1, "rgba(74,222,167,0)");
+  ctx.fillStyle = ornGradL;
+  roundRectPath(ctx, PAD, ornY, 4, ornH, 2);
+  ctx.fill();
+  ctx.fillStyle = ornGradL;
+  roundRectPath(ctx, W - PAD - 4, ornY, 4, ornH, 2);
+  ctx.fill();
+
+  // NOM AUTEUR
+  const authorName = (p.author || "Anonyme").trim();
+  const nameY = 170;
+  const nameMaxW = contentW - 100;
+  let nameFontSize = 64;
+  ctx.font = `700 ${nameFontSize}px Sora, sans-serif`;
+  while (ctx.measureText(authorName).width > nameMaxW && nameFontSize > 32) {
+    nameFontSize -= 2;
+    ctx.font = `700 ${nameFontSize}px Sora, sans-serif`;
+  }
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "center";
+  ctx.shadowColor = "rgba(74,222,167,0.55)";
+  ctx.shadowBlur = 40;
+  ctx.fillStyle = "#4ADEA7";
+  ctx.fillText(authorName, W / 2, nameY);
+  ctx.shadowBlur = 0;
+  ctx.shadowColor = "transparent";
+  ctx.fillStyle = "#E8FFF5";
+  ctx.globalAlpha = 0.35;
+  ctx.fillText(authorName, W / 2, nameY);
+  ctx.globalAlpha = 1;
+
+  ctx.font = "400 22px Sora, sans-serif";
+  ctx.fillStyle = "rgba(196,204,211,0.55)";
+  ctx.textAlign = "center";
+  ctx.fillText("a laissé une trace sur AnonyBoX", W / 2, nameY + 60);
+
+  // LOGO
+  const logoY = 300;
+  ctx.textAlign = "left";
+  drawGhostLogo(ctx, PAD + 26, logoY, 52, "#4ADEA7");
+  ctx.font = "italic 400 40px 'Instrument Serif', Georgia, serif";
+  ctx.fillStyle = "#FFFFFF";
+  ctx.textBaseline = "middle";
+  ctx.fillText("AnonyBoX", PAD + 70, logoY);
+  ctx.font = "500 18px 'JetBrains Mono', monospace";
+  ctx.fillStyle = "#7B8794";
+  ctx.textAlign = "right";
+  ctx.fillText("· anonyme · chiffré", W - PAD, logoY);
+  ctx.textAlign = "left";
+
+  // Séparateur
+  const sepY = 350;
+  const sepGrad = ctx.createLinearGradient(PAD, 0, W - PAD, 0);
   sepGrad.addColorStop(0, "rgba(74,222,167,0)");
-  sepGrad.addColorStop(0.5, "rgba(74,222,167,0.45)");
+  sepGrad.addColorStop(0.5, "rgba(74,222,167,0.30)");
   sepGrad.addColorStop(1, "rgba(74,222,167,0)");
   ctx.fillStyle = sepGrad;
-  ctx.fillRect(0, HEADER_H - 2, W, 2);
+  ctx.fillRect(PAD, sepY, contentW, 1);
 
-  let y = HEADER_H;
+  y = 400;
 
-  // ═══ ZONE 2 — CAPTION ═══
-  if (captionLines.length) {
-    y += 50;
-    ctx.font = "500 42px Sora, sans-serif";
-    ctx.fillStyle = "#E8ECEF";
+  // CARTE DU POST
+  const cardPad = 36;
+  const cardX = PAD;
+  const cardTop = y;
+  let cardBottom = y;
+  y += cardPad;
+
+  // Avatar
+  const avSize = 92;
+  const avX = cardX + cardPad;
+  const avY = y;
+  const avRingGrad = ctx.createLinearGradient(avX, avY, avX + avSize, avY + avSize);
+  avRingGrad.addColorStop(0, "#4ADEA7");
+  avRingGrad.addColorStop(1, "#10B981");
+  ctx.strokeStyle = avRingGrad;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(avX + avSize/2, avY + avSize/2, avSize/2 + 3, 0, Math.PI * 2);
+  ctx.stroke();
+
+  if (p.avatar) {
+    try {
+      const img = await loadImageToCanvas(p.avatar);
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(avX + avSize/2, avY + avSize/2, avSize/2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(img, avX, avY, avSize, avSize);
+      ctx.restore();
+    } catch { drawAvatarFallback(ctx, avX, avY, avSize, p.author); }
+  } else { drawAvatarFallback(ctx, avX, avY, avSize, p.author); }
+
+  const nameX = avX + avSize + 26;
+  const nameY2 = avY + 32;
+  ctx.textBaseline = "middle";
+  ctx.font = "700 36px Sora, sans-serif";
+  ctx.fillStyle = "#FFFFFF";
+  const nameTxt = p.author || "Anonyme";
+  ctx.fillText(nameTxt, nameX, nameY2);
+
+  if (verifiedUsers[p.uid]) {
+    const nameW = ctx.measureText(nameTxt).width;
+    const bx = nameX + nameW + 22;
+    const by = nameY2;
+    ctx.beginPath();
+    ctx.arc(bx, by, 12, 0, Math.PI * 2);
+    ctx.fillStyle = "#4ADEA7";
+    ctx.fill();
+    ctx.font = "700 17px Sora, sans-serif";
+    ctx.fillStyle = "#0B141A";
+    ctx.textAlign = "center";
+    ctx.fillText("✓", bx, by + 1);
     ctx.textAlign = "left";
-    ctx.textBaseline = "top";
-    captionLines.forEach((line, i) => {
-      ctx.fillText(line, 70, y + i * 60);
-    });
-    y += captionH + 50;
   }
 
-  // ═══ ZONE 3 — SONDAGE ═══
+  ctx.font = "500 22px 'JetBrains Mono', monospace";
+  ctx.fillStyle = "#7B8794";
+  const handleTxt = `@${nameTxt.toLowerCase().replace(/\s+/g, ".")}${p.mask ? " · " + p.mask : ""} · ${rel(p.createdAt)}`;
+  ctx.fillText(handleTxt, nameX, nameY2 + 46);
+
+  y = avY + avSize + 44;
+
+  // CAPTION
+  if (captionLines.length) {
+    ctx.font = "400 38px Sora, sans-serif";
+    ctx.fillStyle = "#E8ECEF";
+    ctx.textBaseline = "top";
+    captionLines.forEach((line, i) => { ctx.fillText(line, cardX + cardPad, y + i * 56); });
+    y += captionH + 34;
+  }
+
+  // SONDAGE
   if (hasPoll) {
     const votes = p.pollVotes || {};
     const voters = new Set();
@@ -2810,116 +2975,199 @@ async function generatePostImage(p) {
     const total = voters.size;
     const myVote = Object.keys(votes).find(i => votes[i]?.[currentUser?.uid]);
 
-    drawChartIcon(ctx, 90, y + 22, 32, "#4ADEA7");
-    ctx.font = "600 36px Sora, sans-serif";
+    // Barre + Titre de sondage (avec mini icône chart dessinée)
+    drawChartIcon(ctx, cardX + cardPad + 14, y + 18, 28, "#4ADEA7");
+    ctx.font = "600 32px Sora, sans-serif";
     ctx.fillStyle = "#FFFFFF";
     ctx.textBaseline = "middle";
     ctx.textAlign = "left";
-    ctx.fillText(p.pollQuestion || "Sondage", 120, y + 22);
-    y += 70;
+    ctx.fillText(p.pollQuestion || "Sondage", cardX + cardPad + 40, y + 18);
+    y += 60;
 
     const opts = p.pollOptions || [];
     const barH = 84;
     const gap = 16;
-    const barW = W - 140;
+    const barW = contentW - cardPad * 2;
     opts.forEach((opt, i) => {
       const cnt = votes[i] ? Object.keys(votes[i]).length : 0;
       const pct = total ? Math.round(cnt / total * 100) : 0;
       const voted = String(myVote) === String(i);
       ctx.save();
-      roundRectPath(ctx, 70, y, barW, barH, 16);
-      ctx.fillStyle = voted ? "rgba(74,222,167,0.15)" : "rgba(255,255,255,0.05)";
+      roundRectPath(ctx, cardX + cardPad, y, barW, barH, 14);
+      ctx.fillStyle = voted ? "rgba(74,222,167,0.12)" : "rgba(255,255,255,0.04)";
       ctx.fill();
-      ctx.strokeStyle = voted ? "rgba(74,222,167,0.45)" : "rgba(255,255,255,0.08)";
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = voted ? "rgba(74,222,167,0.4)" : "rgba(255,255,255,0.06)";
+      ctx.lineWidth = 1.5;
       ctx.stroke();
       if (total > 0) {
         ctx.save();
-        roundRectPath(ctx, 70, y, barW, barH, 16);
+        roundRectPath(ctx, cardX + cardPad, y, barW, barH, 14);
         ctx.clip();
-        const fillGrad = ctx.createLinearGradient(70, 0, 70 + barW, 0);
-        fillGrad.addColorStop(0, "rgba(74,222,167,0.30)");
-        fillGrad.addColorStop(1, "rgba(74,222,167,0.10)");
+        const fillGrad = ctx.createLinearGradient(cardX + cardPad, 0, cardX + cardPad + barW, 0);
+        fillGrad.addColorStop(0, "rgba(74,222,167,0.22)");
+        fillGrad.addColorStop(1, "rgba(74,222,167,0.08)");
         ctx.fillStyle = fillGrad;
-        ctx.fillRect(70, y, barW * pct / 100, barH);
+        ctx.fillRect(cardX + cardPad, y, barW * pct / 100, barH);
         ctx.restore();
       }
       ctx.restore();
-      ctx.font = "500 32px Sora, sans-serif";
+      ctx.font = "500 28px Sora, sans-serif";
       ctx.fillStyle = voted ? "#FFFFFF" : "#E8ECEF";
       ctx.textBaseline = "middle";
       ctx.textAlign = "left";
-      ctx.fillText(opt + (voted ? "  ✓" : ""), 96, y + barH / 2);
+      ctx.fillText(opt + (voted ? "  ✓" : ""), cardX + cardPad + 22, y + barH / 2);
       if (total > 0) {
         ctx.textAlign = "right";
-        ctx.font = "700 30px 'JetBrains Mono', monospace";
+        ctx.font = "700 26px 'JetBrains Mono', monospace";
         ctx.fillStyle = "#4ADEA7";
-        ctx.fillText(pct + "%", 70 + barW - 24, y + barH / 2);
+        ctx.fillText(pct + "%", cardX + cardPad + barW - 22, y + barH / 2);
         ctx.textAlign = "left";
       }
       y += barH + gap;
     });
-    ctx.font = "500 24px 'JetBrains Mono', monospace";
+    ctx.font = "500 20px 'JetBrains Mono', monospace";
     ctx.fillStyle = "#7B8794";
     ctx.textBaseline = "top";
-    ctx.fillText(`${total} vote${total > 1 ? "s" : ""}${myVote ? " · Tu as voté" : ""}`, 70, y + 8);
-    y += 50;
+    ctx.fillText(`${total} vote${total > 1 ? "s" : ""}${myVote ? " · Tu as voté" : ""}`, cardX + cardPad, y + 6);
+    y += 44;
   }
 
-  // ═══ ZONE 4 — BARRE WHATSAPP (style preview TikTok) ═══
-  const barY = H - BAR_H - 70;
-  const barGrad = ctx.createLinearGradient(0, barY, 0, barY + BAR_H);
-  barGrad.addColorStop(0, "#1F2C33");
-  barGrad.addColorStop(1, "#182229");
-  ctx.fillStyle = barGrad;
-  ctx.fillRect(0, barY, W, BAR_H);
-
-  ctx.fillStyle = "rgba(74,222,167,0.35)";
-  ctx.fillRect(0, barY, W, 2);
-
-  // Ligne 1 : AnonyBoX · @username
-  const userTxt = `AnonyBoX · @${(p.author || "anonyme").toLowerCase().replace(/\s+/g, ".")}`;
-  ctx.font = "700 34px Sora, sans-serif";
-  ctx.fillStyle = "#FFFFFF";
-  ctx.textAlign = "left";
+  // ═══ PILLS DE STATS — icônes dessinées (plus d'emojis) ═══
+  y += 20;
   ctx.textBaseline = "middle";
-  ctx.fillText(userTxt, 60, barY + 60);
+  const cmtCount = Object.keys(p.comments || {}).length;
+  const rtCount = Object.keys(p.reposts || {}).length;
+  const likeCount = Object.keys(p.likes || {}).length;
+  const viewsTxt = fmtViews(p.views || 0);
 
-  // Ligne 2 : 🔗 anonybox.app
-  drawLinkIcon(ctx, 78, barY + 130, 30, "#8696A0");
-  ctx.font = "500 30px Sora, sans-serif";
-  ctx.fillStyle = "#8696A0";
-  ctx.fillText("anonybox.app", 108, barY + 130);
+  const statsData = [
+    { draw: drawChatIcon,   val: String(cmtCount) },
+    { draw: drawRetweetIcon, val: String(rtCount) },
+    { draw: drawHeartIcon,  val: String(likeCount) },
+    { draw: drawChartIcon,  val: viewsTxt },
+  ];
 
-  // Heure + ✓✓
-  const timeTxt = new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-  ctx.font = "500 26px Sora, sans-serif";
-  ctx.fillStyle = "#8696A0";
-  ctx.textAlign = "right";
-  ctx.fillText(timeTxt, W - 100, barY + BAR_H - 22);
+  const pillH = 56;
+  const pillGap = 12;
+  const iconSize = 26;
+  const pillPadX = 18;
+  const innerGap = 10;
+  let pillX = cardX + cardPad;
 
-  drawDoubleCheck(ctx, W - 70, barY + BAR_H - 22, 26, "#53BDEB");
+  statsData.forEach(s => {
+    ctx.font = "600 26px Sora, sans-serif";
+    const txtW = ctx.measureText(s.val).width;
+    const pillW = pillPadX * 2 + iconSize + innerGap + txtW;
 
+    roundRectPath(ctx, pillX, y, pillW, pillH, pillH / 2);
+    ctx.fillStyle = "rgba(74,222,167,0.08)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(74,222,167,0.20)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    const iconCx = pillX + pillPadX + iconSize / 2;
+    const iconCy = y + pillH / 2;
+    s.draw(ctx, iconCx, iconCy, iconSize, "#C4CCD3");
+
+    ctx.fillStyle = "#C4CCD3";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(s.val, pillX + pillPadX + iconSize + innerGap, y + pillH / 2 + 1);
+
+    pillX += pillW + pillGap;
+  });
+  y += pillH + 36;
+
+  // Carte finale
+  cardBottom = y + cardPad - 36;
+  ctx.save();
+  roundRectPath(ctx, cardX, cardTop, contentW, cardBottom - cardTop, 28);
+  ctx.fillStyle = "rgba(255,255,255,0.025)";
+  ctx.fill();
+  const cardBorder = ctx.createLinearGradient(0, cardTop, 0, cardBottom);
+  cardBorder.addColorStop(0, "rgba(74,222,167,0.28)");
+  cardBorder.addColorStop(0.5, "rgba(74,222,167,0.10)");
+  cardBorder.addColorStop(1, "rgba(255,255,255,0.05)");
+  ctx.strokeStyle = cardBorder;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
   ctx.restore();
 
-  // Bordure dégradée finale
-  ctx.save();
-  roundRectPath(ctx, 2, 2, W - 4, H - 4, RADIUS);
-  const borderGrad = ctx.createLinearGradient(0, 0, 0, H);
-  borderGrad.addColorStop(0, "rgba(74,222,167,0.55)");
-  borderGrad.addColorStop(0.5, "rgba(74,222,167,0.12)");
-  borderGrad.addColorStop(1, "rgba(74,222,167,0.35)");
-  ctx.strokeStyle = borderGrad;
-  ctx.lineWidth = 3;
+  y = cardBottom + 70;
+
+  // ═══ CTA — Lien anonybox.app SOULIGNÉ (look cliquable) ═══
+  const ctaH = 160;
+  const ctaX = PAD;
+  const ctaY = y;
+  roundRectPath(ctx, ctaX, ctaY, contentW, ctaH, 24);
+  const ctaGrad = ctx.createLinearGradient(ctaX, ctaY, ctaX + contentW, ctaY + ctaH);
+  ctaGrad.addColorStop(0, "rgba(74,222,167,0.14)");
+  ctaGrad.addColorStop(1, "rgba(74,222,167,0.04)");
+  ctx.fillStyle = ctaGrad;
+  ctx.fill();
+  ctx.strokeStyle = "rgba(74,222,167,0.35)";
+  ctx.lineWidth = 1.5;
   ctx.stroke();
+
+  // Icône lien dessinée (chaîne)
+  drawLinkIcon(ctx, ctaX + 42, ctaY + ctaH / 2 - 14, 34, "#4ADEA7");
+
+  ctx.font = "500 22px Sora, sans-serif";
+  ctx.fillStyle = "rgba(196,204,211,0.7)";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  ctx.fillText("Rejoins-moi sur", ctaX + 78, ctaY + 50);
+
+  // Lien en gros, gras + souligné
+  ctx.font = "700 46px 'JetBrains Mono', monospace";
+  ctx.fillStyle = "#4ADEA7";
+  ctx.shadowColor = "rgba(74,222,167,0.4)";
+  ctx.shadowBlur = 20;
+  const linkText = "anonybox.app";
+  const linkX = ctaX + 78;
+  const linkY = ctaY + 110;
+  ctx.fillText(linkText, linkX, linkY);
+  ctx.shadowBlur = 0;
+  ctx.shadowColor = "transparent";
+
+  // Soulignement
+  const linkMetrics = ctx.measureText(linkText);
+  ctx.strokeStyle = "#4ADEA7";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(linkX, linkY + 20);
+  ctx.lineTo(linkX + linkMetrics.width, linkY + 20);
+  ctx.stroke();
+
+  // Flèche circulaire droite
+  const arrowCx = ctaX + contentW - 50;
+  const arrowCy = ctaY + ctaH / 2;
+  ctx.beginPath();
+  ctx.arc(arrowCx, arrowCy, 26, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(74,222,167,0.18)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(74,222,167,0.5)";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  drawArrowRight(ctx, arrowCx, arrowCy, 26, "#4ADEA7");
+
+  y = ctaY + ctaH + 40;
+
+  // Footer : cadenas + texte
+  drawLockIcon(ctx, W / 2 - 130, y, 22, "rgba(123,135,148,0.7)");
+  ctx.font = "400 18px 'JetBrains Mono', monospace";
+  ctx.fillStyle = "rgba(123,135,148,0.7)";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  ctx.fillText("Chiffré · Anonyme · Sans trace", W / 2 - 110, y + 1);
+
+  y += 40;
   ctx.restore();
 
   return new Promise(resolve => canvas.toBlob(resolve, "image/png", 0.95));
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   SHEET PARTAGE EN IMAGE
-   ═══════════════════════════════════════════════════════════════ */
 async function openShareImageSheet(postId) {
   const p = feedItems.find(x => x.id === postId);
   if (!p) return;
@@ -2978,6 +3226,14 @@ async function shareNativeImage(blob, caption) {
   try { await navigator.share({ files: [file], title: "AnonyBoX", text: caption || "Une trace sur AnonyBoX" }); hap(8); }
   catch (e) { if (e?.name !== "AbortError") { console.warn(e); toast("Partage annulé ou échoué", "warn"); } }
 }
+async function copyImageToClipboard(blob) {
+  try {
+    if (!navigator.clipboard || !window.ClipboardItem) throw new Error("Non supporté");
+    const item = new ClipboardItem({ "image/png": blob });
+    await navigator.clipboard.write([item]);
+    toast("Image copiée dans le presse-papiers");
+  } catch (e) { console.warn(e); toast("Copie impossible sur ce navigateur", "danger"); }
+}
 $("shi-close")?.addEventListener("click", closeShareImageSheet);
 $("sheet-share-image")?.addEventListener("click", e => { if (e.target === $("sheet-share-image")) closeShareImageSheet(); });
 document.querySelectorAll("#sheet-share-image [data-shi]").forEach(btn => {
@@ -2996,6 +3252,7 @@ document.querySelectorAll("#sheet-share-image [data-shi]").forEach(btn => {
       if (navigator.canShare && navigator.canShare({ files: [new File([blob], "x.png", { type: "image/png" })] })) await shareNativeImage(blob, caption);
       else { window.open(`https://t.me/share/url?url=${encodeURIComponent(APP_SITE_URL)}&text=${encodeURIComponent(caption)}`, "_blank", "noopener"); setTimeout(() => downloadShareImage(blob, currentShareImagePostId), 300); }
     } else if (kind === "download") downloadShareImage(blob, currentShareImagePostId);
+    else if (kind === "copy") await copyImageToClipboard(blob);
   });
 });
 
@@ -3042,7 +3299,6 @@ $("messages-search")?.addEventListener("input", e => {
   $("messages-list").querySelectorAll(".messages-row").forEach(row => { row.style.display = (!q || row.dataset.name.toLowerCase().includes(q)) ? "flex" : "none"; });
 });
 
-/* ═══ MEUTES ═══ */
 function openJoin() { $("ov-join").classList.add("on"); setTimeout(() => $("join-code").focus(), 100); }
 function closeJoin() { $("ov-join").classList.remove("on"); $("join-code").value = ""; }
 $("btn-join-group")?.addEventListener("click", openJoin);
@@ -3685,6 +3941,7 @@ function openShareSheet() {
   $("sheet-share").classList.add("on"); document.body.classList.add("no-scroll");
   $("share-code").textContent = currentGroupCode;
   const url = buildJoinUrl(currentGroupCode);
+  // ═══ LIEN CLIQUABLE ═══
   $("share-link-text").innerHTML = `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-bright);text-decoration:underline;text-underline-offset:2px;">${esc(url)}</a>`;
   renderQR(url);
 }
@@ -4362,10 +4619,10 @@ window.abx = {
     currentRecitsView
   })
 };
-console.log("[AnonyBoX] v42 — Aperçu WhatsApp · Icônes dessinées · Image HD ×3");
+console.log("[AnonyBoX] v41 — Icônes dessinées · Image HD ×3 · Lien cliquable");
 console.log("🐾 Score : +1 chuchotis · +1 DM · +3 trace · +2 grondement · +1 hurlement · +5 chapitre · +2 lecture");
 console.log("🔥 Streak : jours consécutifs d'activité");
-console.log("📸 Partage en image : format WhatsApp (header + caption + barre lien)");
+console.log("📸 Partage en image : coins arrondis 44px, icônes vectorielles, lien anonybox.app souligné");
 console.log("abx.debug() · abx.openShareImageSheet('postId')");
 </script>
 </body>
