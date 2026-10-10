@@ -1448,7 +1448,20 @@ try{app=initializeApp(firebaseConfig);auth=getAuth(app);db=getDatabase(app);}cat
 function useRealUser(u){const wasLocal=!currentUser||currentUser.isLocal;currentUser=u;fbReady=true;if(!booted)bootstrap();else if(wasLocal){loadUserProfile();loadVerified();startFeedListener();startStoriesListener();}}
 if(auth&&!fbFailed){onAuthStateChanged(auth,u=>{if(u)useRealUser(u);});signInAnonymously(auth).catch(e=>console.error("Anonymous auth failed:",e));setTimeout(()=>{if(!currentUser){document.body.innerHTML=`<div style="padding:40px;text-align:center;color:#fff;font-family:sans-serif;background:#0B141A;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-size:60px;margin-bottom:20px">📡</div><h1 style="font-size:24px;margin-bottom:10px">Connexion requise</h1><p style="color:#8696A0;max-width:300px;line-height:1.5">AnonyBoX a besoin d'une connexion Internet.</p><button id="fb-retry" style="margin-top:24px;padding:12px 24px;border-radius:24px;background:#4ADEA7;color:#0B141A;border:0;font-weight:600;font-size:15px;cursor:pointer">Recharger</button></div>`;$("fb-retry")?.addEventListener("click",()=>location.reload());}},6000);}
 
-async function fbRetry(fn,maxTries=3,delayMs=500){let lastErr=null;for(let i=0;i<maxTries;i++){try{return await fn();}catch(e){lastErr=e;if(i<maxTries-1)await new Promise(r=>setTimeout(r,delayMs*(i+1)));}}throw lastErr;}
+/* ═══════════════════════════════════════════════════════════
+   RÉSEAU — adouci : 2 essais max, 200 ms entre (au lieu de 3×500)
+   ═══════════════════════════════════════════════════════════ */
+async function fbRetry(fn, maxTries = 2, delayMs = 200){
+  let lastErr = null;
+  for(let i = 0; i < maxTries; i++){
+    try { return await fn(); }
+    catch(e){
+      lastErr = e;
+      if(i < maxTries - 1) await new Promise(r => setTimeout(r, delayMs));
+    }
+  }
+  throw lastErr;
+}
 async function fbGet(path,fallback=null){if(!fbReady)return fallback;try{const s=await fbRetry(()=>get(ref(db,path)));return s.exists()?s.val():fallback;}catch(e){console.warn("fbGet",path,e);return fallback;}}
 async function fbSet(path,value){if(!fbReady)return false;try{await fbRetry(()=>set(ref(db,path),value));return true;}catch(e){console.warn("fbSet",path,e);return false;}}
 
@@ -1662,7 +1675,7 @@ $("file-recit-cover")?.addEventListener("change",async e=>{const f=e.target.file
 function updateRecitPublishState(){const t=$("re-story-title").value.trim();const c=$("re-chapter-content").value.trim();$("re-publish").disabled=!(t.length>0&&c.length>0);}
 $("re-publish")?.addEventListener("click",()=>saveRecit("published"));
 $("re-draft")?.addEventListener("click",()=>saveRecit("draft"));
-async function saveRecit(mode){const isDraft=mode==="draft";const publishBtn=$("re-publish"),draftBtn=$("re-draft");publishBtn.disabled=true;if(draftBtn)draftBtn.disabled=true;if(!isDraft)publishBtn.textContent="…";if(!fbReady){toast("Connexion requise.","danger");publishBtn.disabled=false;if(draftBtn)draftBtn.disabled=false;publishBtn.textContent="Publier";return;}try{const storyTitle=$("re-story-title").value.trim()||"Sans titre";const description=$("re-story-desc").value.trim();const genre=$("re-story-genre").value;const status=$("re-story-status").value;const tagsRaw=$("re-story-tags").value.trim();const tags=tagsRaw?tagsRaw.split(",").map(t=>t.trim()).filter(Boolean).slice(0,8):[];const chapterTitle=$("re-chapter-title").value.trim()||"Chapitre 1";const chapterContent=$("re-chapter-content").value.trim();const cover=recitCoverData||null;if(recitEditingId&&stories[recitEditingId]){const existing=stories[recitEditingId];const chaps=Object.entries(existing.chapters||{}).map(([id,c])=>({id,...c})).sort((a,b)=>(a.order||0)-(b.order||0));const firstChap=chaps[0];const updates={[`stories/${recitEditingId}/title`]:storyTitle,[`stories/${recitEditingId}/description`]:description,[`stories/${recitEditingId}/genre`]:genre,[`stories/${recitEditingId}/status`]:status,[`stories/${recitEditingId}/tags`]:tags,[`stories/${recitEditingId}/cover`]:cover,[`stories/${recitEditingId}/updatedAt`]:now(),[`stories/${recitEditingId}/author`]:myName,[`stories/${recitEditingId}/mask`]:myMask,[`stories/${recitEditingId}/avatar`]:myAvatar};if(firstChap){updates[`stories/${recitEditingId}/chapters/${firstChap.id}/title`]=chapterTitle;updates[`stories/${recitEditingId}/chapters/${firstChap.id}/content`]=chapterContent;}updates[`stories/${recitEditingId}/isDraft`]=isDraft?true:null;await update(ref(db),updates);if(isDraft){toast("Brouillon enregistré");closeRecitEditor();switchRecitsView("mesecrits");}else{if(existing.isDraft){bumpScore(SCORE.CHAPITRE);registerDailyActivity();}toast("Récit publié 🐾 +"+SCORE.CHAPITRE);closeRecitEditor();openStoryDetail(recitEditingId);}}else{const sid="story_"+genId();const cid="chap_"+genId();const payload={uid:currentUser.uid,author:myName,mask:myMask,avatar:myAvatar,title:storyTitle,description,cover,genre,status,tags,createdAt:now(),updatedAt:now(),views:0,likes:{},chapters:{[cid]:{title:chapterTitle,content:chapterContent,order:1,createdAt:now(),views:0,likes:{}}}};if(isDraft)payload.isDraft=true;await fbRetry(()=>set(ref(db,`stories/${sid}`),payload),3,700);if(isDraft){toast("Brouillon enregistré");closeRecitEditor();switchRecitsView("mesecrits");}else{bumpScore(SCORE.CHAPITRE);registerDailyActivity();toast("Récit publié 🐾 +"+SCORE.CHAPITRE);closeRecitEditor();openStoryDetail(sid);}}}catch(e){console.error("Save story error:",e);toast("Échec : "+(e?.message||e?.code||"inconnu"),"danger");}finally{publishBtn.disabled=false;if(draftBtn)draftBtn.disabled=false;publishBtn.textContent="Publier";}}
+async function saveRecit(mode){const isDraft=mode==="draft";const publishBtn=$("re-publish"),draftBtn=$("re-draft");publishBtn.disabled=true;if(draftBtn)draftBtn.disabled=true;if(!isDraft)publishBtn.textContent="…";if(!fbReady){toast("Connexion requise.","danger");publishBtn.disabled=false;if(draftBtn)draftBtn.disabled=false;publishBtn.textContent="Publier";return;}try{const storyTitle=$("re-story-title").value.trim()||"Sans titre";const description=$("re-story-desc").value.trim();const genre=$("re-story-genre").value;const status=$("re-story-status").value;const tagsRaw=$("re-story-tags").value.trim();const tags=tagsRaw?tagsRaw.split(",").map(t=>t.trim()).filter(Boolean).slice(0,8):[];const chapterTitle=$("re-chapter-title").value.trim()||"Chapitre 1";const chapterContent=$("re-chapter-content").value.trim();const cover=recitCoverData||null;if(recitEditingId&&stories[recitEditingId]){const existing=stories[recitEditingId];const chaps=Object.entries(existing.chapters||{}).map(([id,c])=>({id,...c})).sort((a,b)=>(a.order||0)-(b.order||0));const firstChap=chaps[0];const updates={[`stories/${recitEditingId}/title`]:storyTitle,[`stories/${recitEditingId}/description`]:description,[`stories/${recitEditingId}/genre`]:genre,[`stories/${recitEditingId}/status`]:status,[`stories/${recitEditingId}/tags`]:tags,[`stories/${recitEditingId}/cover`]:cover,[`stories/${recitEditingId}/updatedAt`]:now(),[`stories/${recitEditingId}/author`]:myName,[`stories/${recitEditingId}/mask`]:myMask,[`stories/${recitEditingId}/avatar`]:myAvatar};if(firstChap){updates[`stories/${recitEditingId}/chapters/${firstChap.id}/title`]=chapterTitle;updates[`stories/${recitEditingId}/chapters/${firstChap.id}/content`]=chapterContent;}updates[`stories/${recitEditingId}/isDraft`]=isDraft?true:null;await update(ref(db),updates);if(isDraft){toast("Brouillon enregistré");closeRecitEditor();switchRecitsView("mesecrits");}else{if(existing.isDraft){bumpScore(SCORE.CHAPITRE);registerDailyActivity();}toast("Récit publié 🐾 +"+SCORE.CHAPITRE);closeRecitEditor();openStoryDetail(recitEditingId);}}else{const sid="story_"+genId();const cid="chap_"+genId();const payload={uid:currentUser.uid,author:myName,mask:myMask,avatar:myAvatar,title:storyTitle,description,cover,genre,status,tags,createdAt:now(),updatedAt:now(),views:0,likes:{},chapters:{[cid]:{title:chapterTitle,content:chapterContent,order:1,createdAt:now(),views:0,likes:{}}}};if(isDraft)payload.isDraft=true;await fbRetry(()=>set(ref(db,`stories/${sid}`),payload),2,200);if(isDraft){toast("Brouillon enregistré");closeRecitEditor();switchRecitsView("mesecrits");}else{bumpScore(SCORE.CHAPITRE);registerDailyActivity();toast("Récit publié 🐾 +"+SCORE.CHAPITRE);closeRecitEditor();openStoryDetail(sid);}}}catch(e){console.error("Save story error:",e);toast("Échec : "+(e?.message||e?.code||"inconnu"),"danger");}finally{publishBtn.disabled=false;if(draftBtn)draftBtn.disabled=false;publishBtn.textContent="Publier";}}
 async function openAddChapter(storyId){const title=prompt("Titre du chapitre :","Chapitre");if(title==null)return;const content=prompt("Contenu du chapitre :");if(content==null||!content.trim())return;const s=stories[storyId];if(!s)return;const chaps=Object.entries(s.chapters||{}).map(([id,c])=>({id,...c}));const nextOrder=(Math.max(0,...chaps.map(c=>c.order||0))+1);const cid="chap_"+genId();try{await set(ref(db,`stories/${storyId}/chapters/${cid}`),{title:title.trim()||"Chapitre "+nextOrder,content:content.trim(),order:nextOrder,createdAt:now(),views:0,likes:{}});await set(ref(db,`stories/${storyId}/updatedAt`),now());bumpScore(SCORE.CHAPITRE);registerDailyActivity();toast("Chapitre ajouté 🐾 +"+SCORE.CHAPITRE);}catch{toast("Erreur.","danger");}}
 function compressCover(file,max=400,q=.72){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>{const img=new Image();img.onload=()=>{const ratio=Math.min(max/img.width,(max*1.5)/img.height);const w=Math.max(1,Math.round(img.width*ratio));const h=Math.max(1,Math.round(img.height*ratio));const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);res(c.toDataURL("image/jpeg",q));};img.onerror=rej;img.src=e.target.result;};r.onerror=rej;r.readAsDataURL(file);});}
 
@@ -1829,7 +1842,44 @@ $("btn-join-group")?.addEventListener("click",openJoin);
 $("join-cancel")?.addEventListener("click",closeJoin);
 $("join-ok")?.addEventListener("click",joinGroup);
 $("join-code")?.addEventListener("keydown",e=>{if(e.key==="Enter")joinGroup();});
-async function joinGroup(){const code=$("join-code").value.trim().toUpperCase();if(!code||!/^[A-Z0-9]{4,12}$/.test(code)){toast("Code invalide.","danger");return;}if(!fbReady||!currentUser||currentUser.isLocal){toast("Connexion en cours…");return;}const btn=$("join-ok");const oldText=btn.textContent;btn.disabled=true;btn.textContent="…";try{const s=await fbRetry(()=>get(ref(db,`groups/${code}`)));if(!s.exists()){toast("Meute introuvable.","danger");return;}const g=s.val();await fbRetry(()=>set(ref(db,`groups/${code}/members/${currentUser.uid}`),true));await saveGroupToUser(code,g.name||"Meute");closeJoin();toast("Meute rejointe");openChat(code,g.name,g.owner);}catch(e){console.error(e);toast("Erreur.","danger");}finally{btn.disabled=false;btn.textContent=oldText;}}
+
+/* ═══════════════════════════════════════════════════════════
+   JOIN — UI optimiste : on ouvre le chat tout de suite,
+   les écritures Firebase partent en arrière-plan.
+   ═══════════════════════════════════════════════════════════ */
+async function joinGroup(){
+  const code = $("join-code").value.trim().toUpperCase();
+  if(!code || !/^[A-Z0-9]{4,12}$/.test(code)){ toast("Code invalide.","danger"); return; }
+  if(!fbReady || !currentUser || currentUser.isLocal){ toast("Connexion en cours…"); return; }
+
+  const btn = $("join-ok");
+  const oldText = btn.textContent;
+  btn.disabled = true; btn.textContent = "…";
+
+  try{
+    // Une seule lecture pour vérifier l'existence de la meute
+    const s = await fbRetry(() => get(ref(db, `groups/${code}`)), 2, 200);
+    if(!s.exists()){ toast("Meute introuvable.","danger"); return; }
+    const g = s.val();
+
+    // ⚡ UI optimiste : on ferme le modal et on ouvre le chat immédiatement
+    closeJoin();
+    openChat(code, g.name || "Meute", g.owner);
+    toast("Meute rejointe");
+
+    // Écritures en parallèle, en arrière-plan
+    Promise.all([
+      set(ref(db, `groups/${code}/members/${currentUser.uid}`), true),
+      saveGroupToUser(code, g.name || "Meute")
+    ]).catch(e => console.warn("[join sync]", e));
+
+  }catch(e){
+    console.error(e);
+    toast("Erreur.","danger");
+  }finally{
+    btn.disabled = false; btn.textContent = oldText;
+  }
+}
 function openCreate(){$("sheet-create").classList.add("on");document.body.classList.add("no-scroll");}
 function closeCreate(){$("sheet-create").classList.remove("on");document.body.classList.remove("no-scroll");}
 $("btn-create-group")?.addEventListener("click",openCreate);
@@ -1837,8 +1887,61 @@ $("btn-create-group-2")?.addEventListener("click",openCreate);
 $("cg-cancel")?.addEventListener("click",closeCreate);
 $("btn-go-recits")?.addEventListener("click",()=>show("s-recits"));
 function genCode(){const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";for(let i=0;i<6;i++)s+=c[Math.floor(Math.random()*c.length)];return s;}
-$("cg-ok")?.addEventListener("click",async()=>{const name=$("cg-name").value.trim()||"Meute AnonyBoX";const desc=$("cg-desc").value.trim();const pin=$("cg-pin").value.trim();if(!fbReady||!currentUser||currentUser.isLocal){toast("Connexion en cours…");return;}const btn=$("cg-ok");const oldText=btn.textContent;btn.disabled=true;btn.textContent="…";let code=genCode();try{let tries=0;while(tries<5){const exist=await fbRetry(()=>get(ref(db,`groups/${code}`)));if(!exist.exists())break;code=genCode();tries++;}const groupData={name,desc:desc||"",pin:pin||null,isPublic:$("cg-public").checked,createdAt:now(),owner:currentUser.uid,members:{[currentUser.uid]:true}};await fbRetry(()=>set(ref(db,`groups/${code}`),groupData));await fbRetry(()=>set(ref(db,`groupCodes/${code}`),{code,name,createdAt:now()}));await saveGroupToUser(code,name);closeCreate();$("cg-name").value="";$("cg-desc").value="";$("cg-pin").value="";$("cg-public").checked=false;toast("Meute formée · Code : "+code);openChat(code,name,currentUser.uid);}catch(e){console.error(e);toast("Erreur.","danger");}finally{btn.disabled=false;btn.textContent=oldText;}});
-async function saveGroupToUser(code,name){if(!currentUser||currentUser.isLocal||!fbReady)return false;if(!myGroups.find(g=>g.code===code)){myGroups.unshift({code,name});renderGroupsGrid();}try{await fbRetry(()=>set(ref(db,`users/${currentUser.uid}/groups/${code}`),{code,name}));return true;}catch(e){myGroups=myGroups.filter(g=>g.code!==code);renderGroupsGrid();return false;}}
+
+/* ═══════════════════════════════════════════════════════════
+   CREATE — UI optimiste + écritures parallèles en arrière-plan
+   ═══════════════════════════════════════════════════════════ */
+$("cg-ok")?.addEventListener("click", async () => {
+  const name = $("cg-name").value.trim() || "Meute AnonyBoX";
+  const desc = $("cg-desc").value.trim();
+  const pin  = $("cg-pin").value.trim();
+  if(!fbReady || !currentUser || currentUser.isLocal){ toast("Connexion en cours…"); return; }
+
+  const btn = $("cg-ok");
+  const oldText = btn.textContent;
+  btn.disabled = true; btn.textContent = "…";
+
+  let code = genCode();
+  try{
+    // Cherche un code libre (en pratique 1 essai suffit)
+    for(let i = 0; i < 5; i++){
+      const exist = await get(ref(db, `groups/${code}`));
+      if(!exist.exists()) break;
+      code = genCode();
+    }
+
+    const groupData = {
+      name, desc: desc || "", pin: pin || null,
+      isPublic: $("cg-public").checked,
+      createdAt: now(),
+      owner: currentUser.uid,
+      members: { [currentUser.uid]: true }
+    };
+
+    // ⚡ UI optimiste : fermeture immédiate + ouverture du chat
+    closeCreate();
+    $("cg-name").value = "";
+    $("cg-desc").value = "";
+    $("cg-pin").value = "";
+    $("cg-public").checked = false;
+    openChat(code, name, currentUser.uid);
+    toast("Meute formée · Code : " + code);
+
+    // Écritures en parallèle en arrière-plan
+    Promise.all([
+      set(ref(db, `groups/${code}`), groupData),
+      set(ref(db, `groupCodes/${code}`), { code, name, createdAt: now() }),
+      saveGroupToUser(code, name)
+    ]).catch(e => console.warn("[create sync]", e));
+
+  }catch(e){
+    console.error(e);
+    toast("Erreur.","danger");
+  }finally{
+    btn.disabled = false; btn.textContent = oldText;
+  }
+});
+async function saveGroupToUser(code,name){if(!currentUser||currentUser.isLocal||!fbReady)return false;if(!myGroups.find(g=>g.code===code)){myGroups.unshift({code,name});renderGroupsGrid();}try{await fbRetry(()=>set(ref(db,`users/${currentUser.uid}/groups/${code}`),{code,name}),2,200);return true;}catch(e){myGroups=myGroups.filter(g=>g.code!==code);renderGroupsGrid();return false;}}
 async function removeGroupFromUser(code){myGroups=myGroups.filter(g=>g.code!==code);delete myPositions[code];renderGroupsGrid();if(!currentUser||currentUser.isLocal)return;try{await fbRetry(()=>remove(ref(db,`users/${currentUser.uid}/groups/${code}`)));await fbRetry(()=>remove(ref(db,`users/${currentUser.uid}/positions/${code}`)));}catch(e){console.warn(e);}}
 async function savePosition(code,x,y){myPositions[code]={x,y};if(!currentUser||currentUser.isLocal||!fbReady)return;try{await fbRetry(()=>set(ref(db,`users/${currentUser.uid}/positions/${code}`),{x,y}));}catch(e){console.warn(e);}}
 let cellSize=88,cellGap=14,cols=3;
@@ -1852,7 +1955,40 @@ function attachGroupInteractions(el){el.addEventListener("pointerdown",onGroupPo
 function onGroupPointerDown(e){if(e.button!==undefined&&e.button!==0)return;const el=e.currentTarget;const code=el.dataset.code;const wrap=document.querySelector(".grid-wrap");if(!wrap)return;dragInitialTapTime=Date.now();dragHasMoved=false;dragLongPress=false;dragPointerId=e.pointerId;let dragStartX=e.clientX,dragStartY=e.clientY;el.setPointerCapture?.(e.pointerId);dragPressTimer=setTimeout(()=>{dragLongPress=true;el.classList.add("dragging");el.classList.remove("snap");hap(15);},220);const onMove=ev=>{if(ev.pointerId!==dragPointerId)return;const dx=ev.clientX-dragStartX,dy=ev.clientY-dragStartY;if(!dragHasMoved&&(Math.abs(dx)>6||Math.abs(dy)>6)){dragHasMoved=true;if(!dragLongPress){dragLongPress=true;el.classList.add("dragging");el.classList.remove("snap");clearTimeout(dragPressTimer);}}if(dragLongPress){ev.preventDefault?.();const grid=$("groups-grid");const gridBox=grid.getBoundingClientRect();const wrapBox=wrap.getBoundingClientRect();const relX=ev.clientX-gridBox.left-cellSize/2;const relY=ev.clientY-gridBox.top-cellSize/2;const maxX=wrapBox.width-cellSize-8;const maxY=Math.max(0,wrapBox.height-cellSize-20);el.style.left=Math.max(4,Math.min(maxX,relX))+"px";el.style.top=Math.max(4,Math.min(maxY,relY))+"px";}};const onUp=ev=>{if(ev.pointerId!==dragPointerId)return;clearTimeout(dragPressTimer);document.removeEventListener("pointermove",onMove);document.removeEventListener("pointerup",onUp);document.removeEventListener("pointercancel",onUp);el.releasePointerCapture?.(ev.pointerId);if(dragLongPress){const sx=snapX(parseFloat(el.style.left)||0);const sy=snapY(parseFloat(el.style.top)||0);el.classList.add("snap");el.classList.remove("dragging");el.style.left=sx+"px";el.style.top=sy+"px";setTimeout(()=>el.classList.remove("snap"),300);savePosition(code,sx,sy);hap(8);}else{if(Date.now()-dragInitialTapTime<400)openChat(el.dataset.code,el.dataset.name,null);}dragPointerId=null;dragHasMoved=false;dragLongPress=false;};document.addEventListener("pointermove",onMove,{passive:false});document.addEventListener("pointerup",onUp);document.addEventListener("pointercancel",onUp);}
 window.addEventListener("resize",()=>{clearTimeout(window._resizeTO);window._resizeTO=setTimeout(()=>{computeGridMetrics();renderGroupsGrid();},250);});
 
-async function openChat(code,name,owner){if(currentGroupCode&&currentGroupCode!==code){if(fbReady&&currentUser){remove(ref(db,`presence/${currentGroupCode}/${currentUser.uid}`)).catch(()=>{});remove(ref(db,`typing/${currentGroupCode}/${currentUser.uid}`)).catch(()=>{});}closeChat();}currentGroupCode=code;currentGroupName=name||"Meute";currentGroupOwner=owner||null;if(!currentGroupOwner&&fbReady){try{const s=await get(ref(db,`groups/${code}`));if(s.exists()){currentGroupOwner=s.val().owner;currentGroupMembers=s.val().members||{};}}catch{}}$("chat-title").textContent=currentGroupName;show("s-chat");listenMessages(code);listenPresence(code);listenGroupInfo(code);listenGroupTyping(code);}
+/* ═══════════════════════════════════════════════════════════
+   OPEN CHAT — affichage immédiat, fetch owner non-bloquant
+   ═══════════════════════════════════════════════════════════ */
+async function openChat(code, name, owner){
+  if(currentGroupCode && currentGroupCode !== code){
+    if(fbReady && currentUser){
+      remove(ref(db,`presence/${currentGroupCode}/${currentUser.uid}`)).catch(()=>{});
+      remove(ref(db,`typing/${currentGroupCode}/${currentUser.uid}`)).catch(()=>{});
+    }
+    closeChat();
+  }
+  currentGroupCode  = code;
+  currentGroupName  = name || "Meute";
+  currentGroupOwner = owner || null;
+
+  // ⚡ Affichage immédiat — aucun await avant
+  $("chat-title").textContent = currentGroupName;
+  show("s-chat");
+
+  // Owner + membres récupérés en arrière-plan (non bloquant)
+  if(!currentGroupOwner && fbReady){
+    get(ref(db, `groups/${code}`)).then(s => {
+      if(s.exists()){
+        currentGroupOwner = s.val().owner;
+        currentGroupMembers = s.val().members || {};
+      }
+    }).catch(()=>{});
+  }
+
+  listenMessages(code);
+  listenPresence(code);
+  listenGroupInfo(code);
+  listenGroupTyping(code);
+}
 function closeChat(){if(currentGroupCode&&currentUser&&fbReady){remove(ref(db,`presence/${currentGroupCode}/${currentUser.uid}`)).catch(()=>{});remove(ref(db,`typing/${currentGroupCode}/${currentUser.uid}`)).catch(()=>{});}try{unsubMessages?.();}catch{}try{unsubPresence?.();}catch{}try{unsubGroup?.();}catch{}try{unsubTyping?.();}catch{}unsubMessages=unsubPresence=unsubGroup=unsubTyping=null;currentGroupCode=null;renderMsgDone=false;lastGroupMsgCount=0;clearTimeout(groupTypingTimeout);closeReactPicker();closeMsgCtx();const cm=$("chat-menu");if(cm)cm.style.display="none";updateTypingIndicator("chat",false);}
 function listenGroupInfo(code){try{unsubGroup?.();}catch{}if(!fbReady)return;unsubGroup=onValue(ref(db,`groups/${code}`),snap=>{const d=snap.val()||{};currentGroupMembers=d.members||{};if(d.owner)currentGroupOwner=d.owner;if($("sheet-group-info").classList.contains("on"))renderGroupInfo();});}
 function listenMessages(code){try{unsubMessages?.();}catch{}renderMsgDone=false;lastGroupMsgCount=0;const c=$("chat-msgs");c.innerHTML=`<div style="text-align:center;padding:40px;color:var(--fg-3)"><div class="spinner" style="margin:0 auto 12px"></div>Chargement…</div>`;if(!fbReady){c.innerHTML=`<div style="text-align:center;padding:40px;color:var(--fg-3);font-size:.875rem">Connexion requise.</div>`;return;}unsubMessages=onValue(ref(db,`messages/${code}`),snap=>{const d=snap.val()||{};chatMessages=Object.entries(d).map(([id,v])=>({id,...v})).sort((a,b)=>(a.ts||0)-(b.ts||0));const isNew=chatMessages.length>lastGroupMsgCount&&lastGroupMsgCount>0;const lastMsg=chatMessages[chatMessages.length-1];if(isNew&&lastMsg&&lastMsg.uid!==currentUser?.uid){const el=$("chat-msgs");const nearBottom=el.scrollHeight-el.scrollTop-el.clientHeight<200;if(!nearBottom){const badge=$("scroll-badge");const prev=parseInt(badge.textContent)||0;badge.textContent=prev+1;badge.classList.remove("hidden");}else hap(6);}lastGroupMsgCount=chatMessages.length;renderMessages(chatMessages);},err=>{console.error(err);toast("Lecture impossible.","danger");});}
@@ -2080,7 +2216,7 @@ $("ed-poll-q")?.addEventListener("input",updatePublishState);
 function updateCount(){const w=words($("ed-caption").value);const c=$("ed-count");c.textContent=`${w} / ${MAX_WORDS}`;c.style.color=w>MAX_WORDS?"var(--danger)":w>=MAX_WORDS-3?"var(--accent-bright)":"var(--fg-3)";}
 function updatePublishState(){const cap=$("ed-caption").value.trim();const w=words(cap);let ok=w<=MAX_WORDS;if(editorMode==="text")ok=ok&&cap.length>0;if(editorMode==="poll"){const q=$("ed-poll-q").value.trim();const opts=[...$("ed-poll-opts").querySelectorAll("input")].map(i=>i.value.trim()).filter(Boolean);ok=ok&&q.length>0&&opts.length>=2;}$("ed-publish").disabled=!ok;}
 $("ed-publish")?.addEventListener("click",publishPost);
-async function publishPost(){const btn=$("ed-publish");if(btn.disabled)return;btn.disabled=true;btn.textContent="…";if(!fbReady){toast("Connexion requise pour publier.","danger");btn.disabled=false;btn.textContent="Marquer";return;}const cap=$("ed-caption").value.trim();const base={uid:currentUser.uid,author:myName,mask:myMask,avatar:myAvatar,caption:cap,createdAt:now(),likes:{},reposts:{},comments:{},views:0,viewLog:{}};let payload;if(editorMode==="text")payload={...base,mediaType:"text"};else{const q=$("ed-poll-q").value.trim();const opts=[...$("ed-poll-opts").querySelectorAll("input")].map(i=>i.value.trim()).filter(Boolean).slice(0,4);payload={...base,mediaType:"poll",pollQuestion:q,pollOptions:opts,pollVotes:{}};}const tempId="tmp_post_"+now();feedItems.unshift({id:tempId,...payload,_pending:true});const l=$("feed-list");if(l)l.dataset.sig="";renderFeed();closeEditor();show("s-feed");updateProfile();toast("Trace marquée");try{const refPush=push(ref(db,"posts"));await fbRetry(()=>set(refPush,payload),3,700);bumpScore(SCORE.TRACE);registerDailyActivity();}catch(e){console.error("Publish error:",e);feedItems=feedItems.filter(x=>x.id!==tempId);const l2=$("feed-list");if(l2)l2.dataset.sig="";renderFeed();toast("Échec : "+(e?.message||e?.code||"inconnu"),"danger");}finally{btn.disabled=false;btn.textContent="Marquer";}}
+async function publishPost(){const btn=$("ed-publish");if(btn.disabled)return;btn.disabled=true;btn.textContent="…";if(!fbReady){toast("Connexion requise pour publier.","danger");btn.disabled=false;btn.textContent="Marquer";return;}const cap=$("ed-caption").value.trim();const base={uid:currentUser.uid,author:myName,mask:myMask,avatar:myAvatar,caption:cap,createdAt:now(),likes:{},reposts:{},comments:{},views:0,viewLog:{}};let payload;if(editorMode==="text")payload={...base,mediaType:"text"};else{const q=$("ed-poll-q").value.trim();const opts=[...$("ed-poll-opts").querySelectorAll("input")].map(i=>i.value.trim()).filter(Boolean).slice(0,4);payload={...base,mediaType:"poll",pollQuestion:q,pollOptions:opts,pollVotes:{}};}const tempId="tmp_post_"+now();feedItems.unshift({id:tempId,...payload,_pending:true});const l=$("feed-list");if(l)l.dataset.sig="";renderFeed();closeEditor();show("s-feed");updateProfile();toast("Trace marquée");try{const refPush=push(ref(db,"posts"));await fbRetry(()=>set(refPush,payload),2,200);bumpScore(SCORE.TRACE);registerDailyActivity();}catch(e){console.error("Publish error:",e);feedItems=feedItems.filter(x=>x.id!==tempId);const l2=$("feed-list");if(l2)l2.dataset.sig="";renderFeed();toast("Échec : "+(e?.message||e?.code||"inconnu"),"danger");}finally{btn.disabled=false;btn.textContent="Marquer";}}
 
 const EMOJI_DATA={ emoji:["😀","😁","😂","🤣","😃","😄","😅","😆","😉","😊","😋","😎","😍","😘","🥰","😗","😙","😚","🙂","🤗","🤩","🤔","🤨","😐","😑","😶","🙄","😏","😣","😥","😮","🤐","😯","😪","😫","🥱","😴","😌","😛","😜","😝","🤤","😒","😓","😔","😕","🙃","🤑","😲","☹️","🙁","😖","😞","😟","😤","😢","😭","😦","😧","😨","😩","🤯","😬","😰","😱","🥵","🥶","😳","🤪","😵","🥴","😠","😡","🤬","😷","🤒","🤕","🤢","🤮","🤧","😇","🥳","🥺","🤠","🤡","🤥","🤫","🤭","🧐","🤓","😈","👿","👹","👺","💀","☠️","👻","👽","👾","🤖","💩"], love:["❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❣️","💕","💞","💓","💗","💖","💘","💝","💟","♥️","😍","😘","🥰","😻","💋","💐","🌹","🌷","🌺","🌸"], gesture:["👍","👎","👌","✌️","🤞","🤟","🤘","🤙","👈","👉","👆","👇","☝️","✋","🤚","🖐️","🖖","👋","🤝","🙏","💪","👏","🙌","👐","🤲","✊","👊","🤛","🤜"], food:["🍕","🍔","🍟","🌭","🍿","🍩","🍪","🎂","🍰","🧁","🥧","🍫","🍬","🍭","🍮","🍯","🥛","☕","🍵","🍶","🍾","🍷","🍸","🍹","🍺","🍻","🥂","🥃","🥤","🧃","🍽️"] };
 const STICKER_DATA=["🧸","🎈","🎉","🎊","🌟","✨","⭐","💫","🌈","☀️","🌙","💎","🔮","🎁","🎀","🧧","💐","🌻","🌸","🍀","🦋","🐝","🦄","🐉","👑","💯","🎯","🎪","🎨","🎭"];
@@ -2115,7 +2251,7 @@ function compress(file,max=128,q=.6){return new Promise((res,rej)=>{const r=new 
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){if($("sheet-share-image")?.classList.contains("on")){closeShareImageSheet();return;}if(closeTopmost())return;closeDrawer();closeJoin();closeCreate();closeEditor();closeShareSheet();$("ov-verify").classList.remove("on");$("ov-premium").classList.remove("on");$("ov-chatpoll").classList.remove("on");$("ov-comment").classList.remove("on");$("sheet-edit").classList.remove("on");closeGroupInfo();closeUserProfile();const cm=$("chat-menu");if(cm)cm.style.display="none";closePostMenu();closeReactPicker();closeMsgCtx();closeEmojiPanel();exitPostFocus();currentCommentsPostId=null;}});
 
 window.abx={openChat,show,joinGroup,openEditor,closeEditor,toast,publishPost,openShareSheet,buildJoinUrl,openDm,openUserProfile,fmtViews,fmtScore,exitPostFocus,propagateIdentityChange,bumpScore,SCORE,registerDailyActivity,getEffectiveStreak,openStoryDetail,openReader,openRecitEditor,closeRecitEditor,switchRecitsView,openShareImageSheet,generatePostImage,stories:()=>stories,storyIds:()=>storyIds,debug:()=>({fbReady,uid:currentUser?.uid,userReady,score:myScore,streak:myStreak,streakEffective:getEffectiveStreak(),postsCount:feedItems.length,storiesCount:storyIds.length,drafts:storyIds.map(id=>stories[id]).filter(s=>s&&s.uid===currentUser?.uid&&s.isDraft).length,published:storyIds.map(id=>stories[id]).filter(s=>s&&s.uid===currentUser?.uid&&!s.isDraft).length,groups:myGroups,conversations:Object.keys(dmConversations||{}).length,focused:!!focusedPostEl,name:myName,mask:myMask,currentRecitsView})};
-console.log("[AnonyBoX] v49 — nav facile à déplacer");
+console.log("[AnonyBoX] v50 — join/create optimistes + fbRetry adouci");
 </script>
 
 <script>
@@ -2155,22 +2291,16 @@ requestAnimationFrame(t=>{lastT=t;requestAnimationFrame(loop);});
 </script>
 
 <script>
-/* ═══ NAV BUTTONS DRAGGABLES — v4 (facile à déplacer) ═══
-   • Long press 350ms (compromis rapide/fiable)
-   • Tolérance au tremblement 15px AVANT armement
-   • Une fois armé, drag démarre dès 4px
-   • Pulsation visuelle pendant l'armement
-   • Pas de double-tap, pas d'escape accidentel
-   ═══════════════════════════════════════════════════════ */
+/* ═══ NAV BUTTONS DRAGGABLES — v4 ═══ */
 (() => {
   'use strict';
   const nav = document.querySelector('.nav');
   if (!nav) return;
 
   const STORAGE_KEY = 'abx_nav_positions';
-  const LONG_PRESS_MS = 350;       // ⬅️ 350ms = accessible mais pas accidentel
-  const PRE_MOVE_CANCEL = 15;      // ⬅️ tolère le tremblement naturel du doigt
-  const DRAG_START = 4;            // ⬅️ une fois armé, ça part vite
+  const LONG_PRESS_MS = 350;
+  const PRE_MOVE_CANCEL = 15;
+  const DRAG_START = 4;
   const NAV_SNAP_ZONE = 90;
   const MIN_EDGE = 6;
   const BTN_SIZE = 60;
@@ -2237,7 +2367,6 @@ requestAnimationFrame(t=>{lastT=t;requestAnimationFrame(loop);});
         pressTimer = null;
         if (!active) return;
         armed = true;
-        // ✅ Feedback visuel : pulsation verte = prêt à être déplacé
         if (!btn.classList.contains('is-floating')){
           const rect = btn.getBoundingClientRect();
           activateFloating(btn, rect.left, rect.top, true);
@@ -2256,7 +2385,6 @@ requestAnimationFrame(t=>{lastT=t;requestAnimationFrame(loop);});
       if (!dragging){
         const d = Math.hypot(e.clientX - startX, e.clientY - startY);
         if (!armed){
-          // ✅ tolère 15px de tremblement pendant l'appui long
           if (d > PRE_MOVE_CANCEL){
             clearPress();
             active = false;
@@ -2264,7 +2392,6 @@ requestAnimationFrame(t=>{lastT=t;requestAnimationFrame(loop);});
             return;
           }
         } else {
-          // ✅ une fois armé, il suffit de 4px de mouvement
           if (d > DRAG_START) beginDrag(e);
         }
         return;
@@ -2328,9 +2455,6 @@ requestAnimationFrame(t=>{lastT=t;requestAnimationFrame(loop);});
         hap(12);
         setTimeout(() => { suppressClick = false; }, 400);
       } else if (wasArmed){
-        // L'utilisateur a armé mais n'a pas bougé → on garde le bouton flottant
-        // au cas où il veut réessayer sans re-long-press
-        // (comportement volontaire : permet de relâcher puis re-glisser vite)
         setTimeout(() => { suppressClick = false; }, 200);
       }
     };
@@ -2411,4 +2535,4 @@ requestAnimationFrame(t=>{lastT=t;requestAnimationFrame(loop);});
 })();
 </script>
 </body>
-  </html>
+                                           </html>
