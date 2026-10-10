@@ -1449,7 +1449,7 @@ function useRealUser(u){const wasLocal=!currentUser||currentUser.isLocal;current
 if(auth&&!fbFailed){onAuthStateChanged(auth,u=>{if(u)useRealUser(u);});signInAnonymously(auth).catch(e=>console.error("Anonymous auth failed:",e));setTimeout(()=>{if(!currentUser){document.body.innerHTML=`<div style="padding:40px;text-align:center;color:#fff;font-family:sans-serif;background:#0B141A;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-size:60px;margin-bottom:20px">📡</div><h1 style="font-size:24px;margin-bottom:10px">Connexion requise</h1><p style="color:#8696A0;max-width:300px;line-height:1.5">AnonyBoX a besoin d'une connexion Internet.</p><button id="fb-retry" style="margin-top:24px;padding:12px 24px;border-radius:24px;background:#4ADEA7;color:#0B141A;border:0;font-weight:600;font-size:15px;cursor:pointer">Recharger</button></div>`;$("fb-retry")?.addEventListener("click",()=>location.reload());}},6000);}
 
 /* ═══════════════════════════════════════════════════════════
-   RÉSEAU — adouci : 2 essais max, 200 ms entre (au lieu de 3×500)
+   RÉSEAU — fbRetry adouci (2 essais, 200 ms)
    ═══════════════════════════════════════════════════════════ */
 async function fbRetry(fn, maxTries = 2, delayMs = 200){
   let lastErr = null;
@@ -1473,7 +1473,7 @@ function getEffectiveStreak(){if(!myStreak||!myStreak.lastDate)return 0;const to
 function paintStreak(bump=false){const n=getEffectiveStreak();const dEl=$("drawer-streak"),pEl=$("profile-streak-wrap"),dNum=$("drawer-streak-num"),pNum=$("profile-streak-num");if(dEl){dEl.hidden=n<=0;if(dNum)dNum.textContent=n;if(bump&&n>0){dEl.classList.remove("bump");void dEl.offsetWidth;dEl.classList.add("bump");}}if(pEl){pEl.hidden=n<=0;if(pNum)pNum.textContent=n;}}
 
 let toastTO=null;
-function toast(msg,tone="success"){const t=$("toast");if(!t)return;let col="var(--fg-2)",ico="i-check";if(tone==="danger"){col="var(--danger)";ico="i-warn";}else if(tone==="warn"){col="var(--accent-bright)";ico="i-warn";}t.innerHTML=`<span style="color:${col};display:grid;place-items:center">${ic(ico,17)}</span><span>${esc(msg)}</span>`;t.classList.add("on");clearTimeout(toastTO);toastTO=setTimeout(()=>t.classList.remove("on"),2600);}
+function toast(msg,tone="success"){const t=$("toast");if(!t)return;let col="var(--fg-2)",ico="i-check";if(tone==="danger"){col="var(--danger)";ico="i-warn";}else if(tone==="warn"){col="var(--accent-bright)";ico="i-warn";}t.innerHTML=`<span style="color:${col};display:grid;place-items:center">${ic(ico,17)}</span><span>${esc(msg)}</span>`;t.classList.add("on");clearTimeout(toastTO);toastTO=setTimeout(()=>t.classList.remove("on"),3000);}
 
 const SCREENS=["s-home","s-messages","s-groups","s-feed","s-recits","s-recit-detail","s-reader","s-profile","s-chat","s-dm"];
 function currentScreenId(){return document.querySelector(".screen.active")?.id||"s-home";}
@@ -1844,42 +1844,47 @@ $("join-ok")?.addEventListener("click",joinGroup);
 $("join-code")?.addEventListener("keydown",e=>{if(e.key==="Enter")joinGroup();});
 
 /* ═══════════════════════════════════════════════════════════
-   JOIN — UI optimiste : on ouvre le chat tout de suite,
-   les écritures Firebase partent en arrière-plan.
+   JOIN — correctif 100% :
+   On inscrit le membre AVANT d'ouvrir le chat.
+   Sinon la règle .read sur messages/presence échoue → PERMISSION_DENIED.
    ═══════════════════════════════════════════════════════════ */
 async function joinGroup(){
   const code = $("join-code").value.trim().toUpperCase();
   if(!code || !/^[A-Z0-9]{4,12}$/.test(code)){ toast("Code invalide.","danger"); return; }
-  if(!fbReady || !currentUser || currentUser.isLocal){ toast("Connexion en cours…"); return; }
+  if(!fbReady || !currentUser || currentUser.isLocal){ toast("Connexion en cours…","warn"); return; }
 
   const btn = $("join-ok");
   const oldText = btn.textContent;
   btn.disabled = true; btn.textContent = "…";
 
   try{
-    // Une seule lecture pour vérifier l'existence de la meute
+    // 1) La meute existe ?
     const s = await fbRetry(() => get(ref(db, `groups/${code}`)), 2, 200);
     if(!s.exists()){ toast("Meute introuvable.","danger"); return; }
     const g = s.val();
 
-    // ⚡ UI optimiste : on ferme le modal et on ouvre le chat immédiatement
+    // 2) ⚠️ CRITIQUE : inscrire le membre AVANT d'ouvrir le chat
+    await set(ref(db, `groups/${code}/members/${currentUser.uid}`), true);
+
+    // 3) Enregistrer dans le profil utilisateur
+    await set(ref(db, `users/${currentUser.uid}/groups/${code}`), { code, name: g.name || "Meute" });
+
+    // 4) Maintenant tout est écrit → ouvrir le chat
     closeJoin();
     openChat(code, g.name || "Meute", g.owner);
-    toast("Meute rejointe");
-
-    // Écritures en parallèle, en arrière-plan
-    Promise.all([
-      set(ref(db, `groups/${code}/members/${currentUser.uid}`), true),
-      saveGroupToUser(code, g.name || "Meute")
-    ]).catch(e => console.warn("[join sync]", e));
+    toast("Meute rejointe · " + code);
 
   }catch(e){
-    console.error(e);
-    toast("Erreur.","danger");
+    console.error("[joinGroup]", e);
+    const msg = e?.code === "PERMISSION_DENIED"
+      ? "Permission refusée (règles). Vérifie la console."
+      : (e?.message || e?.code || "inconnue");
+    toast("Erreur : " + msg, "danger");
   }finally{
     btn.disabled = false; btn.textContent = oldText;
   }
 }
+
 function openCreate(){$("sheet-create").classList.add("on");document.body.classList.add("no-scroll");}
 function closeCreate(){$("sheet-create").classList.remove("on");document.body.classList.remove("no-scroll");}
 $("btn-create-group")?.addEventListener("click",openCreate);
@@ -1889,58 +1894,86 @@ $("btn-go-recits")?.addEventListener("click",()=>show("s-recits"));
 function genCode(){const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";for(let i=0;i<6;i++)s+=c[Math.floor(Math.random()*c.length)];return s;}
 
 /* ═══════════════════════════════════════════════════════════
-   CREATE — UI optimiste + écritures parallèles en arrière-plan
+   CREATE — correctif 100% :
+   On attend l'écriture de groups/$code AVANT d'ouvrir le chat.
+   Sinon la règle .read sur messages/$code échoue (membres pas encore là).
    ═══════════════════════════════════════════════════════════ */
 $("cg-ok")?.addEventListener("click", async () => {
   const name = $("cg-name").value.trim() || "Meute AnonyBoX";
   const desc = $("cg-desc").value.trim();
   const pin  = $("cg-pin").value.trim();
-  if(!fbReady || !currentUser || currentUser.isLocal){ toast("Connexion en cours…"); return; }
+
+  if(!fbReady || !currentUser || currentUser.isLocal){
+    toast("Connexion en cours…", "warn"); return;
+  }
 
   const btn = $("cg-ok");
   const oldText = btn.textContent;
   btn.disabled = true; btn.textContent = "…";
 
-  let code = genCode();
   try{
-    // Cherche un code libre (en pratique 1 essai suffit)
+    // 1) Trouver un code libre
+    let code = genCode();
     for(let i = 0; i < 5; i++){
       const exist = await get(ref(db, `groups/${code}`));
       if(!exist.exists()) break;
       code = genCode();
     }
 
+    const uid = currentUser.uid;
+    const nowTs = now();
+
+    // 2) Payload — members DÉJÀ inclus (règle .validate l'exige)
     const groupData = {
-      name, desc: desc || "", pin: pin || null,
+      name,
+      desc: desc || "",
+      pin: pin || null,
       isPublic: $("cg-public").checked,
-      createdAt: now(),
-      owner: currentUser.uid,
-      members: { [currentUser.uid]: true }
+      createdAt: nowTs,
+      owner: uid,
+      members: { [uid]: true }
     };
 
-    // ⚡ UI optimiste : fermeture immédiate + ouverture du chat
+    // 3) ⚠️ CRITIQUE : écrire groups/$code EN PREMIER et ATTENDRE
+    //    Sans ça, messages/$code/.read renvoie PERMISSION_DENIED
+    await set(ref(db, `groups/${code}`), groupData);
+
+    // 4) Écritures secondaires (non-bloquantes pour l'ouverture du chat)
+    const secondary = await Promise.allSettled([
+      set(ref(db, `groupCodes/${code}`), { code, name, createdAt: nowTs }),
+      set(ref(db, `users/${uid}/groups/${code}`), { code, name })
+    ]);
+    secondary.forEach((r, i) => {
+      if(r.status === "rejected") console.warn(`[create secondary ${i}]`, r.reason);
+    });
+
+    // 5) État local
+    if(!myGroups.find(g => g.code === code)){
+      myGroups.unshift({ code, name });
+    }
+
+    // 6) Reset UI
     closeCreate();
     $("cg-name").value = "";
     $("cg-desc").value = "";
     $("cg-pin").value = "";
     $("cg-public").checked = false;
-    openChat(code, name, currentUser.uid);
+
+    // 7) Ouvrir le chat — members/$uid déjà écrit, donc .read passe
+    openChat(code, name, uid);
     toast("Meute formée · Code : " + code);
 
-    // Écritures en parallèle en arrière-plan
-    Promise.all([
-      set(ref(db, `groups/${code}`), groupData),
-      set(ref(db, `groupCodes/${code}`), { code, name, createdAt: now() }),
-      saveGroupToUser(code, name)
-    ]).catch(e => console.warn("[create sync]", e));
-
   }catch(e){
-    console.error(e);
-    toast("Erreur.","danger");
+    console.error("[createGroup]", e);
+    const msg = e?.code === "PERMISSION_DENIED"
+      ? "Permission refusée (règles). Vérifie la console."
+      : (e?.message || e?.code || "inconnue");
+    toast("Échec : " + msg, "danger");
   }finally{
     btn.disabled = false; btn.textContent = oldText;
   }
 });
+
 async function saveGroupToUser(code,name){if(!currentUser||currentUser.isLocal||!fbReady)return false;if(!myGroups.find(g=>g.code===code)){myGroups.unshift({code,name});renderGroupsGrid();}try{await fbRetry(()=>set(ref(db,`users/${currentUser.uid}/groups/${code}`),{code,name}),2,200);return true;}catch(e){myGroups=myGroups.filter(g=>g.code!==code);renderGroupsGrid();return false;}}
 async function removeGroupFromUser(code){myGroups=myGroups.filter(g=>g.code!==code);delete myPositions[code];renderGroupsGrid();if(!currentUser||currentUser.isLocal)return;try{await fbRetry(()=>remove(ref(db,`users/${currentUser.uid}/groups/${code}`)));await fbRetry(()=>remove(ref(db,`users/${currentUser.uid}/positions/${code}`)));}catch(e){console.warn(e);}}
 async function savePosition(code,x,y){myPositions[code]={x,y};if(!currentUser||currentUser.isLocal||!fbReady)return;try{await fbRetry(()=>set(ref(db,`users/${currentUser.uid}/positions/${code}`),{x,y}));}catch(e){console.warn(e);}}
@@ -1970,11 +2003,9 @@ async function openChat(code, name, owner){
   currentGroupName  = name || "Meute";
   currentGroupOwner = owner || null;
 
-  // ⚡ Affichage immédiat — aucun await avant
   $("chat-title").textContent = currentGroupName;
   show("s-chat");
 
-  // Owner + membres récupérés en arrière-plan (non bloquant)
   if(!currentGroupOwner && fbReady){
     get(ref(db, `groups/${code}`)).then(s => {
       if(s.exists()){
@@ -1991,7 +2022,7 @@ async function openChat(code, name, owner){
 }
 function closeChat(){if(currentGroupCode&&currentUser&&fbReady){remove(ref(db,`presence/${currentGroupCode}/${currentUser.uid}`)).catch(()=>{});remove(ref(db,`typing/${currentGroupCode}/${currentUser.uid}`)).catch(()=>{});}try{unsubMessages?.();}catch{}try{unsubPresence?.();}catch{}try{unsubGroup?.();}catch{}try{unsubTyping?.();}catch{}unsubMessages=unsubPresence=unsubGroup=unsubTyping=null;currentGroupCode=null;renderMsgDone=false;lastGroupMsgCount=0;clearTimeout(groupTypingTimeout);closeReactPicker();closeMsgCtx();const cm=$("chat-menu");if(cm)cm.style.display="none";updateTypingIndicator("chat",false);}
 function listenGroupInfo(code){try{unsubGroup?.();}catch{}if(!fbReady)return;unsubGroup=onValue(ref(db,`groups/${code}`),snap=>{const d=snap.val()||{};currentGroupMembers=d.members||{};if(d.owner)currentGroupOwner=d.owner;if($("sheet-group-info").classList.contains("on"))renderGroupInfo();});}
-function listenMessages(code){try{unsubMessages?.();}catch{}renderMsgDone=false;lastGroupMsgCount=0;const c=$("chat-msgs");c.innerHTML=`<div style="text-align:center;padding:40px;color:var(--fg-3)"><div class="spinner" style="margin:0 auto 12px"></div>Chargement…</div>`;if(!fbReady){c.innerHTML=`<div style="text-align:center;padding:40px;color:var(--fg-3);font-size:.875rem">Connexion requise.</div>`;return;}unsubMessages=onValue(ref(db,`messages/${code}`),snap=>{const d=snap.val()||{};chatMessages=Object.entries(d).map(([id,v])=>({id,...v})).sort((a,b)=>(a.ts||0)-(b.ts||0));const isNew=chatMessages.length>lastGroupMsgCount&&lastGroupMsgCount>0;const lastMsg=chatMessages[chatMessages.length-1];if(isNew&&lastMsg&&lastMsg.uid!==currentUser?.uid){const el=$("chat-msgs");const nearBottom=el.scrollHeight-el.scrollTop-el.clientHeight<200;if(!nearBottom){const badge=$("scroll-badge");const prev=parseInt(badge.textContent)||0;badge.textContent=prev+1;badge.classList.remove("hidden");}else hap(6);}lastGroupMsgCount=chatMessages.length;renderMessages(chatMessages);},err=>{console.error(err);toast("Lecture impossible.","danger");});}
+function listenMessages(code){try{unsubMessages?.();}catch{}renderMsgDone=false;lastGroupMsgCount=0;const c=$("chat-msgs");c.innerHTML=`<div style="text-align:center;padding:40px;color:var(--fg-3)"><div class="spinner" style="margin:0 auto 12px"></div>Chargement…</div>`;if(!fbReady){c.innerHTML=`<div style="text-align:center;padding:40px;color:var(--fg-3);font-size:.875rem">Connexion requise.</div>`;return;}unsubMessages=onValue(ref(db,`messages/${code}`),snap=>{const d=snap.val()||{};chatMessages=Object.entries(d).map(([id,v])=>({id,...v})).sort((a,b)=>(a.ts||0)-(b.ts||0));const isNew=chatMessages.length>lastGroupMsgCount&&lastGroupMsgCount>0;const lastMsg=chatMessages[chatMessages.length-1];if(isNew&&lastMsg&&lastMsg.uid!==currentUser?.uid){const el=$("chat-msgs");const nearBottom=el.scrollHeight-el.scrollTop-el.clientHeight<200;if(!nearBottom){const badge=$("scroll-badge");const prev=parseInt(badge.textContent)||0;badge.textContent=prev+1;badge.classList.remove("hidden");}else hap(6);}lastGroupMsgCount=chatMessages.length;renderMessages(chatMessages);},err=>{console.error("[messages]", err);toast("Lecture impossible — vérifie les règles.","danger");});}
 function renderMessages(msgs){const c=$("chat-msgs");if(!msgs.length){c.innerHTML=`<div style="text-align:center;padding:60px 20px;color:var(--fg-3);font-size:.875rem"><div style="font-size:36px;margin-bottom:12px;color:var(--accent-bright)">${ic("i-ghost",36)}</div>Aucun chuchotis pour le moment.<br>Sois le premier à chuchoter ✨</div>`;return;}const nearBottom=c.scrollHeight-c.scrollTop-c.clientHeight<140;let html="",lastDay=null;msgs.forEach(m=>{const k=dayKey(m.ts||Date.now());if(k!==lastDay){html+=`<div class="date-sep">${esc(friendlyDay(m.ts||Date.now()))}</div>`;lastDay=k;}const mine=m.uid===currentUser?.uid;let body;if(m.type==="poll")body=renderPollMessage(m);else body=`<div class="msg__text">${esc(m.text||"")}</div>`;const chips=Object.entries(m.reactions||{}).filter(([e,u])=>u&&Object.keys(u).length).map(([e,u])=>`<button class="rx ${u[currentUser?.uid]?"me":""}" data-rx="${esc(m.id)}|${esc(e)}" type="button">${esc(e)} ${Object.keys(u).length}</button>`).join("");const av=mine?myAvatar:(m.avatar||null);const avHTML=av?`<img src="${esc(av)}" alt="">`:ic("i-mask",10);html+=`<div class="msg ${mine?"mine":""}" data-mid="${esc(m.id)}"><div class="msg__body">${!mine?`<div class="msg__name" data-open-profile="${esc(m.uid||"")}" data-name="${esc(m.name||"Anonyme")}" data-mask="${esc(m.mask||"#----")}" data-avatar="${esc(m.avatar||"")}"><span class="av">${avHTML}</span><span class="txt">${esc(m.name||"Anonyme")}</span><span class="mask">${esc(m.mask||"#----")}</span></div>`:""}<div class="msg__bubble" data-longpress="${esc(m.id)}">${body}<span class="msg__time">${fmtTime(m.ts||Date.now())}${mine?' <span class="chk">✓✓</span>':""}</span></div>${chips?`<div class="msg__reacts">${chips}</div>`:""}</div></div>`;});c.innerHTML=html;if(nearBottom||!renderMsgDone)c.scrollTop=c.scrollHeight;renderMsgDone=true;c.querySelectorAll("[data-open-profile]").forEach(el=>el.addEventListener("click",e=>{e.stopPropagation();const uid=el.dataset.openProfile;if(!uid||uid===currentUser?.uid)return;openUserProfile({uid,name:el.dataset.name,mask:el.dataset.mask,avatar:el.dataset.avatar||null});}));c.querySelectorAll("[data-longpress]").forEach(el=>attachMsgLongPress(el,el.dataset.longpress));c.querySelectorAll("[data-rx]").forEach(el=>el.addEventListener("click",e=>{e.stopPropagation();const [id,emo]=el.dataset.rx.split("|");toggleReaction(id,emo);}));}
 function attachMsgLongPress(el,mid){let timer=null,moved=false,startX=0,startY=0;el.addEventListener("pointerdown",e=>{if(e.button!==undefined&&e.button!==0)return;startX=e.clientX;startY=e.clientY;moved=false;timer=setTimeout(()=>{if(moved)return;hap(15);openMsgCtx(el,mid);},450);});el.addEventListener("pointermove",e=>{if(Math.abs(e.clientX-startX)>8||Math.abs(e.clientY-startY)>8){moved=true;clearTimeout(timer);}});el.addEventListener("pointerup",()=>clearTimeout(timer));el.addEventListener("pointercancel",()=>clearTimeout(timer));el.addEventListener("pointerleave",()=>clearTimeout(timer));el.addEventListener("contextmenu",e=>e.preventDefault());}
 function closeMsgCtx(){if(openMsgCtxEl){openMsgCtxEl.remove();openMsgCtxEl=null;}}
@@ -2251,7 +2282,7 @@ function compress(file,max=128,q=.6){return new Promise((res,rej)=>{const r=new 
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){if($("sheet-share-image")?.classList.contains("on")){closeShareImageSheet();return;}if(closeTopmost())return;closeDrawer();closeJoin();closeCreate();closeEditor();closeShareSheet();$("ov-verify").classList.remove("on");$("ov-premium").classList.remove("on");$("ov-chatpoll").classList.remove("on");$("ov-comment").classList.remove("on");$("sheet-edit").classList.remove("on");closeGroupInfo();closeUserProfile();const cm=$("chat-menu");if(cm)cm.style.display="none";closePostMenu();closeReactPicker();closeMsgCtx();closeEmojiPanel();exitPostFocus();currentCommentsPostId=null;}});
 
 window.abx={openChat,show,joinGroup,openEditor,closeEditor,toast,publishPost,openShareSheet,buildJoinUrl,openDm,openUserProfile,fmtViews,fmtScore,exitPostFocus,propagateIdentityChange,bumpScore,SCORE,registerDailyActivity,getEffectiveStreak,openStoryDetail,openReader,openRecitEditor,closeRecitEditor,switchRecitsView,openShareImageSheet,generatePostImage,stories:()=>stories,storyIds:()=>storyIds,debug:()=>({fbReady,uid:currentUser?.uid,userReady,score:myScore,streak:myStreak,streakEffective:getEffectiveStreak(),postsCount:feedItems.length,storiesCount:storyIds.length,drafts:storyIds.map(id=>stories[id]).filter(s=>s&&s.uid===currentUser?.uid&&s.isDraft).length,published:storyIds.map(id=>stories[id]).filter(s=>s&&s.uid===currentUser?.uid&&!s.isDraft).length,groups:myGroups,conversations:Object.keys(dmConversations||{}).length,focused:!!focusedPostEl,name:myName,mask:myMask,currentRecitsView})};
-console.log("[AnonyBoX] v50 — join/create optimistes + fbRetry adouci");
+console.log("[AnonyBoX] v51 — correctif règles Firebase 100%");
 </script>
 
 <script>
