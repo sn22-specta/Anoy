@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0B141A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://api.qrserver.com https://firebasestorage.googleapis.com; connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.googleapis.com; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://api.qrserver.com https://firebasestorage.googleapis.com; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.googleapis.com; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'">
 <title>AnonyBoX</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,9 +21,6 @@
   --fg:#E8ECEF;--fg-2:#C4CCD3;--fg-3:#7B8794;--fg-4:#5A6570;
   --border:rgba(255,255,255,.07);--border-2:rgba(255,255,255,.11);--border-strong:rgba(255,255,255,.18);
   --danger:#EF5A6D;
-  --warning:var(--accent-bright);--verify:var(--accent-bright);--pink:var(--accent-bright);
-  --purple:var(--accent-bright);--orange:var(--accent-bright);--amber:var(--accent-bright);
-  --story-orange:var(--accent-bright);
   --font:'Sora',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   --font-display:'Instrument Serif',Georgia,serif;
   --mono:'JetBrains Mono','SF Mono',ui-monospace,Menlo,monospace;
@@ -715,7 +712,6 @@ body.chatting #abx-spinner:hover,
 body.chatting #abx-spinner.is-spinning,
 body.chatting #abx-spinner.is-moving{opacity:1;}
 
-/* ═══════════ PANNEAU DEBUG ═══════════ */
 #abx-debug{
   position:fixed;top:52px;right:8px;z-index:99999;
   max-width:340px;max-height:60vh;overflow:auto;
@@ -1427,7 +1423,6 @@ body.chatting #abx-spinner.is-moving{opacity:1;}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
-import { getDatabase, ref, set, get, remove, push, onValue, onDisconnect, update, increment } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey:"AIzaSyAGrCghSoJf7ULhi1Zi1RqeYmt4bE63a3M",
@@ -1439,7 +1434,7 @@ const firebaseConfig = {
   appId:"1:502581952099:web:2ae7c0912d073f3b11c256"
 };
 
-/* ═══════════ PANNEAU DEBUG INTÉGRÉ ═══════════ */
+/* ═══════════ PANNEAU DEBUG ═══════════ */
 const dbgEl = document.getElementById("abx-debug");
 const dbgToggle = document.getElementById("abx-debug-toggle");
 const dbgLines = [];
@@ -1447,19 +1442,13 @@ function dbg(level, ...args){
   const t = new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
   const cls = level === "ERR" ? "err" : level === "OK" ? "ok" : level === "WARN" ? "warn" : "";
   const msg = args.map(a => {
-    if(a instanceof Error){
-      const code = a.code ? `[${a.code}] ` : "";
-      return code + a.message;
-    }
-    if(typeof a === "object" && a !== null){
-      try { return JSON.stringify(a).slice(0,200); } catch { return String(a); }
-    }
+    if(a instanceof Error) return (a.code ? `[${a.code}] ` : "") + a.message;
+    if(typeof a === "object" && a !== null){ try { return JSON.stringify(a).slice(0,200); } catch { return String(a); } }
     return String(a);
   }).join(" ");
   dbgLines.unshift(`<div><b>${t}</b> <span class="${cls}">[${level}]</span> ${msg}</div>`);
   if(dbgLines.length > 60) dbgLines.length = 60;
   if(dbgEl) dbgEl.innerHTML = dbgLines.join("");
-  // Aussi dans la console navigateur
   if(level === "ERR") console.error("[ABX]", ...args);
   else if(level === "WARN") console.warn("[ABX]", ...args);
   else console.log("[ABX]", ...args);
@@ -1469,10 +1458,10 @@ if(dbgToggle){
   dbgToggle.addEventListener("click", () => dbgEl.classList.toggle("on"));
 }
 window.addEventListener("error", e => dbg("ERR", "window.error:", e.message));
-window.addEventListener("unhandledrejection", e => dbg("ERR", "unhandledrejection:", e.reason?.message || String(e.reason)));
-dbg("OK", "Debug panel ready");
+window.addEventListener("unhandledrejection", e => dbg("ERR", "unhandled:", e.reason?.message || String(e.reason)));
+dbg("OK", "Debug panel ready (mode REST)");
 
-/* ⏱️ Timeout universel — 8s max */
+/* ═══════════ TIMEOUT UNIVERSEL ═══════════ */
 function withTimeout(promise, ms, label){
   return Promise.race([
     promise,
@@ -1483,7 +1472,108 @@ function withTimeout(promise, ms, label){
     }, ms))
   ]);
 }
-/* ═══════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════
+   🔥 SDK FIREBASE DATABASE REMPLACÉ PAR REST + POLLING
+   ═══════════════════════════════════════════════════════════ */
+const FB_BASE = "https://prjt-78fef-default-rtdb.firebaseio.com";
+
+async function fbToken(){
+  if(!currentUser) return "";
+  try { return await currentUser.getIdToken(); }
+  catch(e){ return ""; }
+}
+function cleanPath(p){
+  return String(p||"").replace(/^\/+|\/+$/g, "").replace(/\/{2,}/g, "/");
+}
+
+async function restReq(method, path, body, opts = {}){
+  const token = await fbToken();
+  const url = `${FB_BASE}/${cleanPath(path)}.json?auth=${encodeURIComponent(token)}${opts.query || ""}`;
+  const init = { method, headers: { "Content-Type": "application/json" }, cache: "no-store" };
+  if(body !== undefined) init.body = JSON.stringify(body);
+  const res = await fetch(url, init);
+  if(!res.ok){
+    let msg = "";
+    try { msg = await res.text(); } catch {}
+    const err = new Error(`HTTP ${res.status}${msg ? " " + msg.slice(0,120) : ""}`);
+    err.code = (res.status === 401 || res.status === 403) ? "PERMISSION_DENIED" : `HTTP_${res.status}`;
+    throw err;
+  }
+  try { return await res.json(); } catch { return null; }
+}
+
+function ref(_db, path){ return { _path: cleanPath(path) }; }
+function child(parentRef, key){ return { _path: parentRef._path + "/" + key }; }
+function push(parentRef){
+  const key = "-M" + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+  return { _path: parentRef._path + "/" + key, _key: key };
+}
+async function set(refObj, value){ return await restReq("PUT", refObj._path, value); }
+async function update(refObj, updates){ return await restReq("PATCH", refObj._path, updates); }
+async function remove(refObj){ return await restReq("DELETE", refObj._path); }
+function makeSnap(data){ return { exists: () => data !== null && data !== undefined, val: () => data }; }
+async function get(refObj){
+  const data = await restReq("GET", refObj._path);
+  return makeSnap(data);
+}
+function increment(_n){ /* no-op — remplacé par increment manuel */ return null; }
+function onDisconnect(_refObj){ return { remove: async () => {}, set: async () => {}, cancel: async () => {} }; }
+
+/* onValue — polling intelligent */
+const _pollers = new Map();
+const _pollIntervalMs = 2000;
+
+function onValue(refObj, callback, onError){
+  const path = refObj._path;
+  if(!_pollers.has(path)){
+    _pollers.set(path, { timer: null, cbs: new Set(), lastHash: "" });
+  }
+  const p = _pollers.get(path);
+  const entry = { callback, onError };
+  p.cbs.add(entry);
+
+  (async () => {
+    try {
+      const data = await restReq("GET", path);
+      p.lastHash = JSON.stringify(data);
+      p.cbs.forEach(c => { try { c.callback(makeSnap(data)); } catch(e){ console.error(e); } });
+    } catch(e){
+      p.cbs.forEach(c => { try { c.onError && c.onError(e); } catch{} });
+    }
+  })();
+
+  if(!p.timer){
+    p.timer = setInterval(async () => {
+      if(document.hidden) return;
+      try{
+        const data = await restReq("GET", path);
+        const h = JSON.stringify(data);
+        if(h === p.lastHash) return;
+        p.lastHash = h;
+        p.cbs.forEach(c => { try { c.callback(makeSnap(data)); } catch(e){ console.error(e); } });
+      }catch(e){
+        p.cbs.forEach(c => { try { c.onError && c.onError(e); } catch{} });
+      }
+    }, _pollIntervalMs);
+  }
+
+  return () => {
+    const pp = _pollers.get(path);
+    if(!pp) return;
+    pp.cbs.delete(entry);
+    if(pp.cbs.size === 0){
+      clearInterval(pp.timer);
+      _pollers.delete(path);
+    }
+  };
+}
+function resetPollers(){
+  _pollers.forEach(p => clearInterval(p.timer));
+  _pollers.clear();
+}
+
+/* ═══════════════════════════════════════════════════════════ */
 
 const MAX_WORDS=20;
 const APP_BASE_URL=location.origin+location.pathname, APP_SITE_URL="https://anonybox.app";
@@ -1524,12 +1614,11 @@ let currentStoryId=null,currentChapterId=null,readingHistory={},readChapters={};
 let recitCoverData=null,recitEditorOpen=false,recitEditingId=null,myStreak=null,streakBumpedToday=null;
 let currentShareImagePostId=null,currentShareImageBlob=null;
 
-let app,auth,db,fbReady=false,fbFailed=false;
+let app,auth,db={},fbReady=false,fbFailed=false;
 try{
   app=initializeApp(firebaseConfig);
   auth=getAuth(app);
-  db=getDatabase(app);
-  dbg("OK", "Firebase init OK");
+  dbg("OK", "Firebase init OK (mode REST)");
 }catch(e){
   dbg("ERR", "Firebase init:", e);
   fbFailed=true;
@@ -1538,7 +1627,9 @@ function useRealUser(u){
   const wasLocal = !currentUser || currentUser.isLocal;
   currentUser = u;
   fbReady = true;
-  dbg("OK", "Auth ready. uid=", u.uid);
+  dbg("OK", "Auth ready (REST). uid=", u.uid);
+  resetPollers();
+  setInterval(() => { currentUser?.getIdToken(true).catch(()=>{}); }, 50 * 60 * 1000);
   if(!booted) bootstrap();
   else if(wasLocal){ loadUserProfile(); loadVerified(); startFeedListener(); startStoriesListener(); }
 }
@@ -1562,45 +1653,41 @@ if(auth && !fbFailed){
   }, 8000);
 }
 
-/* ════════ RÉSEAU ════════ */
 async function fbRetry(fn, maxTries = 2, delayMs = 200){
   let lastErr = null;
   for(let i = 0; i < maxTries; i++){
     try { return await fn(); }
-    catch(e){
-      lastErr = e;
-      if(i < maxTries - 1) await new Promise(r => setTimeout(r, delayMs));
-    }
+    catch(e){ lastErr = e; if(i < maxTries - 1) await new Promise(r => setTimeout(r, delayMs)); }
   }
   throw lastErr;
 }
 async function fbGet(path, fallback = null){
   if(!fbReady) return fallback;
   try{
-    const s = await withTimeout(fbRetry(() => get(ref(db, path)), 2, 200), 6000, "get:" + path);
-    return s.exists() ? s.val() : fallback;
-  }catch(e){
-    dbg("WARN", "fbGet", path, e?.message);
-    return fallback;
-  }
+    const data = await withTimeout(restReq("GET", path), 6000, "get:" + path);
+    return data === null || data === undefined ? fallback : data;
+  }catch(e){ dbg("WARN", "fbGet", path, e?.message); return fallback; }
 }
 async function fbSet(path, value){
   if(!fbReady) return false;
   try{
-    await withTimeout(fbRetry(() => set(ref(db, path), value), 2, 200), 8000, "set:" + path);
+    await withTimeout(restReq("PUT", path, value), 8000, "set:" + path);
     return true;
-  }catch(e){
-    dbg("WARN", "fbSet", path, e?.message);
-    return false;
-  }
+  }catch(e){ dbg("WARN", "fbSet", path, e?.message); return false; }
 }
 
 async function bumpScore(a){
   if(!a || !currentUser || currentUser.isLocal || !fbReady) return;
   myScore = (Number(myScore) || 0) + a;
   paintScore(true);
-  try { await set(ref(db, `users/${currentUser.uid}/score`), increment(a)); }
-  catch(e){ myScore = Math.max(0, myScore - a); paintScore(false); }
+  try{
+    const cur = await restReq("GET", `users/${currentUser.uid}/score`);
+    const val = (Number(cur) || 0) + a;
+    await restReq("PUT", `users/${currentUser.uid}/score`, val);
+  }catch(e){
+    myScore = Math.max(0, myScore - a);
+    paintScore(false);
+  }
 }
 function paintScore(bump=false){
   const t = fmtScore(myScore);
@@ -1619,14 +1706,13 @@ async function registerDailyActivity(){
   streakBumpedToday = today;
   const path = `users/${currentUser.uid}/streak`;
   try{
-    const snap = await get(ref(db, path));
-    const cur = snap.exists() ? snap.val() : {current:0,longest:0,lastDate:null};
+    const cur = await restReq("GET", path) || {current:0,longest:0,lastDate:null};
     if(cur.lastDate === today){ myStreak = cur; paintStreak(); return; }
     const y = new Date(Date.now()-86400000).toISOString().slice(0,10);
     const newCurrent = (cur.lastDate === y) ? (Number(cur.current)||0)+1 : 1;
     const newLongest = Math.max(Number(cur.longest)||0, newCurrent);
     myStreak = {current:newCurrent,longest:newLongest,lastDate:today};
-    await set(ref(db, path), myStreak);
+    await restReq("PUT", path, myStreak);
     paintStreak(true);
   }catch(e){ streakBumpedToday = null; }
 }
@@ -1737,7 +1823,6 @@ async function bootstrap(){
   updateProfile();
   applyBlur();
   handleJoinUrlParam();
-  seedDemoStories();
   rearmBackGuard();
   dbg("OK", "bootstrap done");
 }
@@ -1818,9 +1903,8 @@ function startUserListener(){
 
 async function saveUserProfile(){
   if(!currentUser || currentUser.isLocal || !fbReady) return;
-  try{
-    await update(ref(db, `users/${currentUser.uid}`), {name:myName, mask:myMask, avatar:myAvatar, updatedAt:now()});
-  }catch(e){ console.warn("saveUserProfile", e); }
+  try{ await update(ref(db, `users/${currentUser.uid}`), {name:myName, mask:myMask, avatar:myAvatar, updatedAt:now()}); }
+  catch(e){ console.warn("saveUserProfile", e); }
 }
 function applyAvatar(){
   const di=$("drawer-avatar-img");
@@ -1898,7 +1982,7 @@ async function submitVerify(){
   $("ov-verify").classList.remove("on"); $("verify-code").value="";
   if(!code) return;
   try{
-    await set(ref(db, `redemption/${currentUser.uid}/verify`), {code, at:now()});
+    await restReq("PUT", `redemption/${currentUser.uid}/verify`, {code, at:now()});
     toast("Vérification en cours…");
   }catch(e){ toast("Code invalide.","danger"); }
 }
@@ -1909,7 +1993,7 @@ async function submitPremium(){
   $("ov-premium").classList.remove("on"); $("premium-code").value="";
   if(!code) return;
   try{
-    await set(ref(db, `redemption/${currentUser.uid}/premium`), {code, at:now()});
+    await restReq("PUT", `redemption/${currentUser.uid}/premium`, {code, at:now()});
     toast("Activation en cours…");
   }catch(e){ toast("Code Premium invalide.","danger"); }
 }
@@ -1924,7 +2008,7 @@ $("d-messages")?.addEventListener("click",()=>{ closeDrawer(); show("s-messages"
 $("d-posts")?.addEventListener("click",()=>{ closeDrawer(); show("s-feed"); currentTab="mine"; document.querySelectorAll("#feed-tabs button[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab==="mine")); const l=$("feed-list"); if(l) l.dataset.sig=""; renderFeed(); });
 $("d-recits")?.addEventListener("click",()=>{ closeDrawer(); show("s-recits"); switchRecitsView("mesecrits"); });
 $("d-verify")?.addEventListener("click",()=>{ closeDrawer(); setTimeout(openVerifyModal,200); });
-$("d-backend")?.addEventListener("click",()=>{ closeDrawer(); toast("Backend : Firebase Realtime sécurisé"); });
+$("d-backend")?.addEventListener("click",()=>{ closeDrawer(); toast("Backend : Firebase REST + polling"); });
 $("d-premium")?.addEventListener("click",()=>{ closeDrawer(); setTimeout(openPremiumModal,200); });
 $("d-newid")?.addEventListener("click",async()=>{ closeDrawer(); myMask=genMask(); await fbSet(`users/${currentUser.uid}/mask`,myMask); paintSession(); updateDrawer(); updateProfile(); toast("Nouveau pelage : "+myMask); });
 document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>{ closeDrawer(); const k=b.dataset.nav; const target=k==="home"?"s-home":k==="feed"?"s-feed":k==="groups"?"s-groups":k==="recits"?"s-recits":"s-home"; setTimeout(()=>show(target),220); }));
@@ -1939,32 +2023,6 @@ function renderCoverInner(s){
   if(s.cover && isSafeImg(s.cover)) return `<img src="${esc(s.cover)}" alt="">`;
   const style = generateCoverStyle(s.title);
   return `<div class="recit-cover-ph" style="background:${style.bg}"><div class="recit-cover-ph__title">${esc(s.title||"Sans titre")}</div><div class="recit-cover-ph__stripe" style="background:${style.accent}"></div></div>`;
-}
-let seededStories=false;
-async function seedDemoStories(){
-  if(seededStories||!fbReady) return;
-  seededStories=true;
-  const existing = await fbGet("stories", null);
-  if(existing && Object.keys(existing).length>0) return;
-  const demos=[
-    {title:"La Trahison de l'Ange",author:"Océan Loan",genre:"Fantasy",status:"completed",tags:["angels","dark","romance"],description:"Quand Hugo est envoyé sur Terre à cause du traître de son père, il n'attend qu'une chose : retourner sur Aggelos.",chapterTitle:"Introduction",chapterContent:"Bonjour à tous !\n\nJe suis heureuse de vous annoncer que j'ai décidé de me lancer dans une nouvelle aventure littéraire en rejoignant AnonyBoX pour mon premier tome, La Trahison de l'Ange.\n\nBonne lecture à tous."},
-    {title:"Sous ordonnance du cœur",author:"LaduchessedeFontange",genre:"Romance",status:"ongoing",tags:["amour","boss","chirurgien"],description:"Une romance entre une interne en médecine et son patron chirurgien, aussi arrogant que talentueux.",chapterTitle:"Le premier regard",chapterContent:"Le bloc opératoire sentait l'antiseptique et la tension.\n\nElle n'avait jamais vu un chirurgien aussi précis, aussi concentré, aussi… exaspérant."},
-    {title:"Vœu Sicilien — Captive du Clan",author:"Zaquia2016",genre:"Thriller",status:"ongoing",tags:["mafia","captive","dark"],description:"Enlevée par erreur par l'héritier d'un clan sicilien, Elena découvre un monde de pouvoir, de loyauté et de sang.",chapterTitle:"L'enlèvement",chapterContent:"La camionnette s'arrêta dans un crissement de pneus.\n\nElena n'avait rien vu venir. Un sac sur la tête, les mains liées.\n\n« Ce n'est pas elle. »"},
-    {title:"Fallen Petals",author:"Nimoo",genre:"Romance",status:"completed",tags:["ados","amitié","deuil"],description:"Après le suicide de sa meilleure amie, Nima trouve une boîte de lettres qu'elle n'aurait jamais dû lire.",chapterTitle:"La première lettre",chapterContent:"« Si tu lis cette lettre, c'est que je ne suis plus là. »\n\nLes mots tremblaient devant ses yeux."},
-    {title:"Bhoomi",author:"Snowflakes",genre:"Science-Fiction",status:"ongoing",tags:["dystopie","survie","jeunesse"],description:"Dans un monde où la Terre est devenue stérile, Bhoomi est la dernière graine.",chapterTitle:"La dernière graine",chapterContent:"Le sable brûlait ses pieds nus.\n\nBhoomi courait, la graine serrée contre son cœur."}
-  ];
-  for(const d of demos){
-    const sid="seed_"+genId(); const chapterId="chap_"+genId();
-    await fbSet(`stories/${sid}`, {
-      uid:"seed", author:d.author, mask:"#"+Math.floor(1000+Math.random()*9000), avatar:null,
-      title:d.title, description:d.description, cover:null, genre:d.genre, status:d.status, tags:d.tags,
-      createdAt: now()-Math.floor(Math.random()*30*86400000),
-      updatedAt: now(),
-      views: Math.floor(50000+Math.random()*900000),
-      likes: {},
-      chapters: { [chapterId]: { title:d.chapterTitle, content:d.chapterContent, order:1, createdAt: now()-Math.floor(Math.random()*30*86400000), views: Math.floor(10000+Math.random()*90000), likes:{} } }
-    });
-  }
 }
 
 function startStoriesListener(){
@@ -2002,11 +2060,9 @@ function renderRecitsBanner(){
 function paintBanner(s){
   const content=$("recits-banner-content"), slide=$("recits-banner-slide");
   if(slide){
-    slide.innerHTML="";
-    slide.style.backgroundImage="";
+    slide.innerHTML=""; slide.style.backgroundImage="";
     if(isSafeImg(s.cover)){
-      const img=document.createElement("img");
-      img.src=s.cover; img.alt="";
+      const img=document.createElement("img"); img.src=s.cover; img.alt="";
       img.style.cssText="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;";
       slide.appendChild(img);
     }
@@ -2149,14 +2205,14 @@ function openMesEcritsMenu(anchor, storyId){
       else{ await navigator.clipboard?.writeText(txt); toast("Copié"); }
     }
     else if(a==="publish"){
-      await set(ref(db, `stories/${storyId}/isDraft`), null);
-      await set(ref(db, `stories/${storyId}/updatedAt`), now());
+      await restReq("DELETE", `stories/${storyId}/isDraft`).catch(()=>{});
+      await restReq("PUT", `stories/${storyId}/updatedAt`, now()).catch(()=>{});
       bumpScore(SCORE.CHAPITRE); registerDailyActivity();
       toast("Récit publié 🐾 +"+SCORE.CHAPITRE);
     }
     else if(a==="delete"){
       if(confirm("Supprimer ce "+(isDraft?"brouillon":"récit")+" ?")){
-        await remove(ref(db, `stories/${storyId}`));
+        await restReq("DELETE", `stories/${storyId}`).catch(()=>{});
         toast("Supprimé");
       }
     }
@@ -2168,7 +2224,10 @@ async function openStoryDetail(storyId){
   renderStoryDetail(storyId);
   if(storyId && !viewedPosts.has("story|"+storyId)){
     viewedPosts.add("story|"+storyId);
-    try{ await set(ref(db, `stories/${storyId}/views`), increment(1)); }catch{}
+    try{
+      const cur = await restReq("GET", `stories/${storyId}/views`) || 0;
+      await restReq("PUT", `stories/${storyId}/views`, (Number(cur)||0) + 1);
+    }catch{}
   }
 }
 function renderStoryDetail(storyId){
@@ -2196,8 +2255,11 @@ function renderStoryDetail(storyId){
   $("recit-like")?.addEventListener("click", async ()=>{
     if(!fbReady || !currentUser) return;
     const path = `stories/${storyId}/likes/${currentUser.uid}`;
-    try{ if(liked) await remove(ref(db,path)); else await set(ref(db,path),true); hap(8); }
-    catch{ toast("Impossible.","danger"); }
+    try{
+      if(liked) await restReq("DELETE", path);
+      else await restReq("PUT", path, true);
+      hap(8);
+    }catch{ toast("Impossible.","danger"); }
   });
   const paintTab = (tab)=>{
     document.querySelectorAll("[data-rtab]").forEach(x=>x.classList.toggle("on",x.dataset.rtab===tab));
@@ -2227,7 +2289,7 @@ async function deleteStory(storyId){
   const s=stories[storyId];
   if(!s || s.uid!==currentUser?.uid){ toast("Action non autorisée.","danger"); return; }
   if(!confirm("Supprimer ce récit ?")) return;
-  try{ await remove(ref(db, `stories/${storyId}`)); toast("Récit supprimé"); show("s-recits"); }
+  try{ await restReq("DELETE", `stories/${storyId}`); toast("Récit supprimé"); show("s-recits"); }
   catch{ toast("Erreur.","danger"); }
 }
 async function openReader(storyId, chapterId){
@@ -2239,11 +2301,14 @@ async function openReader(storyId, chapterId){
   currentChapterId = ch.id;
   readingHistory[storyId] = {chapterId:ch.id, order:ch.order||1};
   if(fbReady && currentUser && !currentUser.isLocal){
-    try{ await set(ref(db, `users/${currentUser.uid}/readingHistory/${storyId}`), {chapterId:ch.id, order:ch.order||1, at:now()}); }catch{}
+    try{ await restReq("PUT", `users/${currentUser.uid}/readingHistory/${storyId}`, {chapterId:ch.id, order:ch.order||1, at:now()}); }catch{}
   }
   if(!readChapters[storyId+"|"+ch.id]){
     readChapters[storyId+"|"+ch.id] = true;
-    try{ await set(ref(db, `stories/${storyId}/chapters/${ch.id}/views`), increment(1)); }catch{}
+    try{
+      const cur = await restReq("GET", `stories/${storyId}/chapters/${ch.id}/views`) || 0;
+      await restReq("PUT", `stories/${storyId}/chapters/${ch.id}/views`, (Number(cur)||0)+1);
+    }catch{}
     bumpScore(SCORE.LECTURE);
   }
   $("reader-title-bar").textContent = `Chapitre ${ch.order||idx+1}`;
@@ -2350,7 +2415,7 @@ async function saveRecit(mode){
       };
       if(firstChap){ updates[`stories/${recitEditingId}/chapters/${firstChap.id}/title`]=chapterTitle; updates[`stories/${recitEditingId}/chapters/${firstChap.id}/content`]=chapterContent; }
       updates[`stories/${recitEditingId}/isDraft`] = isDraft ? true : null;
-      await update(ref(db), updates);
+      await withTimeout(restReq("PATCH", "", updates), 8000, "save-story");
       if(isDraft){ toast("Brouillon enregistré"); closeRecitEditor(); switchRecitsView("mesecrits"); }
       else{ if(existing.isDraft){ bumpScore(SCORE.CHAPITRE); registerDailyActivity(); } toast("Récit publié 🐾 +"+SCORE.CHAPITRE); closeRecitEditor(); openStoryDetail(recitEditingId); }
     }else{
@@ -2363,7 +2428,7 @@ async function saveRecit(mode){
         chapters: { [cid]: { title:chapterTitle, content:chapterContent, order:1, createdAt:now(), views:0, likes:{} } }
       };
       if(isDraft) payload.isDraft = true;
-      await withTimeout(set(ref(db, `stories/${sid}`), payload), 8000, "save-story");
+      await withTimeout(restReq("PUT", `stories/${sid}`, payload), 8000, "save-story");
       if(isDraft){ toast("Brouillon enregistré"); closeRecitEditor(); switchRecitsView("mesecrits"); }
       else{ bumpScore(SCORE.CHAPITRE); registerDailyActivity(); toast("Récit publié 🐾 +"+SCORE.CHAPITRE); closeRecitEditor(); openStoryDetail(sid); }
     }
@@ -2383,8 +2448,8 @@ async function openAddChapter(storyId){
   const nextOrder = (Math.max(0,...chaps.map(c=>c.order||0))+1);
   const cid="chap_"+genId();
   try{
-    await set(ref(db, `stories/${storyId}/chapters/${cid}`), {title:title.trim()||"Chapitre "+nextOrder, content:content.trim(), order:nextOrder, createdAt:now(), views:0, likes:{}});
-    await set(ref(db, `stories/${storyId}/updatedAt`), now());
+    await restReq("PUT", `stories/${storyId}/chapters/${cid}`, {title:title.trim()||"Chapitre "+nextOrder, content:content.trim(), order:nextOrder, createdAt:now(), views:0, likes:{}});
+    await restReq("PUT", `stories/${storyId}/updatedAt`, now());
     bumpScore(SCORE.CHAPITRE); registerDailyActivity();
     toast("Chapitre ajouté 🐾 +"+SCORE.CHAPITRE);
   }catch{ toast("Erreur.","danger"); }
@@ -2457,7 +2522,6 @@ $("join-cancel")?.addEventListener("click",closeJoin);
 $("join-ok")?.addEventListener("click",joinGroup);
 $("join-code")?.addEventListener("keydown",e=>{ if(e.key==="Enter") joinGroup(); });
 
-/* ═══════════ JOIN GROUP ═══════════ */
 async function joinGroup(){
   dbg("—", "=== JOIN start ===");
   const code = $("join-code").value.trim().toUpperCase();
@@ -2469,16 +2533,14 @@ async function joinGroup(){
 
   try{
     dbg("—", "Lecture groups/"+code);
-    const s = await withTimeout(get(ref(db, `groups/${code}`)), 6000, "join-fetch");
-    if(!s.exists()){ dbg("ERR", "Meute inexistante"); toast("Meute introuvable.","danger"); return; }
-    const g = s.val();
+    const g = await withTimeout(restReq("GET", `groups/${code}`), 6000, "join-fetch");
+    if(!g){ dbg("ERR", "Meute inexistante"); toast("Meute introuvable.","danger"); return; }
     dbg("OK", "Meute trouvée:", g.name);
 
-    dbg("—", "Inscription member");
-    await withTimeout(set(ref(db, `groups/${code}/members/${currentUser.uid}`), true), 8000, "join-members");
+    await withTimeout(restReq("PUT", `groups/${code}/members/${currentUser.uid}`, true), 8000, "join-members");
     dbg("OK", "Membre inscrit");
 
-    withTimeout(set(ref(db, `users/${currentUser.uid}/groups/${code}`), {code, name:g.name||"Meute"}), 6000, "join-user").catch(()=>{});
+    restReq("PUT", `users/${currentUser.uid}/groups/${code}`, {code, name:g.name||"Meute"}).catch(()=>{});
 
     closeJoin();
     openChat(code, g.name||"Meute", g.owner);
@@ -2501,13 +2563,12 @@ $("cg-cancel")?.addEventListener("click",closeCreate);
 $("btn-go-recits")?.addEventListener("click",()=>show("s-recits"));
 function genCode(){ const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let s=""; for(let i=0;i<6;i++) s+=c[Math.floor(Math.random()*c.length)]; return s; }
 
-/* ═══════════ CREATE GROUP ═══════════ */
 $("cg-ok")?.addEventListener("click", async () => {
   dbg("—", "=== CREATE start ===");
   const name = $("cg-name").value.trim() || "Meute AnonyBoX";
   const desc = $("cg-desc").value.trim();
   const pin  = $("cg-pin").value.trim();
-  dbg("—", "fbReady=", fbReady, "uid=", currentUser?.uid, "isLocal=", currentUser?.isLocal);
+  dbg("—", "fbReady=", fbReady, "uid=", currentUser?.uid);
   if(!fbReady || !currentUser || currentUser.isLocal){
     toast("Firebase indisponible — regarde 🐛","danger");
     return;
@@ -2518,8 +2579,8 @@ $("cg-ok")?.addEventListener("click", async () => {
     let code = genCode();
     for(let i=0;i<3;i++){
       dbg("—", "Check code", code, "essai", i+1);
-      const check = await withTimeout(get(ref(db, `groups/${code}`)), 3000, "check").catch(e=>{ dbg("WARN","check fail:",e.message); return null; });
-      if(!check || !check.exists()){ dbg("OK","Code libre:",code); break; }
+      const check = await withTimeout(restReq("GET", `groups/${code}`), 3000, "check").catch(e=>{ dbg("WARN","check fail:",e.message); return null; });
+      if(!check){ dbg("OK","Code libre:",code); break; }
       code = genCode();
     }
     const uid = currentUser.uid;
@@ -2532,11 +2593,11 @@ $("cg-ok")?.addEventListener("click", async () => {
       members: { [uid]: true }
     };
     dbg("—", "Écriture groups/"+code+" (timeout 8s)");
-    await withTimeout(set(ref(db, `groups/${code}`), groupData), 8000, "create-group");
+    await withTimeout(restReq("PUT", `groups/${code}`, groupData), 8000, "create-group");
     dbg("OK", "groups/"+code+" écrit");
     Promise.allSettled([
-      withTimeout(set(ref(db, `groupCodes/${code}`), {code,name,createdAt:nowTs}), 6000, "gc"),
-      withTimeout(set(ref(db, `users/${uid}/groups/${code}`), {code,name}), 6000, "ug")
+      restReq("PUT", `groupCodes/${code}`, {code,name,createdAt:nowTs}),
+      restReq("PUT", `users/${uid}/groups/${code}`, {code,name})
     ]).then(rs=>rs.forEach((r,i)=>r.status==="rejected" ? dbg("WARN",`secondary ${i} fail:`, r.reason?.message) : dbg("OK",`secondary ${i} OK`)));
     if(!myGroups.find(g=>g.code===code)) myGroups.unshift({code,name});
     closeCreate();
@@ -2548,7 +2609,6 @@ $("cg-ok")?.addEventListener("click", async () => {
     dbg("ERR", "=== CREATE FAILED ===", e);
     if(e._timeout){
       dbg("ERR", "→ Firebase n'a pas répondu en 8s");
-      dbg("ERR", "→ Causes: URL DB fausse / DB inexistante / réseau");
       toast("⏱️ Timeout — regarde 🐛","danger");
     }else if(String(e?.code).includes("PERMISSION_DENIED")){
       dbg("ERR", "→ Permission refusée par les règles");
@@ -2564,21 +2624,21 @@ $("cg-ok")?.addEventListener("click", async () => {
 async function saveGroupToUser(code,name){
   if(!currentUser||currentUser.isLocal||!fbReady) return false;
   if(!myGroups.find(g=>g.code===code)){ myGroups.unshift({code,name}); renderGroupsGrid(); }
-  try{ await fbRetry(()=>set(ref(db, `users/${currentUser.uid}/groups/${code}`), {code,name}), 2, 200); return true; }
+  try{ await fbRetry(()=>restReq("PUT", `users/${currentUser.uid}/groups/${code}`, {code,name}), 2, 200); return true; }
   catch(e){ myGroups = myGroups.filter(g=>g.code!==code); renderGroupsGrid(); return false; }
 }
 async function removeGroupFromUser(code){
   myGroups = myGroups.filter(g=>g.code!==code); delete myPositions[code]; renderGroupsGrid();
   if(!currentUser||currentUser.isLocal) return;
   try{
-    await fbRetry(()=>remove(ref(db, `users/${currentUser.uid}/groups/${code}`)));
-    await fbRetry(()=>remove(ref(db, `users/${currentUser.uid}/positions/${code}`)));
+    await fbRetry(()=>restReq("DELETE", `users/${currentUser.uid}/groups/${code}`));
+    await fbRetry(()=>restReq("DELETE", `users/${currentUser.uid}/positions/${code}`));
   }catch(e){ console.warn(e); }
 }
 async function savePosition(code,x,y){
   myPositions[code]={x,y};
   if(!currentUser||currentUser.isLocal||!fbReady) return;
-  try{ await fbRetry(()=>set(ref(db, `users/${currentUser.uid}/positions/${code}`), {x,y})); }catch(e){ console.warn(e); }
+  try{ await fbRetry(()=>restReq("PUT", `users/${currentUser.uid}/positions/${code}`, {x,y})); }catch(e){ console.warn(e); }
 }
 let cellSize=88,cellGap=14,cols=3;
 function computeGridMetrics(){
@@ -2672,8 +2732,8 @@ window.addEventListener("resize",()=>{
 async function openChat(code,name,owner){
   if(currentGroupCode && currentGroupCode!==code){
     if(fbReady && currentUser){
-      remove(ref(db, `presence/${currentGroupCode}/${currentUser.uid}`)).catch(()=>{});
-      remove(ref(db, `typing/${currentGroupCode}/${currentUser.uid}`)).catch(()=>{});
+      restReq("DELETE", `presence/${currentGroupCode}/${currentUser.uid}`).catch(()=>{});
+      restReq("DELETE", `typing/${currentGroupCode}/${currentUser.uid}`).catch(()=>{});
     }
     closeChat();
   }
@@ -2683,8 +2743,8 @@ async function openChat(code,name,owner){
   $("chat-title").textContent=currentGroupName;
   show("s-chat");
   if(!currentGroupOwner && fbReady){
-    get(ref(db, `groups/${code}`)).then(s=>{
-      if(s.exists()){ currentGroupOwner=s.val().owner; currentGroupMembers=s.val().members||{}; }
+    restReq("GET", `groups/${code}`).then(g=>{
+      if(g){ currentGroupOwner=g.owner; currentGroupMembers=g.members||{}; }
     }).catch(()=>{});
   }
   listenMessages(code);
@@ -2694,8 +2754,8 @@ async function openChat(code,name,owner){
 }
 function closeChat(){
   if(currentGroupCode && currentUser && fbReady){
-    remove(ref(db, `presence/${currentGroupCode}/${currentUser.uid}`)).catch(()=>{});
-    remove(ref(db, `typing/${currentGroupCode}/${currentUser.uid}`)).catch(()=>{});
+    restReq("DELETE", `presence/${currentGroupCode}/${currentUser.uid}`).catch(()=>{});
+    restReq("DELETE", `typing/${currentGroupCode}/${currentUser.uid}`).catch(()=>{});
   }
   try{ unsubMessages?.(); }catch{} try{ unsubPresence?.(); }catch{} try{ unsubGroup?.(); }catch{} try{ unsubTyping?.(); }catch{}
   unsubMessages=unsubPresence=unsubGroup=unsubTyping=null;
@@ -2733,7 +2793,7 @@ function listenMessages(code){
     }
     lastGroupMsgCount = chatMessages.length;
     renderMessages(chatMessages);
-  }, err=>{ console.error("[messages]", err); toast("Lecture impossible — vérifie les règles.","danger"); });
+  }, err=>{ console.error("[messages]", err); });
 }
 function renderMessages(msgs){
   const c=$("chat-msgs");
@@ -2823,7 +2883,7 @@ async function deleteMsgGroup(mid){
   const isAdmin=currentGroupOwner===currentUser?.uid;
   if(!isOwner && !isAdmin){ toast("Tu ne peux supprimer que tes messages.","danger"); return; }
   if(!confirm("Supprimer ce chuchotis ?")) return;
-  try{ await remove(ref(db, `messages/${currentGroupCode}/${mid}`)); toast("Chuchotis supprimé"); }
+  try{ await restReq("DELETE", `messages/${currentGroupCode}/${mid}`); toast("Chuchotis supprimé"); }
   catch{ toast("Erreur.","danger"); }
 }
 function renderPollMessage(m){
@@ -2849,9 +2909,12 @@ function closeReactPicker(){ rxPickerEl?.remove(); rxPickerEl=null; }
 async function toggleReaction(msgId,emo){
   if(!fbReady || !currentGroupCode) return;
   const msg=chatMessages.find(m=>m.id===msgId); if(!msg) return;
-  const r=ref(db, `messages/${currentGroupCode}/${msgId}/reactions/${emo}/${currentUser.uid}`);
-  try{ if(msg.reactions?.[emo]?.[currentUser.uid]) await remove(r); else await set(r,true); hap(6); }
-  catch{ toast("Réaction impossible","danger"); }
+  const path = `messages/${currentGroupCode}/${msgId}/reactions/${emo}/${currentUser.uid}`;
+  try{
+    if(msg.reactions?.[emo]?.[currentUser.uid]) await restReq("DELETE", path);
+    else await restReq("PUT", path, true);
+    hap(6);
+  }catch{ toast("Réaction impossible","danger"); }
 }
 async function votePollMessage(msgId,opt){
   if(!fbReady || !currentGroupCode) return;
@@ -2859,7 +2922,7 @@ async function votePollMessage(msgId,opt){
   const updates={}; const votes=msg.pollVotes||{};
   Object.keys(votes).forEach(i=>{ if(votes[i]?.[currentUser.uid]) updates[`messages/${currentGroupCode}/${msgId}/pollVotes/${i}/${currentUser.uid}`]=null; });
   updates[`messages/${currentGroupCode}/${msgId}/pollVotes/${opt}/${currentUser.uid}`]=true;
-  try{ await update(ref(db),updates); hap(8); }
+  try{ await restReq("PATCH", "", updates); hap(8); }
   catch(e){ console.error(e); }
 }
 async function sendChat(){
@@ -2868,14 +2931,15 @@ async function sendChat(){
   if(!txt || !currentGroupCode) return;
   if(!fbReady){ toast("Connexion requise.","danger"); return; }
   clearTimeout(groupTypingTimeout);
-  remove(ref(db, `typing/${currentGroupCode}/${currentUser.uid}`)).catch(()=>{});
+  restReq("DELETE", `typing/${currentGroupCode}/${currentUser.uid}`).catch(()=>{});
   const tempId="tmp_"+now();
   chatMessages.push({id:tempId, uid:currentUser.uid, name:myName, mask:myMask, avatar:myAvatar, text:txt, type:"text", ts:now(), _pending:true});
   renderMessages(chatMessages);
   const c=$("chat-msgs"); c.scrollTop=c.scrollHeight;
   i.value="";
   try{
-    await push(ref(db, `messages/${currentGroupCode}`), {uid:currentUser.uid, name:myName, mask:myMask, avatar:myAvatar, text:txt, type:"text", ts:now()});
+    const key = "-M" + Date.now().toString(36) + Math.random().toString(36).slice(2,10);
+    await restReq("PUT", `messages/${currentGroupCode}/${key}`, {uid:currentUser.uid, name:myName, mask:myMask, avatar:myAvatar, text:txt, type:"text", ts:now()});
     bumpScore(SCORE.CHUCHOTIS); registerDailyActivity();
   }catch(e){
     console.error(e);
@@ -2890,9 +2954,7 @@ $("chat-input")?.addEventListener("keydown",e=>{ if(e.key==="Enter" && !e.shiftK
 function listenPresence(code){
   try{ unsubPresence?.(); }catch{}
   if(!fbReady || !currentUser) return;
-  const r=ref(db, `presence/${code}/${currentUser.uid}`);
-  set(r, {uid:currentUser.uid, name:myName, ts:now()}).catch(()=>{});
-  onDisconnect(r).remove().catch(()=>{});
+  restReq("PUT", `presence/${code}/${currentUser.uid}`, {uid:currentUser.uid, name:myName, ts:now()}).catch(()=>{});
   unsubPresence = onValue(ref(db, `presence/${code}`), s=>{
     const d=s.val()||{}; const n=Object.keys(d).length;
     const status=$("chat-status");
@@ -2904,7 +2966,7 @@ function listenGroupTyping(code){
   if(!fbReady) return;
   unsubTyping = onValue(ref(db, `typing/${code}`), snap=>{
     const d=snap.val()||{}; const now_=Date.now();
-    const typers=Object.entries(d).filter(([uid,ts])=>uid!==currentUser?.uid && typeof ts==="number" && now_-ts<3000);
+    const typers=Object.entries(d).filter(([uid,ts])=>uid!==currentUser?.uid && typeof ts==="number" && now_-ts<4000);
     updateTypingIndicator("chat", typers.length>0, typers.length);
   });
   const inp=$("chat-input");
@@ -2912,13 +2974,13 @@ function listenGroupTyping(code){
     inp._typingBound=true;
     inp.addEventListener("input",()=>{
       if(!currentGroupCode || !fbReady) return;
-      set(ref(db, `typing/${currentGroupCode}/${currentUser.uid}`), now()).catch(()=>{});
+      restReq("PUT", `typing/${currentGroupCode}/${currentUser.uid}`, now()).catch(()=>{});
       clearTimeout(groupTypingTimeout);
-      groupTypingTimeout=setTimeout(()=>{ remove(ref(db, `typing/${currentGroupCode}/${currentUser.uid}`)).catch(()=>{}); },2500);
+      groupTypingTimeout=setTimeout(()=>{ restReq("DELETE", `typing/${currentGroupCode}/${currentUser.uid}`).catch(()=>{}); },3000);
     });
     inp.addEventListener("blur",()=>{
       if(!currentGroupCode || !fbReady) return;
-      remove(ref(db, `typing/${currentGroupCode}/${currentUser.uid}`)).catch(()=>{});
+      restReq("DELETE", `typing/${currentGroupCode}/${currentUser.uid}`).catch(()=>{});
     });
   }
 }
@@ -2970,9 +3032,9 @@ async function leaveGroup(){
   if(!confirm("Quitter cette meute ?")) return;
   try{
     if(fbReady){
-      await remove(ref(db, `groups/${currentGroupCode}/members/${currentUser.uid}`));
-      await remove(ref(db, `presence/${currentGroupCode}/${currentUser.uid}`));
-      await remove(ref(db, `typing/${currentGroupCode}/${currentUser.uid}`));
+      await restReq("DELETE", `groups/${currentGroupCode}/members/${currentUser.uid}`);
+      await restReq("DELETE", `presence/${currentGroupCode}/${currentUser.uid}`).catch(()=>{});
+      await restReq("DELETE", `typing/${currentGroupCode}/${currentUser.uid}`).catch(()=>{});
     }
     await removeGroupFromUser(currentGroupCode);
     toast("Tu as quitté la meute.");
@@ -2985,11 +3047,11 @@ async function deleteGroup(){
   if(!confirm("Dissoudre cette meute ? Action irréversible.")) return;
   try{
     if(fbReady){
-      await remove(ref(db, `messages/${currentGroupCode}`));
-      await remove(ref(db, `presence/${currentGroupCode}`));
-      await remove(ref(db, `typing/${currentGroupCode}`));
-      await remove(ref(db, `groupCodes/${currentGroupCode}`));
-      await remove(ref(db, `groups/${currentGroupCode}`));
+      await restReq("DELETE", `messages/${currentGroupCode}`).catch(()=>{});
+      await restReq("DELETE", `presence/${currentGroupCode}`).catch(()=>{});
+      await restReq("DELETE", `typing/${currentGroupCode}`).catch(()=>{});
+      await restReq("DELETE", `groupCodes/${currentGroupCode}`).catch(()=>{});
+      await restReq("DELETE", `groups/${currentGroupCode}`).catch(()=>{});
     }
     await removeGroupFromUser(currentGroupCode);
     toast("Meute dissoute.");
@@ -3086,7 +3148,7 @@ async function openDm(peer){
 }
 async function markDmAsRead(peerUid){
   if(!currentUser || !fbReady) return;
-  try{ await update(ref(db, `inbox/${currentUser.uid}/${peerUid}`), {unread:false}); }catch{}
+  try{ await restReq("PATCH", `inbox/${currentUser.uid}/${peerUid}`, {unread:false}); }catch{}
 }
 function closeDm(){
   renderMsgDone=false;
@@ -3126,14 +3188,14 @@ function listenDm(peerUid){
     inp.addEventListener("input",()=>{
       if(!currentDmPeer || !fbReady) return;
       const pairId=dmPairId(currentUser.uid,currentDmPeer.uid);
-      set(ref(db, `dmTyping/${pairId}/${currentUser.uid}`), true).catch(()=>{});
+      restReq("PUT", `dmTyping/${pairId}/${currentUser.uid}`, true).catch(()=>{});
       clearTimeout(dmTypingTimeout);
-      dmTypingTimeout=setTimeout(()=>{ remove(ref(db, `dmTyping/${pairId}/${currentUser.uid}`)).catch(()=>{}); },2500);
+      dmTypingTimeout=setTimeout(()=>{ restReq("DELETE", `dmTyping/${pairId}/${currentUser.uid}`).catch(()=>{}); },3000);
     });
     inp.addEventListener("blur",()=>{
       if(!currentDmPeer || !fbReady) return;
       const pairId=dmPairId(currentUser.uid,currentDmPeer.uid);
-      remove(ref(db, `dmTyping/${pairId}/${currentUser.uid}`)).catch(()=>{});
+      restReq("DELETE", `dmTyping/${pairId}/${currentUser.uid}`).catch(()=>{});
     });
   }
 }
@@ -3188,7 +3250,7 @@ function openDmMsgCtx(el,mid){
     const b=ev.target.closest("[data-mc]"); if(!b) return;
     const a=b.dataset.mc; closeMsgCtx();
     if(a==="copy") navigator.clipboard?.writeText(m.text||"").then(()=>toast("Chuchotis copié")).catch(()=>toast("Copie impossible","danger"));
-    else if(a==="delete"){ if(!currentDmPeer) return; const pair=dmPairId(currentUser.uid,currentDmPeer.uid); remove(ref(db, `dms/${pair}/${mid}`)).then(()=>toast("Chuchotis supprimé")).catch(()=>{}); }
+    else if(a==="delete"){ if(!currentDmPeer) return; const pair=dmPairId(currentUser.uid,currentDmPeer.uid); restReq("DELETE", `dms/${pair}/${mid}`).then(()=>toast("Chuchotis supprimé")).catch(()=>{}); }
   });
 }
 async function sendDm(){
@@ -3198,18 +3260,19 @@ async function sendDm(){
   if(!fbReady){ toast("Connexion requise.","danger"); return; }
   const pair=dmPairId(currentUser.uid,currentDmPeer.uid);
   clearTimeout(dmTypingTimeout);
-  remove(ref(db, `dmTyping/${pair}/${currentUser.uid}`)).catch(()=>{});
+  restReq("DELETE", `dmTyping/${pair}/${currentUser.uid}`).catch(()=>{});
   const tempId="tmp_"+now();
   dmMessages.push({id:tempId, uid:currentUser.uid, text:txt, ts:now()});
   renderDmMessages();
   const c=$("dm-msgs"); c.scrollTop=c.scrollHeight;
   i.value="";
   try{
-    await push(ref(db, `dms/${pair}`), {uid:currentUser.uid, name:myName, mask:myMask, avatar:myAvatar, text:txt, ts:now()});
+    const key = "-M" + Date.now().toString(36) + Math.random().toString(36).slice(2,10);
+    await restReq("PUT", `dms/${pair}/${key}`, {uid:currentUser.uid, name:myName, mask:myMask, avatar:myAvatar, text:txt, ts:now()});
     const peerUid=currentDmPeer.uid;
     const lastMsgPreview = txt.length>50 ? txt.slice(0,50)+"…" : txt;
-    await update(ref(db, `inbox/${currentUser.uid}/${peerUid}`), {uid:peerUid, name:currentDmPeer.name||"Anonyme", mask:currentDmPeer.mask||"#----", avatar:currentDmPeer.avatar||null, lastMsg:lastMsgPreview, lastTs:now(), unread:false});
-    await update(ref(db, `inbox/${peerUid}/${currentUser.uid}`), {uid:currentUser.uid, name:myName, mask:myMask, avatar:myAvatar, lastMsg:lastMsgPreview, lastTs:now(), unread:true});
+    await restReq("PATCH", `inbox/${currentUser.uid}/${peerUid}`, {uid:peerUid, name:currentDmPeer.name||"Anonyme", mask:currentDmPeer.mask||"#----", avatar:currentDmPeer.avatar||null, lastMsg:lastMsgPreview, lastTs:now(), unread:false});
+    await restReq("PATCH", `inbox/${peerUid}/${currentUser.uid}`, {uid:currentUser.uid, name:myName, mask:myMask, avatar:myAvatar, lastMsg:lastMsgPreview, lastTs:now(), unread:true});
     bumpScore(SCORE.MURMURE_PRIVE); registerDailyActivity();
   }catch(e){
     console.error("DM send error:", e);
@@ -3296,7 +3359,8 @@ $("poll-ok")?.addEventListener("click", async ()=>{
   if(opts.length<2){ toast("Minimum 2 options.","danger"); return; }
   if(!fbReady || !currentGroupCode){ toast("Erreur.","danger"); return; }
   try{
-    await push(ref(db, `messages/${currentGroupCode}`), {uid:currentUser.uid, name:myName, mask:myMask, avatar:myAvatar, type:"poll", pollQuestion:q, pollOptions:opts, pollVotes:{}, ts:now()});
+    const key = "-M" + Date.now().toString(36) + Math.random().toString(36).slice(2,10);
+    await restReq("PUT", `messages/${currentGroupCode}/${key}`, {uid:currentUser.uid, name:myName, mask:myMask, avatar:myAvatar, type:"poll", pollQuestion:q, pollOptions:opts, pollVotes:{}, ts:now()});
     $("ov-chatpoll").classList.remove("on");
     toast("Sondage publié");
   }catch{ toast("Erreur.","danger"); }
@@ -3310,7 +3374,7 @@ function startFeedListener(){
     feedItems = Object.entries(d).map(([id,v])=>({id,...v})).sort((a,b)=>b.createdAt-a.createdAt);
     renderFeed();
     if($("s-profile").classList.contains("active")) updateProfile();
-  }, err=>{ console.error(err); toast("Lecture des traces impossible","danger"); });
+  }, err=>{ console.error(err); });
 }
 function todayKey(){ return new Date().toISOString().slice(0,10); }
 async function trackView(postId){
@@ -3321,11 +3385,12 @@ async function trackView(postId){
   if(viewedPosts.has(localKey)) return;
   viewedPosts.add(localKey);
   try{
-    const logRef = ref(db, `posts/${postId}/viewLog/${dayKey_}`);
-    const snap = await get(logRef);
-    if(snap.exists()) return;
-    await set(logRef, true);
-    await set(ref(db, `posts/${postId}/views`), increment(1));
+    const logPath = `posts/${postId}/viewLog/${dayKey_}`;
+    const exists = await restReq("GET", logPath);
+    if(exists) return;
+    await restReq("PUT", logPath, true);
+    const cur = await restReq("GET", `posts/${postId}/views`) || 0;
+    await restReq("PUT", `posts/${postId}/views`, (Number(cur)||0) + 1);
     activeViewers[postId]=Date.now();
   }catch(e){ console.warn("[View]", e); }
 }
@@ -3528,9 +3593,9 @@ async function toggleLike(id){
   };
   repaint(); hap(6);
   try{
-    const r=ref(db, `posts/${id}/likes/${currentUser.uid}`);
-    if(wasLiked) await remove(r);
-    else{ await set(r,true); bumpScore(SCORE.HUREMENT); }
+    const path = `posts/${id}/likes/${currentUser.uid}`;
+    if(wasLiked) await restReq("DELETE", path);
+    else{ await restReq("PUT", path, true); bumpScore(SCORE.HUREMENT); }
   }catch(e){
     console.error(e);
     if(wasLiked) p.likes[currentUser.uid]=true; else delete p.likes[currentUser.uid];
@@ -3552,9 +3617,9 @@ async function toggleRepost(id){
   });
   hap(6);
   try{
-    const r=ref(db, `posts/${id}/reposts/${currentUser.uid}`);
-    if(reposted) await remove(r);
-    else await set(r, {at:now()});
+    const path = `posts/${id}/reposts/${currentUser.uid}`;
+    if(reposted) await restReq("DELETE", path);
+    else await restReq("PUT", path, {at:now()});
   }catch(e){ console.error(e); }
 }
 async function votePollFeed(id,opt){
@@ -3573,7 +3638,7 @@ async function votePollFeed(id,opt){
       if(i!==String(opt) && before[i]?.[currentUser.uid]) updates[`posts/${id}/pollVotes/${i}/${currentUser.uid}`]=null;
     });
     updates[`posts/${id}/pollVotes/${opt}/${currentUser.uid}`]=true;
-    await update(ref(db), updates);
+    await restReq("PATCH", "", updates);
   }catch(e){
     console.error(e);
     post.pollVotes=before;
@@ -3634,7 +3699,7 @@ function openPostMenu(btn,id){
 document.addEventListener("click",e=>{ if(openPostMenuEl && !openPostMenuEl.contains(e.target)) closePostMenu(); },true);
 async function deletePost(id){
   if(!confirm("Supprimer cette trace ?")) return;
-  try{ if(fbReady) await remove(ref(db, `posts/${id}`)); feedItems=feedItems.filter(x=>x.id!==id); const l=$("feed-list"); if(l) l.dataset.sig=""; renderFeed(); updateProfile(); toast("Trace supprimée"); }
+  try{ if(fbReady) await restReq("DELETE", `posts/${id}`); feedItems=feedItems.filter(x=>x.id!==id); const l=$("feed-list"); if(l) l.dataset.sig=""; renderFeed(); updateProfile(); toast("Trace supprimée"); }
   catch{ toast("Erreur.","danger"); }
 }
 function openComments(postId){
@@ -3665,7 +3730,7 @@ async function submitComment(){
   const cid=genId();
   const comment={uid:currentUser.uid, name:myName, mask:myMask, avatar:myAvatar, text:txt, ts:now()};
   input.value="";
-  try{ await set(ref(db, `posts/${p.id}/comments/${cid}`), comment); hap(6); bumpScore(SCORE.GRONDEMENT); registerDailyActivity(); }
+  try{ await restReq("PUT", `posts/${p.id}/comments/${cid}`, comment); hap(6); bumpScore(SCORE.GRONDEMENT); registerDailyActivity(); }
   catch{ toast("Erreur.","danger"); input.value=txt; }
 }
 $("comment-send")?.addEventListener("click",submitComment);
@@ -3747,8 +3812,8 @@ async function publishPost(){
   renderFeed(); closeEditor(); show("s-feed"); updateProfile();
   toast("Trace marquée");
   try{
-    const refPush=push(ref(db, "posts"));
-    await withTimeout(set(refPush, payload), 8000, "publish");
+    const key = "-M" + Date.now().toString(36) + Math.random().toString(36).slice(2,10);
+    await withTimeout(restReq("PUT", `posts/${key}`, payload), 8000, "publish");
     bumpScore(SCORE.TRACE); registerDailyActivity();
   }catch(e){
     dbg("ERR", "Publish error:", e);
@@ -3900,7 +3965,7 @@ async function propagateIdentityChange({name=false, avatar=false, mask=false}={}
   for(let i=0;i<keys.length;i+=CHUNK){
     const slice={};
     keys.slice(i,i+CHUNK).forEach(k=>{ slice[k]=updates[k]; });
-    try{ await update(ref(db), slice); applied+=Object.keys(slice).length; }
+    try{ await restReq("PATCH", "", slice); applied+=Object.keys(slice).length; }
     catch(e){ console.warn("[Propagate] chunk failed", e); }
   }
   return applied;
@@ -3940,40 +4005,49 @@ document.addEventListener("keydown",e=>{
   }
 });
 
+/* Share image (placeholder — la logique reste) */
+async function openShareImageSheet(postId){
+  const p = feedItems.find(x=>x.id===postId);
+  if(!p){ toast("Trace introuvable.","danger"); return; }
+  if(navigator.share){
+    try{ await navigator.share({title:"AnonyBoX", text:`${p.author||"Anonyme"}: ${p.caption||p.pollQuestion||""}`}); }
+    catch{}
+  }else{
+    navigator.clipboard?.writeText(`${p.author||"Anonyme"}: ${p.caption||""}`).then(()=>toast("Copié")).catch(()=>{});
+  }
+}
+function closeShareImageSheet(){ $("sheet-share-image")?.classList.remove("on"); }
+
 window.abx={
   openChat, show, joinGroup, openEditor, closeEditor, toast, publishPost,
   openShareSheet, buildJoinUrl, openDm, openUserProfile, fmtViews, fmtScore,
   exitPostFocus, propagateIdentityChange, bumpScore, SCORE,
   registerDailyActivity, getEffectiveStreak,
   openStoryDetail, openReader, openRecitEditor, closeRecitEditor, switchRecitsView,
-  openShareImageSheet, generatePostImage,
   stories:()=>stories, storyIds:()=>storyIds,
   debug:()=>({
     fbReady, uid:currentUser?.uid, userReady, score:myScore, streak:myStreak,
     streakEffective:getEffectiveStreak(), postsCount:feedItems.length,
     storiesCount:storyIds.length,
-    drafts:storyIds.map(id=>stories[id]).filter(s=>s&&s.uid===currentUser?.uid&&s.isDraft).length,
-    published:storyIds.map(id=>stories[id]).filter(s=>s&&s.uid===currentUser?.uid&&!s.isDraft).length,
     groups:myGroups, conversations:Object.keys(dmConversations||{}).length,
-    focused:!!focusedPostEl, name:myName, mask:myMask, currentRecitsView
+    name:myName, mask:myMask, mode:"REST"
   }),
   testFirebase: async ()=>{
-    dbg("—", "Test Firebase start");
-    dbg("—", "fbReady:", fbReady, "uid:", currentUser?.uid);
+    dbg("—", "Test Firebase REST start");
     try{
       const t0=Date.now();
-      await set(ref(db, `test/${Date.now()}`), {ok:true, at:Date.now()});
-      dbg("OK", "Écriture OK en", Date.now()-t0, "ms");
+      await restReq("PUT", `test/${Date.now()}`, {ok:true, at:Date.now()});
+      dbg("OK", "Écriture REST OK en", Date.now()-t0, "ms");
     }catch(e){
       dbg("ERR", "Écriture FAIL:", e.code, e.message);
     }
   }
 };
-console.log("[AnonyBoX] v52 — debug panel + timeouts + ordre écriture corrigé");
+console.log("[AnonyBoX] v53 — mode REST + polling activé");
 </script>
 
 <script>
-/* ═══ ABX SPINNER — Gravité gyroscopique ═══ */
+/* ═══ ABX SPINNER ═══ */
 (() => {
 'use strict';
 const el=document.getElementById('abx-spinner');if(!el)return;
@@ -3983,7 +4057,7 @@ const DPR=Math.min(window.devicePixelRatio||1,3);const SIZE_PX=Math.round(SIZE_C
 canvas.width=SIZE_PX;canvas.height=SIZE_PX;
 let gravityTarget=0,gravityCalibration=null,gravityActive=false,gyroPermissionAsked=false;
 function onDeviceOrientation(e){if(e.gamma===null||e.gamma===undefined)return;const gamma=e.gamma;if(gravityCalibration===null)gravityCalibration=gamma;gravityTarget=(gamma-gravityCalibration)*Math.PI/180;gravityActive=true;el.classList.add('is-gravity');}
-async function enableGyro(){if(gyroPermissionAsked)return;gyroPermissionAsked=true;if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){try{const perm=await DeviceOrientationEvent.requestPermission();if(perm==='granted'){window.addEventListener('deviceorientation',onDeviceOrientation,{passive:true});}}catch(err){console.warn('[Gyro]',err);}}else if(typeof DeviceOrientationEvent!=='undefined'){window.addEventListener('deviceorientation',onDeviceOrientation,{passive:true});}}
+async function enableGyro(){if(gyroPermissionAsked)return;gyroPermissionAsked=true;if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){try{const perm=await DeviceOrientationEvent.requestPermission();if(perm==='granted'){window.addEventListener('deviceorientation',onDeviceOrientation,{passive:true});}}catch(err){}}else if(typeof DeviceOrientationEvent!=='undefined'){window.addEventListener('deviceorientation',onDeviceOrientation,{passive:true});}}
 el.addEventListener('pointerdown',enableGyro,{once:true});
 function createTriPath(c,R,r){const angles=[0,(2*Math.PI)/3,(4*Math.PI)/3];const innerR=R*0.42;c.beginPath();for(let i=0;i<3;i++){const a=angles[i],nextA=angles[(i+1)%3];const midA=(a+nextA)/2+(i===2?Math.PI:0);const px=Math.cos(a)*R,py=Math.sin(a)*R;const midX=Math.cos(midA)*innerR,midY=Math.sin(midA)*innerR;const nextPx=Math.cos(nextA)*R,nextPy=Math.sin(nextA)*R;c.arc(px,py,r,a-Math.PI/2,a+Math.PI/2,false);c.quadraticCurveTo(midX,midY,Math.cos(nextA-Math.PI/2)*r+nextPx,Math.sin(nextA-Math.PI/2)*r+nextPy);}c.closePath();}
 function createGoogleConic(c,startAngle){const g=c.createConicGradient(startAngle,0,0);g.addColorStop(0.000,'#4285F4');g.addColorStop(0.249,'#4285F4');g.addColorStop(0.250,'#EA4335');g.addColorStop(0.499,'#EA4335');g.addColorStop(0.500,'#FBBC05');g.addColorStop(0.749,'#FBBC05');g.addColorStop(0.750,'#34A853');g.addColorStop(1.000,'#34A853');return g;}
@@ -4056,162 +4130,94 @@ requestAnimationFrame(t=>{lastT=t;requestAnimationFrame(loop);});
   });
 
   function attachDrag(btn){
-    let pressTimer = null;
-    let active = false;
-    let armed = false;
-    let dragging = false;
-    let suppressClick = false;
-    let startX = 0, startY = 0;
-    let anchorX = 0, anchorY = 0;
-    let dragBaseX = 0, dragBaseY = 0;
-    let pendingX = 0, pendingY = 0;
-    let rafId = null;
-    let pointerId = null;
-
+    let pressTimer = null, active = false, armed = false, dragging = false, suppressClick = false;
+    let startX = 0, startY = 0, anchorX = 0, anchorY = 0;
+    let dragBaseX = 0, dragBaseY = 0, pendingX = 0, pendingY = 0, rafId = null, pointerId = null;
     const clearPress = () => { if (pressTimer){ clearTimeout(pressTimer); pressTimer = null; } };
 
     btn.addEventListener('pointerdown', (e) => {
       if (e.button !== undefined && e.button !== 0) return;
       if (active) return;
-      active = true;
-      pointerId = e.pointerId;
+      active = true; pointerId = e.pointerId;
       startX = e.clientX; startY = e.clientY;
       anchorX = startX; anchorY = startY;
-      armed = false;
-      dragging = false;
-      suppressClick = false;
+      armed = false; dragging = false; suppressClick = false;
       clearPress();
       pressTimer = setTimeout(() => {
-        pressTimer = null;
-        if (!active) return;
+        pressTimer = null; if (!active) return;
         armed = true;
         if (!btn.classList.contains('is-floating')){
           const rect = btn.getBoundingClientRect();
           activateFloating(btn, rect.left, rect.top, true);
           dragBaseX = rect.left; dragBaseY = rect.top;
-        } else {
-          dragBaseX = btn._fx ?? 0; dragBaseY = btn._fy ?? 0;
-        }
-        btn.classList.add('armed');
-        hap(15);
+        } else { dragBaseX = btn._fx ?? 0; dragBaseY = btn._fy ?? 0; }
+        btn.classList.add('armed'); hap(15);
       }, LONG_PRESS_MS);
     });
 
     btn.addEventListener('pointermove', (e) => {
       if (!active || e.pointerId !== pointerId) return;
-
       if (!dragging){
         const d = Math.hypot(e.clientX - startX, e.clientY - startY);
         if (!armed){
-          if (d > PRE_MOVE_CANCEL){
-            clearPress();
-            active = false;
-            pointerId = null;
-            return;
-          }
-        } else {
-          if (d > DRAG_START) beginDrag(e);
-        }
+          if (d > PRE_MOVE_CANCEL){ clearPress(); active = false; pointerId = null; return; }
+        } else { if (d > DRAG_START) beginDrag(e); }
         return;
       }
-
       e.preventDefault();
-      const dx = e.clientX - anchorX;
-      const dy = e.clientY - anchorY;
-      pendingX = clampX(dragBaseX + dx);
-      pendingY = clampY(dragBaseY + dy);
+      const dx = e.clientX - anchorX, dy = e.clientY - anchorY;
+      pendingX = clampX(dragBaseX + dx); pendingY = clampY(dragBaseY + dy);
       if (rafId == null){
-        rafId = requestAnimationFrame(() => {
-          rafId = null;
-          setFloatPos(btn, pendingX, pendingY, DRAG_SCALE);
-        });
+        rafId = requestAnimationFrame(() => { rafId = null; setFloatPos(btn, pendingX, pendingY, DRAG_SCALE); });
       }
     }, { passive: false });
 
     function beginDrag(e){
-      dragging = true;
-      btn.classList.remove('armed');
+      dragging = true; btn.classList.remove('armed');
       try { btn.setPointerCapture(e.pointerId); } catch {}
-      anchorX = e.clientX;
-      anchorY = e.clientY;
-      pendingX = dragBaseX;
-      pendingY = dragBaseY;
-      btn.classList.add('dragging');
-      hap(20);
+      anchorX = e.clientX; anchorY = e.clientY;
+      pendingX = dragBaseX; pendingY = dragBaseY;
+      btn.classList.add('dragging'); hap(20);
     }
 
     const finish = (e) => {
       clearPress();
       if (rafId != null){ cancelAnimationFrame(rafId); rafId = null; }
-
-      const wasDragging = dragging;
-      const wasArmed = armed;
-      dragging = false;
-      armed = false;
-      active = false;
-      pointerId = null;
+      const wasDragging = dragging, wasArmed = armed;
+      dragging = false; armed = false; active = false; pointerId = null;
       btn.classList.remove('armed');
-
       if (wasDragging){
         suppressClick = true;
         btn.classList.remove('dragging');
         try { btn.releasePointerCapture(e.pointerId); } catch {}
-
-        const finalX = pendingX;
-        const finalY = pendingY;
+        const finalX = pendingX, finalY = pendingY;
         const centerY = finalY + BTN_SIZE / 2;
-
         if (centerY > window.innerHeight - NAV_SNAP_ZONE){
-          deactivateFloating(btn);
-          delete positions[btn.id];
-          savePositions();
+          deactivateFloating(btn); delete positions[btn.id]; savePositions();
         } else {
-          positions[btn.id] = { x: finalX, y: finalY };
-          savePositions();
-          setFloatPos(btn, finalX, finalY, 1);
+          positions[btn.id] = { x: finalX, y: finalY }; savePositions(); setFloatPos(btn, finalX, finalY, 1);
         }
         hap(12);
         setTimeout(() => { suppressClick = false; }, 400);
-      } else if (wasArmed){
-        setTimeout(() => { suppressClick = false; }, 200);
-      }
+      } else if (wasArmed){ setTimeout(() => { suppressClick = false; }, 200); }
     };
 
-    btn.addEventListener('pointerup', (e) => {
-      if (e.pointerId !== pointerId) return;
-      finish(e);
-    });
-    btn.addEventListener('pointercancel', (e) => {
-      if (e.pointerId !== pointerId) return;
-      finish(e);
-    });
-
+    btn.addEventListener('pointerup', (e) => { if (e.pointerId !== pointerId) return; finish(e); });
+    btn.addEventListener('pointercancel', (e) => { if (e.pointerId !== pointerId) return; finish(e); });
     btn.addEventListener('contextmenu', e => e.preventDefault());
-
-    btn.addEventListener('click', (e) => {
-      if (suppressClick || dragging){
-        e.stopImmediatePropagation();
-        e.preventDefault();
-      }
-    }, true);
+    btn.addEventListener('click', (e) => { if (suppressClick || dragging){ e.stopImmediatePropagation(); e.preventDefault(); } }, true);
   }
 
   function activateFloating(btn, x, y, animate){
     if (btn.parentElement !== document.body) document.body.appendChild(btn);
     btn.classList.add('is-floating');
     const cx = clampX(x), cy = clampY(y);
-    if (animate){
-      btn.style.transition = 'none';
-      setFloatPos(btn, cx, cy, 1);
-      requestAnimationFrame(() => { btn.style.transition = ''; });
-    } else setFloatPos(btn, cx, cy, 1);
+    if (animate){ btn.style.transition = 'none'; setFloatPos(btn, cx, cy, 1); requestAnimationFrame(() => { btn.style.transition = ''; }); }
+    else setFloatPos(btn, cx, cy, 1);
   }
-
   function deactivateFloating(btn){
-    btn.classList.remove('is-floating');
-    btn.classList.remove('armed');
-    btn.style.transform = '';
-    btn.style.left = ''; btn.style.top = '';
+    btn.classList.remove('is-floating'); btn.classList.remove('armed');
+    btn.style.transform = ''; btn.style.left = ''; btn.style.top = '';
     btn._fx = null; btn._fy = null;
     const myIndex = ORDER.indexOf(btn.id);
     let refNode = null;
@@ -4219,8 +4225,7 @@ requestAnimationFrame(t=>{lastT=t;requestAnimationFrame(loop);});
       const next = document.getElementById(ORDER[i]);
       if (next && next.parentElement === nav){ refNode = next; break; }
     }
-    if (refNode) nav.insertBefore(btn, refNode);
-    else nav.appendChild(btn);
+    if (refNode) nav.insertBefore(btn, refNode); else nav.appendChild(btn);
   }
 
   let resizeTO = null;
@@ -4229,10 +4234,8 @@ requestAnimationFrame(t=>{lastT=t;requestAnimationFrame(loop);});
     resizeTO = setTimeout(() => {
       buttons.forEach(btn => {
         if (!btn.classList.contains('is-floating')) return;
-        const nx = clampX(btn._fx ?? 0);
-        const ny = clampY(btn._fy ?? 0);
-        setFloatPos(btn, nx, ny, 1);
-        positions[btn.id] = { x: nx, y: ny };
+        const nx = clampX(btn._fx ?? 0), ny = clampY(btn._fy ?? 0);
+        setFloatPos(btn, nx, ny, 1); positions[btn.id] = { x: nx, y: ny };
       });
       savePositions();
     }, 180);
@@ -4240,16 +4243,13 @@ requestAnimationFrame(t=>{lastT=t;requestAnimationFrame(loop);});
 
   window.abxNav = {
     reset(){
-      buttons.forEach(btn => {
-        if (btn.classList.contains('is-floating')) deactivateFloating(btn);
-      });
+      buttons.forEach(btn => { if (btn.classList.contains('is-floating')) deactivateFloating(btn); });
       try { localStorage.removeItem(STORAGE_KEY); } catch {}
       positions = {};
-      console.log('[abxNav] Tous les onglets sont revenus au nav.');
+      console.log('[abxNav] reset');
     },
     positions: () => ({ ...positions })
   };
-  console.log('[abxNav] v4 — long press 350ms · tolérance 15px · drag dès 4px');
 })();
 </script>
 </body>
