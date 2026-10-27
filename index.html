@@ -2,11 +2,11 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0B141A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://api.qrserver.com https://firebasestorage.googleapis.com; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.googleapis.com; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://api.qrserver.com https://firebasestorage.googleapis.com; connect-src 'self' https://*.firebaseio.com https://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.googleapis.com; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <title>AnonyBoX</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,9 +64,9 @@ input::placeholder,textarea::placeholder{color:var(--fg-4)}
 @keyframes focusPop{0%{transform:scale(1)}45%{transform:scale(1.018)}100%{transform:scale(1)}}
 @keyframes scoreBump{0%{transform:scale(1)}35%{transform:scale(1.35);color:#fff}100%{transform:scale(1)}}
 @keyframes scoreGlow{0%,100%{box-shadow:0 0 0 0 rgba(74,222,167,.35)}50%{box-shadow:0 0 0 12px rgba(74,222,167,0)}}
-@keyframes abxGlow{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.9;transform:scale(1.22)}}
 @keyframes navHintPulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,167,.35)}50%{box-shadow:0 0 0 6px rgba(74,222,167,0)}}
 @keyframes navArmedPulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,167,.55)}50%{box-shadow:0 0 0 10px rgba(74,222,167,0)}}
+@keyframes spinIdle{to{transform:rotate(360deg)}}
 
 .app{position:relative;z-index:10;width:100%;max-width:var(--app-max);min-height:100dvh;margin:0 auto;background:var(--bg-2)}
 @media(min-width:481px){body{background:#090e12}.app{box-shadow:0 0 40px rgba(0,0,0,.6)}}
@@ -688,56 +688,32 @@ body.on-recits .fab--story{display:grid}
 .mono{font-family:var(--mono)}
 .spinner{width:22px;height:22px;border-radius:50%;border:2px solid var(--border-strong);border-top-color:var(--accent-bright);animation:spin .7s linear infinite}
 
-#abx-spinner{
-  position:fixed;top:0;left:0;width:92px;height:92px;z-index:855;
-  touch-action:none;cursor:grab;
-  user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
-  will-change:transform;
-  filter:drop-shadow(0 6px 14px rgba(0,0,0,.55));
-  transition:filter .3s ease,opacity .3s ease;
+#abx-mascot{
+  position:fixed;top:0;left:0;width:70px;height:70px;z-index:855;display:none;
+  align-items:center;justify-content:center;border-radius:50%;
+  background:rgba(15,23,30,0.85);border:1px solid rgba(74,222,167,0.3);
+  box-shadow:0 4px 16px rgba(0,0,0,0.5),0 0 12px rgba(74,222,167,0.2);
+  backdrop-filter:blur(4px);touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;
+  transition:box-shadow .2s,border-color .2s,background .2s;will-change:transform;
 }
-#abx-spinner::before{
-  content:"";position:absolute;inset:-12px;border-radius:50%;
-  background:radial-gradient(circle,rgba(74,222,167,.22) 0%,rgba(74,222,167,.06) 45%,transparent 72%);
-  opacity:.3;transition:opacity .35s ease,transform .35s ease;pointer-events:none;z-index:-1;
-}
-#abx-spinner.is-spinning::before{opacity:1;animation:abxGlow 1.8s ease-in-out infinite}
-#abx-spinner.is-moving{cursor:grabbing;filter:drop-shadow(0 12px 28px rgba(74,222,167,.6));}
-#abx-spinner.is-moving::before{opacity:1;background:radial-gradient(circle,rgba(74,222,167,.5) 0%,rgba(74,222,167,.12) 50%,transparent 75%);transform:scale(1.18);}
-#abx-spinner.is-gravity::before{opacity:1;background:radial-gradient(circle,rgba(74,222,167,.32) 0%,rgba(74,222,167,.08) 50%,transparent 75%);}
-#abx-spinner canvas{display:block;width:100%;height:100%;transform-origin:50% 50%;will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden;pointer-events:none;border-radius:50%;}
-@media(max-width:360px){ #abx-spinner{width:78px;height:78px;} }
-body.chatting #abx-spinner{opacity:.4}
-body.chatting #abx-spinner:hover,
-body.chatting #abx-spinner.is-spinning,
-body.chatting #abx-spinner.is-moving{opacity:1;}
+#abx-mascot.on{display:flex}
+#abx-mascot:active{cursor:grabbing}
+#abx-mascot .mascot-inner{font-size:36px;line-height:1;pointer-events:none;will-change:transform;}
+#abx-mascot .mascot-inner.spinning{animation:spinIdle 2s linear infinite;}
+#abx-mascot::after{content:"";position:absolute;inset:-4px;border-radius:50%;pointer-events:none;border:1px dashed rgba(74,222,167,0.3);opacity:0;transition:opacity .2s,transform .2s;}
+#abx-mascot.armed::after{opacity:1;animation:spinIdle 3s linear infinite reverse;}
 
-#abx-debug{
-  position:fixed;top:52px;right:8px;z-index:99999;
-  max-width:340px;max-height:60vh;overflow:auto;
-  padding:10px 12px;border-radius:10px;
-  background:rgba(10,15,20,.97);border:1px solid #4ADEA7;
-  font-family:var(--mono);font-size:10.5px;line-height:1.45;color:#fff;
-  box-shadow:0 8px 32px rgba(0,0,0,.7);
-  display:none;
-}
+#abx-debug{position:fixed;top:52px;right:8px;z-index:99999;max-width:340px;max-height:60vh;overflow:auto;padding:10px 12px;border-radius:10px;background:rgba(10,15,20,.97);border:1px solid #4ADEA7;font-family:var(--mono);font-size:10.5px;line-height:1.45;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,.7);display:none;}
 #abx-debug.on{display:block}
 #abx-debug b{color:#4ADEA7}
 #abx-debug .err{color:#EF5A6D;font-weight:700}
 #abx-debug .ok{color:#4ADEA7}
 #abx-debug .warn{color:#F5C542}
-#abx-debug-toggle{
-  position:fixed;top:8px;left:56px;z-index:99998;
-  width:36px;height:36px;border-radius:50%;
-  background:#4ADEA7;color:#0B141A;border:0;
-  font-size:16px;font-weight:700;cursor:pointer;
-  display:none;
-}
+#abx-debug-toggle{position:fixed;top:8px;left:56px;z-index:99998;width:36px;height:36px;border-radius:50%;background:#4ADEA7;color:#0B141A;border:0;font-size:16px;font-weight:700;cursor:pointer;display:none;}
 #abx-debug-toggle.on{display:grid;place-items:center}
 
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important}
-  #abx-spinner::before{animation:none!important;}
 }
 </style>
 </head>
@@ -801,6 +777,7 @@ body.chatting #abx-spinner.is-moving{opacity:1;}
 <symbol id="logo-telegram" viewBox="0 0 24 24"><path fill="#FFFFFF" d="M22.05 3.05 1.575 10.94c-1.395.55-1.38 1.325-.255 1.665l5.25 1.65 12.15-7.665c.57-.36 1.095-.165.665.225l-9.84 8.88-.375 5.4c.54 0 .78-.24 1.08-.525l2.585-2.52 5.385 3.99c.99.555 1.71.27 1.965-.915l3.555-16.74c.36-1.44-.545-2.085-1.665-1.5z"/></symbol>
 <symbol id="logo-x" viewBox="0 0 24 24"><path fill="#000000" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></symbol>
 <symbol id="logo-chatgpt" viewBox="0 0 24 24"><path fill="#10A37F" d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729z"/></symbol>
+<symbol id="i-config" viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" stroke="currentColor" stroke-width="1.8" fill="none"/></symbol>
 </defs></svg>
 
 <main class="app">
@@ -819,7 +796,7 @@ body.chatting #abx-spinner.is-moving{opacity:1;}
     <div class="home__actions">
       <button class="home-btn primary" id="btn-create-group" type="button">
         <span class="home-btn__icon"><svg class="ic" viewBox="0 0 24 24" style="width:22px;height:22px"><use href="#i-plus"/></svg></span>
-        <span class="home-btn__text"><strong>Former une meute</strong><small>Salon chiffré, accès par code</small></span>
+        <span class="home-btn__text"><strong>Former une meute</strong><small>Salon privé, accès par code</small></span>
         <span class="home-btn__chev"><svg class="ic" viewBox="0 0 24 24"><use href="#i-chevron"/></svg></span>
       </button>
       <button class="home-btn secondary" id="btn-join-group" type="button">
@@ -836,7 +813,7 @@ body.chatting #abx-spinner.is-moving{opacity:1;}
     <div class="home__session">
       <svg class="ic" viewBox="0 0 24 24"><use href="#i-lock"/></svg>
       <div class="home__session__text">
-        <strong>Tanière anonyme chiffrée</strong>
+        <strong>Tanière anonyme (session locale)</strong>
         <small id="session-info">Anonyme · Réinitialisée à la fermeture</small>
       </div>
       <span class="home__session__mask" id="session-mask">#----</span>
@@ -1017,7 +994,7 @@ body.chatting #abx-spinner.is-moving{opacity:1;}
         <small><span class="chat__dot"></span><span id="chat-status">Meute privée</span></small>
       </div>
     </div>
-    <span class="chat__chip" id="chat-chip"><svg class="ic" viewBox="0 0 24 24" style="font-size:10px"><use href="#i-lock"/></svg>Chiffré</span>
+    <span class="chat__chip" id="chat-chip"><svg class="ic" viewBox="0 0 24 24" style="font-size:10px"><use href="#i-lock"/></svg>Privé</span>
     <button class="hdr__btn" id="chat-menu-btn" type="button"><svg class="ic" viewBox="0 0 24 24"><use href="#i-more"/></svg></button>
   </header>
   <div id="chat-menu" class="chat__menu" style="display:none">
@@ -1118,6 +1095,7 @@ body.chatting #abx-spinner.is-moving{opacity:1;}
     <button class="drawer__item" id="d-posts" type="button"><span class="drawer__icon"><svg class="ic" viewBox="0 0 24 24"><use href="#i-globe"/></svg></span><span class="drawer__text"><strong>Mes traces</strong><small>Voir mes publications</small></span><span class="drawer__chev">→</span></button>
     <button class="drawer__item" id="d-recits" type="button"><span class="drawer__icon"><svg class="ic" viewBox="0 0 24 24"><use href="#i-book-open"/></svg></span><span class="drawer__text"><strong>Mes récits</strong><small>Mes histoires écrites</small></span><span class="drawer__chev">→</span></button>
     <button class="drawer__item" id="d-verify" type="button"><span class="drawer__icon"><svg class="ic" viewBox="0 0 24 24"><use href="#i-badge"/></svg></span><span class="drawer__text"><strong>Vérification</strong><small>Badge officiel</small></span><span class="drawer__chev">→</span></button>
+    <button class="drawer__item" id="d-spinner" type="button"><span class="drawer__icon"><svg class="ic" viewBox="0 0 24 24"><use href="#i-config"/></svg></span><span class="drawer__text"><strong>Mascotte</strong><small>Configurer l'animal</small></span><span class="drawer__chev">→</span></button>
     <button class="drawer__item" id="d-backend" type="button"><span class="drawer__icon"><svg class="ic" viewBox="0 0 24 24"><use href="#i-database"/></svg></span><span class="drawer__text"><strong>Backend</strong><small>Sécurité & données</small></span><span class="drawer__chev">→</span></button>
     <button class="drawer__item" id="d-premium" type="button"><span class="drawer__icon"><svg class="ic" viewBox="0 0 24 24"><use href="#i-crown"/></svg></span><span class="drawer__text"><strong id="d-premium-label">Premium</strong><small id="d-premium-sub">Fonctionnalités avancées</small></span><span class="drawer__chev">→</span></button>
     <button class="drawer__item" id="d-newid" type="button"><span class="drawer__icon"><svg class="ic" viewBox="0 0 24 24"><use href="#i-refresh"/></svg></span><span class="drawer__text"><strong>Changer de pelage</strong><small>Nouvel identifiant #</small></span><span class="drawer__chev">→</span></button>
@@ -1331,6 +1309,37 @@ body.chatting #abx-spinner.is-moving{opacity:1;}
   </div>
 </div>
 
+<!-- Sheet Mascotte : les boutons n'ont PAS de border inline → le JS gère border+bg -->
+<div class="sheet" id="sheet-spinner">
+  <div class="sheet__grip"></div>
+  <div class="sheet__head" style="padding-bottom:14px;flex-direction:row;justify-content:space-between;align-items:center">
+    <h2 style="font-size:1.0625rem">Mascotte</h2>
+    <button class="drawer__close" id="spinner-close" type="button"><svg class="ic" viewBox="0 0 24 24" style="width:16px;height:16px"><use href="#i-close"/></svg></button>
+  </div>
+  <div class="sheet__body" style="padding-top:16px">
+    <label class="field__toggle">
+      <span class="field__toggle__text"><strong>Activer la mascotte</strong><small>Flottante sur l'écran</small></span>
+      <span class="switch"><input type="checkbox" id="spinner-enabled"><i></i></span>
+    </label>
+    <div class="field">
+      <label>Choix de la mascotte</label>
+      <div id="spinner-choices" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px">
+        <button data-mascot="🕷️" class="spinner-choice" type="button" style="padding:14px;font-size:28px;border-radius:var(--r-md);">🕷️</button>
+        <button data-mascot="🐻" class="spinner-choice" type="button" style="padding:14px;font-size:28px;border-radius:var(--r-md);">🐻</button>
+        <button data-mascot="🌀" class="spinner-choice" type="button" style="padding:14px;font-size:28px;border-radius:var(--r-md);">🌀</button>
+        <button data-mascot="⭐" class="spinner-choice" type="button" style="padding:14px;font-size:28px;border-radius:var(--r-md);">⭐</button>
+        <button data-mascot="👻" class="spinner-choice" type="button" style="padding:14px;font-size:28px;border-radius:var(--r-md);">👻</button>
+        <button data-mascot="🧸" class="spinner-choice" type="button" style="padding:14px;font-size:28px;border-radius:var(--r-md);">🧸</button>
+        <button data-mascot="💀" class="spinner-choice" type="button" style="padding:14px;font-size:28px;border-radius:var(--r-md);">💀</button>
+        <button data-mascot="🐱" class="spinner-choice" type="button" style="padding:14px;font-size:28px;border-radius:var(--r-md);">🐱</button>
+      </div>
+    </div>
+    <div style="font-size:.75rem;color:var(--fg-3);text-align:center;margin-top:20px;">
+      Tu peux déplacer la mascotte avec ton doigt, la faire tourner d'un tap rapide ou d'un swipe.
+    </div>
+  </div>
+</div>
+
 <div class="editor" id="editor">
   <div class="editor__head">
     <button id="ed-cancel" type="button">Annuler</button>
@@ -1404,8 +1413,8 @@ body.chatting #abx-spinner.is-moving{opacity:1;}
 <button class="fab" id="fab-post" type="button" aria-label="Marquer"><svg class="ic" viewBox="0 0 24 24"><use href="#i-plus"/></svg></button>
 <button class="fab fab--story" id="fab-recit" type="button" aria-label="Écrire un récit"><svg class="ic" viewBox="0 0 24 24"><use href="#i-feather"/></svg></button>
 
-<div id="abx-spinner" aria-label="Hand spinner" role="button" tabindex="-1">
-  <canvas></canvas>
+<div id="abx-mascot">
+  <div class="mascot-inner" id="mascot-emoji">🕷️</div>
 </div>
 
 <button id="abx-debug-toggle" type="button">🐛</button>
@@ -1418,7 +1427,6 @@ body.chatting #abx-spinner.is-moving{opacity:1;}
   <button id="nav-feed" type="button"><span><svg class="ic" viewBox="0 0 24 24"><use href="#i-globe"/></svg></span><small>Traces</small></button>
   <button id="nav-recits" type="button"><span><svg class="ic" viewBox="0 0 24 24"><use href="#i-book-open"/></svg></span><small>Récits</small></button>
 </nav>
-
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
@@ -1434,7 +1442,7 @@ const firebaseConfig = {
   appId:"1:502581952099:web:2ae7c0912d073f3b11c256"
 };
 
-/* ═══════════ PANNEAU DEBUG ═══════════ */
+/* ═══════════ DEBUG ═══════════ */
 const dbgEl = document.getElementById("abx-debug");
 const dbgToggle = document.getElementById("abx-debug-toggle");
 const dbgLines = [];
@@ -1454,14 +1462,13 @@ function dbg(level, ...args){
   else console.log("[ABX]", ...args);
 }
 if(dbgToggle){
-  dbgToggle.classList.add("on");
+  if(/[?&]debug=1/.test(location.search)) dbgToggle.classList.add("on");
   dbgToggle.addEventListener("click", () => dbgEl.classList.toggle("on"));
 }
 window.addEventListener("error", e => dbg("ERR", "window.error:", e.message));
 window.addEventListener("unhandledrejection", e => dbg("ERR", "unhandled:", e.reason?.message || String(e.reason)));
 dbg("OK", "Debug panel ready (mode REST)");
 
-/* ═══════════ TIMEOUT UNIVERSEL ═══════════ */
 function withTimeout(promise, ms, label){
   return Promise.race([
     promise,
@@ -1473,9 +1480,7 @@ function withTimeout(promise, ms, label){
   ]);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   🔥 SDK FIREBASE DATABASE REMPLACÉ PAR REST + POLLING
-   ═══════════════════════════════════════════════════════════ */
+/* ═══════════ REST + POLLING ═══════════ */
 const FB_BASE = "https://prjt-78fef-default-rtdb.firebaseio.com";
 
 async function fbToken(){
@@ -1486,7 +1491,6 @@ async function fbToken(){
 function cleanPath(p){
   return String(p||"").replace(/^\/+|\/+$/g, "").replace(/\/{2,}/g, "/");
 }
-
 async function restReq(method, path, body, opts = {}){
   const token = await fbToken();
   const url = `${FB_BASE}/${cleanPath(path)}.json?auth=${encodeURIComponent(token)}${opts.query || ""}`;
@@ -1502,7 +1506,6 @@ async function restReq(method, path, body, opts = {}){
   }
   try { return await res.json(); } catch { return null; }
 }
-
 function ref(_db, path){ return { _path: cleanPath(path) }; }
 function child(parentRef, key){ return { _path: parentRef._path + "/" + key }; }
 function push(parentRef){
@@ -1513,26 +1516,32 @@ async function set(refObj, value){ return await restReq("PUT", refObj._path, val
 async function update(refObj, updates){ return await restReq("PATCH", refObj._path, updates); }
 async function remove(refObj){ return await restReq("DELETE", refObj._path); }
 function makeSnap(data){ return { exists: () => data !== null && data !== undefined, val: () => data }; }
-async function get(refObj){
-  const data = await restReq("GET", refObj._path);
-  return makeSnap(data);
-}
-function increment(_n){ /* no-op — remplacé par increment manuel */ return null; }
+async function get(refObj){ const data = await restReq("GET", refObj._path); return makeSnap(data); }
+const increment = n => ({".sv":{"increment":n}});
 function onDisconnect(_refObj){ return { remove: async () => {}, set: async () => {}, cancel: async () => {} }; }
 
-/* onValue — polling intelligent */
 const _pollers = new Map();
-const _pollIntervalMs = 2000;
+function pollIntervalFor(p){
+  if(/^(messages|dms|typing|dmTyping|presence)\//.test(p)) return 2000;
+  if(/^inbox\//.test(p)) return 3000;
+  return 6000;
+}
+async function pollNow(path){
+  const p=_pollers.get(cleanPath(path)); if(!p) return;
+  try{
+    const data=await restReq("GET",cleanPath(path)), h=JSON.stringify(data);
+    if(h===p.lastHash) return; p.lastHash=h;
+    p.cbs.forEach(c=>{ try{c.callback(makeSnap(data));}catch(e){console.error(e);} });
+  }catch{}
+}
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden) _pollers.forEach((_,k)=>pollNow(k)); });
 
 function onValue(refObj, callback, onError){
   const path = refObj._path;
-  if(!_pollers.has(path)){
-    _pollers.set(path, { timer: null, cbs: new Set(), lastHash: "" });
-  }
+  if(!_pollers.has(path)){ _pollers.set(path, { timer: null, cbs: new Set(), lastHash: "" }); }
   const p = _pollers.get(path);
   const entry = { callback, onError };
   p.cbs.add(entry);
-
   (async () => {
     try {
       const data = await restReq("GET", path);
@@ -1542,7 +1551,6 @@ function onValue(refObj, callback, onError){
       p.cbs.forEach(c => { try { c.onError && c.onError(e); } catch{} });
     }
   })();
-
   if(!p.timer){
     p.timer = setInterval(async () => {
       if(document.hidden) return;
@@ -1555,28 +1563,20 @@ function onValue(refObj, callback, onError){
       }catch(e){
         p.cbs.forEach(c => { try { c.onError && c.onError(e); } catch{} });
       }
-    }, _pollIntervalMs);
+    }, pollIntervalFor(path));
   }
-
   return () => {
     const pp = _pollers.get(path);
     if(!pp) return;
     pp.cbs.delete(entry);
-    if(pp.cbs.size === 0){
-      clearInterval(pp.timer);
-      _pollers.delete(path);
-    }
+    if(pp.cbs.size === 0){ clearInterval(pp.timer); _pollers.delete(path); }
   };
 }
-function resetPollers(){
-  _pollers.forEach(p => clearInterval(p.timer));
-  _pollers.clear();
-}
+function resetPollers(){ _pollers.forEach(p => clearInterval(p.timer)); _pollers.clear(); }
 
-/* ═══════════════════════════════════════════════════════════ */
-
+/* ═══════════ CONSTANTES ═══════════ */
 const MAX_WORDS=20;
-const APP_BASE_URL=location.origin+location.pathname, APP_SITE_URL="https://anonybox.app";
+const APP_BASE_URL=location.origin+location.pathname;
 const SCORE={CHUCHOTIS:1,MURMURE_PRIVE:1,TRACE:3,GRONDEMENT:2,HUREMENT:1,CHAPITRE:5,LECTURE:2};
 const $=id=>document.getElementById(id);
 const ic=(id,s=18)=>`<svg class="ic" viewBox="0 0 24 24" style="width:${s}px;height:${s}px"><use href="#${id}"/></svg>`;
@@ -1589,7 +1589,7 @@ const fmtTime=ts=>new Date(ts).toLocaleTimeString("fr-FR",{hour:"2-digit",minute
 const rel=ts=>{const s=(Date.now()-ts)/1000;if(s<60)return"maintenant";if(s<3600)return`${s/60|0} min`;if(s<86400)return`${s/3600|0} h`;if(s<2592000)return`${s/86400|0} j`;if(s<31536000)return`${s/2592000|0} mois`;return`${s/31536000|0} an${s/31536000>1?"s":""}`};
 const genId=()=>"id_"+now()+"_"+Math.random().toString(36).slice(2,8);
 const buildJoinUrl=code=>`${APP_BASE_URL}?join=${encodeURIComponent(code)}`;
-const buildShareText=(name,code)=>`🔒 Rejoins ma meute AnonyBoX\n\n🐺 Meute : ${name}\n🎫 Code : ${code}\n🔗 Lien : ${buildJoinUrl(code)}\n\nAnonyBoX — chuchotis anonymes chiffrés`;
+const buildShareText=(name,code)=>`🔒 Rejoins ma meute AnonyBoX\n\n🐺 Meute : ${name}\n🎫 Code : ${code}\n🔗 Lien : ${buildJoinUrl(code)}\n\nAnonyBoX — chuchotis anonymes`;
 function fmtViews(n){n=Number(n)||0;const fmt=v=>v.toFixed(1).replace(/\.0$/,"").replace(".",",");if(n<1000)return String(n);if(n<10000)return fmt(n/1000)+"K";if(n<1000000)return Math.round(n/1000)+"K";if(n<10000000)return fmt(n/1000000)+"M";return Math.round(n/1000000)+"M";}
 function fmtScore(n){n=Number(n)||0;return n.toLocaleString("fr-FR");}
 function fmtDate(ts){return new Date(ts).toLocaleDateString("fr-FR",{day:"2-digit",month:"short",year:"numeric"});}
@@ -1598,6 +1598,8 @@ function friendlyDay(ts){const d=new Date(ts);const today=new Date();today.setHo
 
 const SAFE_IMG_RE = /^data:image\/(png|jpe?g|webp|gif);base64,[A-Za-z0-9+/=]+$/i;
 const isSafeImg = s => typeof s==="string" && SAFE_IMG_RE.test(s);
+const TRANSPARENT_PX = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+const safeSrc = s => isSafeImg(s) ? s : TRANSPARENT_PX;
 const UID_RE = /^[A-Za-z0-9_-]{20,}$/;
 
 let currentUser=null,myAvatar=null,myName="Anonyme",myMask=genMask(),myScore=0,isPremium=false;
@@ -1612,7 +1614,7 @@ let focusedPostEl=null,focusTimer=null,focusStartX=0,focusStartY=0,focusMoved=fa
 let stories={},storyIds=[],currentRecitsTag="all",currentRecitsView="lire",bannerStoryIds=[],bannerIdx=0,bannerTimer=null;
 let currentStoryId=null,currentChapterId=null,readingHistory={},readChapters={};
 let recitCoverData=null,recitEditorOpen=false,recitEditingId=null,myStreak=null,streakBumpedToday=null;
-let currentShareImagePostId=null,currentShareImageBlob=null;
+let recitDetailTab="resume";
 
 let app,auth,db={},fbReady=false,fbFailed=false;
 try{
@@ -1640,9 +1642,7 @@ if(auth && !fbFailed){
     .then(c => dbg("OK", "signInAnonymously OK. uid=", c.user.uid))
     .catch(e => {
       dbg("ERR", "signInAnonymously failed:", e.code, e.message);
-      if(e.code === "auth/unauthorized-domain"){
-        dbg("ERR", "→ Ajoute " + location.hostname + " dans Firebase Auth → Domaines autorisés");
-      }
+      if(e.code === "auth/unauthorized-domain"){ dbg("ERR", "→ Ajoute " + location.hostname + " dans Firebase Auth → Domaines autorisés"); }
     });
   setTimeout(() => {
     if(!currentUser){
@@ -1656,8 +1656,7 @@ if(auth && !fbFailed){
 async function fbRetry(fn, maxTries = 2, delayMs = 200){
   let lastErr = null;
   for(let i = 0; i < maxTries; i++){
-    try { return await fn(); }
-    catch(e){ lastErr = e; if(i < maxTries - 1) await new Promise(r => setTimeout(r, delayMs)); }
+    try { return await fn(); } catch(e){ lastErr = e; if(i < maxTries - 1) await new Promise(r => setTimeout(r, delayMs)); }
   }
   throw lastErr;
 }
@@ -1670,24 +1669,16 @@ async function fbGet(path, fallback = null){
 }
 async function fbSet(path, value){
   if(!fbReady) return false;
-  try{
-    await withTimeout(restReq("PUT", path, value), 8000, "set:" + path);
-    return true;
-  }catch(e){ dbg("WARN", "fbSet", path, e?.message); return false; }
+  try{ await withTimeout(restReq("PUT", path, value), 8000, "set:" + path); return true; }
+  catch(e){ dbg("WARN", "fbSet", path, e?.message); return false; }
 }
 
 async function bumpScore(a){
   if(!a || !currentUser || currentUser.isLocal || !fbReady) return;
   myScore = (Number(myScore) || 0) + a;
   paintScore(true);
-  try{
-    const cur = await restReq("GET", `users/${currentUser.uid}/score`);
-    const val = (Number(cur) || 0) + a;
-    await restReq("PUT", `users/${currentUser.uid}/score`, val);
-  }catch(e){
-    myScore = Math.max(0, myScore - a);
-    paintScore(false);
-  }
+  try{ await restReq("PUT", `users/${currentUser.uid}/score`, increment(a)); }
+  catch(e){ myScore = Math.max(0, myScore - a); paintScore(false); }
 }
 function paintScore(bump=false){
   const t = fmtScore(myScore);
@@ -1701,14 +1692,14 @@ function paintScore(bump=false){
 
 async function registerDailyActivity(){
   if(!fbReady || !currentUser || currentUser.isLocal) return;
-  const today = new Date().toISOString().slice(0,10);
+  const today = dayKey(Date.now());
   if(streakBumpedToday === today) return;
   streakBumpedToday = today;
   const path = `users/${currentUser.uid}/streak`;
   try{
     const cur = await restReq("GET", path) || {current:0,longest:0,lastDate:null};
     if(cur.lastDate === today){ myStreak = cur; paintStreak(); return; }
-    const y = new Date(Date.now()-86400000).toISOString().slice(0,10);
+    const y = dayKey(Date.now()-86400000);
     const newCurrent = (cur.lastDate === y) ? (Number(cur.current)||0)+1 : 1;
     const newLongest = Math.max(Number(cur.longest)||0, newCurrent);
     myStreak = {current:newCurrent,longest:newLongest,lastDate:today};
@@ -1718,8 +1709,8 @@ async function registerDailyActivity(){
 }
 function getEffectiveStreak(){
   if(!myStreak || !myStreak.lastDate) return 0;
-  const today = new Date().toISOString().slice(0,10);
-  const y = new Date(Date.now()-86400000).toISOString().slice(0,10);
+  const today = dayKey(Date.now());
+  const y = dayKey(Date.now()-86400000);
   if(myStreak.lastDate === today || myStreak.lastDate === y) return Number(myStreak.current)||0;
   return 0;
 }
@@ -1732,8 +1723,7 @@ function paintStreak(bump=false){
 
 let toastTO=null;
 function toast(msg, tone="success"){
-  const t = $("toast");
-  if(!t) return;
+  const t = $("toast"); if(!t) return;
   let col="var(--fg-2)", ico="i-check";
   if(tone==="danger"){ col="var(--danger)"; ico="i-warn"; }
   else if(tone==="warn"){ col="var(--accent-bright)"; ico="i-warn"; }
@@ -1769,7 +1759,7 @@ function show(id){
 function closeTopmost(){
   const overlays=["ov-join","ov-verify","ov-premium","ov-chatpoll","ov-comment"];
   for(const id of overlays){ const el=$(id); if(el?.classList.contains("on")){ el.classList.remove("on"); return true; } }
-  const sheets=["sheet-create","sheet-edit","sheet-share","sheet-share-image","sheet-group-info","sheet-user-profile"];
+  const sheets=["sheet-create","sheet-edit","sheet-share","sheet-share-image","sheet-group-info","sheet-user-profile","sheet-spinner"];
   for(const id of sheets){ const el=$(id); if(el?.classList.contains("on")){ el.classList.remove("on"); document.body.classList.remove("no-scroll"); return true; } }
   if($("recit-editor")?.classList.contains("on")){ closeRecitEditor(); return true; }
   if($("editor")?.classList.contains("on")){ closeEditor(); return true; }
@@ -1837,12 +1827,7 @@ async function handleJoinUrlParam(){
   const code=(params.get("join")||"").trim().toUpperCase();
   if(!code || !/^[A-Z0-9]{4,12}$/.test(code)) return;
   try{ history.replaceState({},"",APP_BASE_URL); }catch{}
-  setTimeout(()=>{
-    const input=$("join-code");
-    if(input) input.value=code;
-    openJoin();
-    toast("Code détecté : "+code);
-  },800);
+  setTimeout(()=>{ const input=$("join-code"); if(input) input.value=code; openJoin(); toast("Code détecté : "+code); },800);
 }
 
 async function loadUserProfile(){
@@ -1908,11 +1893,11 @@ async function saveUserProfile(){
 }
 function applyAvatar(){
   const di=$("drawer-avatar-img");
-  if(di){ if(myAvatar){ di.src=myAvatar; di.hidden=false; } else di.hidden=true; }
+  if(di){ if(myAvatar){ di.src=safeSrc(myAvatar); di.hidden=false; } else di.hidden=true; }
   const pi=$("profile-avatar-img"), pp=$("profile-avatar-ph");
-  if(pi && pp){ if(myAvatar){ pi.src=myAvatar; pi.hidden=false; pp.style.display="none"; } else { pi.hidden=true; pp.style.display=""; } }
+  if(pi && pp){ if(myAvatar){ pi.src=safeSrc(myAvatar); pi.hidden=false; pp.style.display="none"; } else { pi.hidden=true; pp.style.display=""; } }
   const ei=$("edit-avatar-img"), ep=$("edit-avatar-ph");
-  if(ei && ep){ if(myAvatar){ ei.src=myAvatar; ei.hidden=false; ep.style.display="none"; } else { ei.hidden=true; ep.style.display=""; } }
+  if(ei && ep){ if(myAvatar){ ei.src=safeSrc(myAvatar); ei.hidden=false; ep.style.display="none"; } else { ei.hidden=true; ep.style.display=""; } }
 }
 function updateDrawer(){
   const v = currentUser?.uid && verifiedUsers[currentUser.uid];
@@ -1981,10 +1966,8 @@ async function submitVerify(){
   const code=$("verify-code").value.trim().toUpperCase();
   $("ov-verify").classList.remove("on"); $("verify-code").value="";
   if(!code) return;
-  try{
-    await restReq("PUT", `redemption/${currentUser.uid}/verify`, {code, at:now()});
-    toast("Vérification en cours…");
-  }catch(e){ toast("Code invalide.","danger"); }
+  try{ await restReq("PUT", `redemption/${currentUser.uid}/verify`, {code, at:now()}); toast("Vérification en cours…"); }
+  catch(e){ toast("Code invalide.","danger"); }
 }
 function openPremiumModal(){ $("ov-premium").classList.add("on"); setTimeout(()=>$("premium-code").focus(),100); }
 async function submitPremium(){
@@ -1992,10 +1975,8 @@ async function submitPremium(){
   const code=$("premium-code").value.trim().toUpperCase();
   $("ov-premium").classList.remove("on"); $("premium-code").value="";
   if(!code) return;
-  try{
-    await restReq("PUT", `redemption/${currentUser.uid}/premium`, {code, at:now()});
-    toast("Activation en cours…");
-  }catch(e){ toast("Code Premium invalide.","danger"); }
+  try{ await restReq("PUT", `redemption/${currentUser.uid}/premium`, {code, at:now()}); toast("Activation en cours…"); }
+  catch(e){ toast("Code Premium invalide.","danger"); }
 }
 
 function openDrawer(){ $("drawer-bg").classList.add("on"); $("drawer").classList.add("on"); document.body.classList.add("no-scroll"); updateDrawer(); }
@@ -2008,6 +1989,7 @@ $("d-messages")?.addEventListener("click",()=>{ closeDrawer(); show("s-messages"
 $("d-posts")?.addEventListener("click",()=>{ closeDrawer(); show("s-feed"); currentTab="mine"; document.querySelectorAll("#feed-tabs button[data-tab]").forEach(b=>b.classList.toggle("on",b.dataset.tab==="mine")); const l=$("feed-list"); if(l) l.dataset.sig=""; renderFeed(); });
 $("d-recits")?.addEventListener("click",()=>{ closeDrawer(); show("s-recits"); switchRecitsView("mesecrits"); });
 $("d-verify")?.addEventListener("click",()=>{ closeDrawer(); setTimeout(openVerifyModal,200); });
+$("d-spinner")?.addEventListener("click",()=>{ closeDrawer(); openSpinnerSettings(); });
 $("d-backend")?.addEventListener("click",()=>{ closeDrawer(); toast("Backend : Firebase REST + polling"); });
 $("d-premium")?.addEventListener("click",()=>{ closeDrawer(); setTimeout(openPremiumModal,200); });
 $("d-newid")?.addEventListener("click",async()=>{ closeDrawer(); myMask=genMask(); await fbSet(`users/${currentUser.uid}/mask`,myMask); paintSession(); updateDrawer(); updateProfile(); toast("Nouveau pelage : "+myMask); });
@@ -2020,7 +2002,7 @@ function generateCoverStyle(title){
   return { bg:`linear-gradient(160deg, hsl(${hue}, 42%, 18%), hsl(${(hue+40)%360}, 48%, 8%))`, accent:`hsl(${(hue+60)%360}, 65%, 62%)` };
 }
 function renderCoverInner(s){
-  if(s.cover && isSafeImg(s.cover)) return `<img src="${esc(s.cover)}" alt="">`;
+  if(s.cover && isSafeImg(s.cover)) return `<img src="${safeSrc(s.cover)}" alt="">`;
   const style = generateCoverStyle(s.title);
   return `<div class="recit-cover-ph" style="background:${style.bg}"><div class="recit-cover-ph__title">${esc(s.title||"Sans titre")}</div><div class="recit-cover-ph__stripe" style="background:${style.accent}"></div></div>`;
 }
@@ -2062,7 +2044,7 @@ function paintBanner(s){
   if(slide){
     slide.innerHTML=""; slide.style.backgroundImage="";
     if(isSafeImg(s.cover)){
-      const img=document.createElement("img"); img.src=s.cover; img.alt="";
+      const img=document.createElement("img"); img.src=safeSrc(s.cover); img.alt="";
       img.style.cssText="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;";
       slide.appendChild(img);
     }
@@ -2199,35 +2181,24 @@ function openMesEcritsMenu(anchor, storyId){
     const b=e.target.closest("[data-mem]"); if(!b) return;
     const a=b.dataset.mem; closePostMenu();
     if(a==="open"){ if(isDraft) openRecitEditor(storyId); else openStoryDetail(storyId); }
-    else if(a==="share"){
-      const txt=`Découvre mon récit "${s.title}" sur AnonyBoX !`;
-      if(navigator.share) navigator.share({title:s.title,text:txt}).catch(()=>{});
-      else{ await navigator.clipboard?.writeText(txt); toast("Copié"); }
-    }
+    else if(a==="share"){ const txt=`Découvre mon récit "${s.title}" sur AnonyBoX !`; if(navigator.share) navigator.share({title:s.title,text:txt}).catch(()=>{}); else{ await navigator.clipboard?.writeText(txt); toast("Copié"); } }
     else if(a==="publish"){
       await restReq("DELETE", `stories/${storyId}/isDraft`).catch(()=>{});
       await restReq("PUT", `stories/${storyId}/updatedAt`, now()).catch(()=>{});
       bumpScore(SCORE.CHAPITRE); registerDailyActivity();
       toast("Récit publié 🐾 +"+SCORE.CHAPITRE);
     }
-    else if(a==="delete"){
-      if(confirm("Supprimer ce "+(isDraft?"brouillon":"récit")+" ?")){
-        await restReq("DELETE", `stories/${storyId}`).catch(()=>{});
-        toast("Supprimé");
-      }
-    }
+    else if(a==="delete"){ if(confirm("Supprimer ce "+(isDraft?"brouillon":"récit")+" ?")){ await restReq("DELETE", `stories/${storyId}`).catch(()=>{}); toast("Supprimé"); } }
   });
 }
 async function openStoryDetail(storyId){
   currentStoryId=storyId;
+  recitDetailTab="resume";
   show("s-recit-detail");
   renderStoryDetail(storyId);
   if(storyId && !viewedPosts.has("story|"+storyId)){
     viewedPosts.add("story|"+storyId);
-    try{
-      const cur = await restReq("GET", `stories/${storyId}/views`) || 0;
-      await restReq("PUT", `stories/${storyId}/views`, (Number(cur)||0) + 1);
-    }catch{}
+    try{ const cur = await restReq("GET", `stories/${storyId}/views`) || 0; await restReq("PUT", `stories/${storyId}/views`, (Number(cur)||0) + 1); }catch{}
   }
 }
 function renderStoryDetail(storyId){
@@ -2255,13 +2226,11 @@ function renderStoryDetail(storyId){
   $("recit-like")?.addEventListener("click", async ()=>{
     if(!fbReady || !currentUser) return;
     const path = `stories/${storyId}/likes/${currentUser.uid}`;
-    try{
-      if(liked) await restReq("DELETE", path);
-      else await restReq("PUT", path, true);
-      hap(8);
-    }catch{ toast("Impossible.","danger"); }
+    try{ if(liked) await restReq("DELETE", path); else await restReq("PUT", path, true); hap(8); }
+    catch{ toast("Impossible.","danger"); }
   });
   const paintTab = (tab)=>{
+    recitDetailTab=tab;
     document.querySelectorAll("[data-rtab]").forEach(x=>x.classList.toggle("on",x.dataset.rtab===tab));
     const body = $("recit-detail-body"); if(!body) return;
     if(tab==="resume"){
@@ -2278,13 +2247,21 @@ function renderStoryDetail(storyId){
     }
   };
   document.querySelectorAll("[data-rtab]").forEach(b=>b.addEventListener("click",()=>paintTab(b.dataset.rtab)));
-  paintTab("resume");
-  $("recit-detail-back")?.addEventListener("click",()=>show("s-recits"));
-  $("recit-detail-more")?.addEventListener("click",()=>{
-    if(s.uid===currentUser?.uid){ if(confirm("Supprimer ce récit ?")) deleteStory(storyId); }
-    else{ if(confirm("Signaler ce récit ?")) toast("Signalement envoyé"); }
-  });
+  paintTab(recitDetailTab);
 }
+let recitDetailBackBound=false, recitDetailMoreBound=false;
+function bindRecitDetailHeaderOnce(){
+  if(!recitDetailBackBound){ recitDetailBackBound=true; $("recit-detail-back")?.addEventListener("click",()=>show("s-recits")); }
+  if(!recitDetailMoreBound){
+    recitDetailMoreBound=true;
+    $("recit-detail-more")?.addEventListener("click",()=>{
+      const s=stories[currentStoryId]; if(!s) return;
+      if(s.uid===currentUser?.uid) deleteStory(currentStoryId);
+      else if(confirm("Signaler ce récit ?")) toast("Signalement envoyé");
+    });
+  }
+}
+bindRecitDetailHeaderOnce();
 async function deleteStory(storyId){
   const s=stories[storyId];
   if(!s || s.uid!==currentUser?.uid){ toast("Action non autorisée.","danger"); return; }
@@ -2300,15 +2277,10 @@ async function openReader(storyId, chapterId){
   const ch = chaps[idx];
   currentChapterId = ch.id;
   readingHistory[storyId] = {chapterId:ch.id, order:ch.order||1};
-  if(fbReady && currentUser && !currentUser.isLocal){
-    try{ await restReq("PUT", `users/${currentUser.uid}/readingHistory/${storyId}`, {chapterId:ch.id, order:ch.order||1, at:now()}); }catch{}
-  }
+  if(fbReady && currentUser && !currentUser.isLocal){ try{ await restReq("PUT", `users/${currentUser.uid}/readingHistory/${storyId}`, {chapterId:ch.id, order:ch.order||1, at:now()}); }catch{} }
   if(!readChapters[storyId+"|"+ch.id]){
     readChapters[storyId+"|"+ch.id] = true;
-    try{
-      const cur = await restReq("GET", `stories/${storyId}/chapters/${ch.id}/views`) || 0;
-      await restReq("PUT", `stories/${storyId}/chapters/${ch.id}/views`, (Number(cur)||0)+1);
-    }catch{}
+    try{ const cur = await restReq("GET", `stories/${storyId}/chapters/${ch.id}/views`) || 0; await restReq("PUT", `stories/${storyId}/chapters/${ch.id}/views`, (Number(cur)||0)+1); }catch{}
     bumpScore(SCORE.LECTURE);
   }
   $("reader-title-bar").textContent = `Chapitre ${ch.order||idx+1}`;
@@ -2343,7 +2315,7 @@ function openRecitEditor(editId=null){
   $("recit-editor").classList.add("on");
   recitEditorOpen = true;
   recitCoverData = existing?.cover || null;
-  if(existing?.cover && isSafeImg(existing.cover)){ $("re-cover-img").src=existing.cover; $("re-cover-img").hidden=false; $("re-cover-ph").style.display="none"; }
+  if(existing?.cover && isSafeImg(existing.cover)){ $("re-cover-img").src=safeSrc(existing.cover); $("re-cover-img").hidden=false; $("re-cover-ph").style.display="none"; }
   else{ $("re-cover-img").hidden=true; $("re-cover-ph").style.display=""; }
   $("re-story-title").value = existing?.title || "";
   $("re-story-desc").value = existing?.description || "";
@@ -2374,11 +2346,7 @@ $("file-recit-cover")?.addEventListener("change", async e=>{
   catch{ toast("Image invalide.","danger"); }
 });
 ["re-story-title","re-story-desc","re-chapter-title","re-chapter-content"].forEach(id=>$(id)?.addEventListener("input",updateRecitPublishState));
-function updateRecitPublishState(){
-  const t = $("re-story-title").value.trim();
-  const c = $("re-chapter-content").value.trim();
-  $("re-publish").disabled = !(t.length>0 && c.length>0);
-}
+function updateRecitPublishState(){ $("re-publish").disabled = !($("re-story-title").value.trim().length>0 && $("re-chapter-content").value.trim().length>0); }
 $("re-publish")?.addEventListener("click",()=>saveRecit("published"));
 $("re-draft")?.addEventListener("click",()=>saveRecit("draft"));
 async function saveRecit(mode){
@@ -2432,13 +2400,8 @@ async function saveRecit(mode){
       if(isDraft){ toast("Brouillon enregistré"); closeRecitEditor(); switchRecitsView("mesecrits"); }
       else{ bumpScore(SCORE.CHAPITRE); registerDailyActivity(); toast("Récit publié 🐾 +"+SCORE.CHAPITRE); closeRecitEditor(); openStoryDetail(sid); }
     }
-  }catch(e){
-    dbg("ERR", "saveRecit:", e);
-    toast("Échec : "+(e?.message||e?.code||"inconnu"),"danger");
-  }finally{
-    publishBtn.disabled=false; if(draftBtn) draftBtn.disabled=false;
-    publishBtn.textContent="Publier";
-  }
+  }catch(e){ dbg("ERR", "saveRecit:", e); toast("Échec : "+(e?.message||e?.code||"inconnu"),"danger"); }
+  finally{ publishBtn.disabled=false; if(draftBtn) draftBtn.disabled=false; publishBtn.textContent="Publier"; }
 }
 async function openAddChapter(storyId){
   const title = prompt("Titre du chapitre :","Chapitre"); if(title==null) return;
@@ -2497,7 +2460,7 @@ function renderMessagesList(){
     return;
   }
   list.innerHTML = entries.map(c=>{
-    const av = c.avatar ? `<img src="${esc(c.avatar)}" alt="">` : ic("i-mask",20);
+    const av = c.avatar ? `<img src="${safeSrc(c.avatar)}" alt="">` : ic("i-mask",20);
     const preview = c.lastMsg || "Chuchotis privé";
     const time = rel(c.lastTs||0);
     const unread = c.unread===true;
@@ -2522,37 +2485,39 @@ $("join-cancel")?.addEventListener("click",closeJoin);
 $("join-ok")?.addEventListener("click",joinGroup);
 $("join-code")?.addEventListener("keydown",e=>{ if(e.key==="Enter") joinGroup(); });
 
+async function sha256Hex(s){
+  if(!crypto?.subtle) return s;
+  const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+
 async function joinGroup(){
   dbg("—", "=== JOIN start ===");
   const code = $("join-code").value.trim().toUpperCase();
   if(!code || !/^[A-Z0-9]{4,12}$/.test(code)){ toast("Code invalide.","danger"); return; }
   if(!fbReady || !currentUser || currentUser.isLocal){ toast("Firebase indisponible — regarde 🐛","danger"); return; }
-
   const btn=$("join-ok"); const oldText=btn.textContent;
   btn.disabled=true; btn.textContent="…";
-
   try{
-    dbg("—", "Lecture groups/"+code);
     const g = await withTimeout(restReq("GET", `groups/${code}`), 6000, "join-fetch");
-    if(!g){ dbg("ERR", "Meute inexistante"); toast("Meute introuvable.","danger"); return; }
-    dbg("OK", "Meute trouvée:", g.name);
-
+    if(!g){ toast("Meute introuvable.","danger"); return; }
+    if((g.pinHash||g.pin) && !myGroups.find(x=>x.code===code)){
+      const entered=prompt("Cette meute est protégée. Code PIN :");
+      if(entered==null) return;
+      const ok=g.pinHash ? (await sha256Hex(code+":"+entered.trim()))===g.pinHash : entered.trim()===String(g.pin);
+      if(!ok){ toast("PIN incorrect.","danger"); return; }
+    }
     await withTimeout(restReq("PUT", `groups/${code}/members/${currentUser.uid}`, true), 8000, "join-members");
-    dbg("OK", "Membre inscrit");
-
     restReq("PUT", `users/${currentUser.uid}/groups/${code}`, {code, name:g.name||"Meute"}).catch(()=>{});
-
     closeJoin();
     openChat(code, g.name||"Meute", g.owner);
     toast("Meute rejointe · " + code);
   }catch(e){
     dbg("ERR", "=== JOIN FAILED ===", e);
-    if(e._timeout) toast("⏱️ Timeout — regarde 🐛","danger");
+    if(e._timeout) toast("⏱️ Timeout","danger");
     else if(String(e?.code).includes("PERMISSION_DENIED")) toast("🔒 Permission refusée","danger");
     else toast("Erreur : "+(e?.message||e?.code||"inconnue"),"danger");
-  }finally{
-    btn.disabled=false; btn.textContent=oldText;
-  }
+  }finally{ btn.disabled=false; btn.textContent=oldText; }
 }
 
 function openCreate(){ $("sheet-create").classList.add("on"); document.body.classList.add("no-scroll"); }
@@ -2564,76 +2529,53 @@ $("btn-go-recits")?.addEventListener("click",()=>show("s-recits"));
 function genCode(){ const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let s=""; for(let i=0;i<6;i++) s+=c[Math.floor(Math.random()*c.length)]; return s; }
 
 $("cg-ok")?.addEventListener("click", async () => {
-  dbg("—", "=== CREATE start ===");
   const name = $("cg-name").value.trim() || "Meute AnonyBoX";
   const desc = $("cg-desc").value.trim();
   const pin  = $("cg-pin").value.trim();
-  dbg("—", "fbReady=", fbReady, "uid=", currentUser?.uid);
-  if(!fbReady || !currentUser || currentUser.isLocal){
-    toast("Firebase indisponible — regarde 🐛","danger");
-    return;
-  }
+  if(!fbReady || !currentUser || currentUser.isLocal){ toast("Firebase indisponible — regarde 🐛","danger"); return; }
+  if(pin && !/^\d{4,6}$/.test(pin)){ toast("Le PIN doit contenir 4 à 6 chiffres.","danger"); return; }
   const btn=$("cg-ok"); const oldText=btn.textContent;
   btn.disabled=true; btn.textContent="…";
   try{
     let code = genCode();
     for(let i=0;i<3;i++){
-      dbg("—", "Check code", code, "essai", i+1);
-      const check = await withTimeout(restReq("GET", `groups/${code}`), 3000, "check").catch(e=>{ dbg("WARN","check fail:",e.message); return null; });
-      if(!check){ dbg("OK","Code libre:",code); break; }
+      const check = await withTimeout(restReq("GET", `groups/${code}`), 3000, "check").catch(()=>null);
+      if(!check) break;
       code = genCode();
     }
     const uid = currentUser.uid;
     const nowTs = now();
     const groupData = {
-      name, desc: desc || "", pin: pin || null,
+      name, desc: desc || "",
+      pinHash: pin ? await sha256Hex(code+":"+pin) : null,
       isPublic: $("cg-public").checked,
       createdAt: nowTs,
       owner: uid,
       members: { [uid]: true }
     };
-    dbg("—", "Écriture groups/"+code+" (timeout 8s)");
     await withTimeout(restReq("PUT", `groups/${code}`, groupData), 8000, "create-group");
-    dbg("OK", "groups/"+code+" écrit");
     Promise.allSettled([
       restReq("PUT", `groupCodes/${code}`, {code,name,createdAt:nowTs}),
       restReq("PUT", `users/${uid}/groups/${code}`, {code,name})
-    ]).then(rs=>rs.forEach((r,i)=>r.status==="rejected" ? dbg("WARN",`secondary ${i} fail:`, r.reason?.message) : dbg("OK",`secondary ${i} OK`)));
+    ]);
     if(!myGroups.find(g=>g.code===code)) myGroups.unshift({code,name});
     closeCreate();
     $("cg-name").value=""; $("cg-desc").value=""; $("cg-pin").value=""; $("cg-public").checked=false;
     openChat(code, name, uid);
     toast("Meute formée · Code : " + code);
-    dbg("OK", "Chat ouvert pour", code);
   }catch(e){
     dbg("ERR", "=== CREATE FAILED ===", e);
-    if(e._timeout){
-      dbg("ERR", "→ Firebase n'a pas répondu en 8s");
-      toast("⏱️ Timeout — regarde 🐛","danger");
-    }else if(String(e?.code).includes("PERMISSION_DENIED")){
-      dbg("ERR", "→ Permission refusée par les règles");
-      toast("🔒 Règles Firebase refusent l'écriture","danger");
-    }else{
-      toast("Erreur : "+(e?.message||e?.code||"inconnue"),"danger");
-    }
-  }finally{
-    btn.disabled=false; btn.textContent=oldText;
-  }
+    if(e._timeout) toast("⏱️ Timeout","danger");
+    else if(String(e?.code).includes("PERMISSION_DENIED")) toast("🔒 Règles Firebase refusent l'écriture","danger");
+    else toast("Erreur : "+(e?.message||e?.code||"inconnue"),"danger");
+  }finally{ btn.disabled=false; btn.textContent=oldText; }
 });
 
-async function saveGroupToUser(code,name){
-  if(!currentUser||currentUser.isLocal||!fbReady) return false;
-  if(!myGroups.find(g=>g.code===code)){ myGroups.unshift({code,name}); renderGroupsGrid(); }
-  try{ await fbRetry(()=>restReq("PUT", `users/${currentUser.uid}/groups/${code}`, {code,name}), 2, 200); return true; }
-  catch(e){ myGroups = myGroups.filter(g=>g.code!==code); renderGroupsGrid(); return false; }
-}
 async function removeGroupFromUser(code){
   myGroups = myGroups.filter(g=>g.code!==code); delete myPositions[code]; renderGroupsGrid();
   if(!currentUser||currentUser.isLocal) return;
-  try{
-    await fbRetry(()=>restReq("DELETE", `users/${currentUser.uid}/groups/${code}`));
-    await fbRetry(()=>restReq("DELETE", `users/${currentUser.uid}/positions/${code}`));
-  }catch(e){ console.warn(e); }
+  try{ await fbRetry(()=>restReq("DELETE", `users/${currentUser.uid}/groups/${code}`)); await fbRetry(()=>restReq("DELETE", `users/${currentUser.uid}/positions/${code}`)); }
+  catch(e){ console.warn(e); }
 }
 async function savePosition(code,x,y){
   myPositions[code]={x,y};
@@ -2684,10 +2626,7 @@ function onGroupPointerDown(e){
   const onMove=ev=>{
     if(ev.pointerId!==dragPointerId) return;
     const dx=ev.clientX-dragStartX, dy=ev.clientY-dragStartY;
-    if(!dragHasMoved && (Math.abs(dx)>6 || Math.abs(dy)>6)){
-      dragHasMoved=true;
-      if(!dragLongPress){ dragLongPress=true; el.classList.add("dragging"); el.classList.remove("snap"); clearTimeout(dragPressTimer); }
-    }
+    if(!dragHasMoved && (Math.abs(dx)>6 || Math.abs(dy)>6)){ dragHasMoved=true; if(!dragLongPress){ dragLongPress=true; el.classList.add("dragging"); el.classList.remove("snap"); clearTimeout(dragPressTimer); } }
     if(dragLongPress){
       ev.preventDefault?.();
       const grid=$("groups-grid");
@@ -2715,26 +2654,18 @@ function onGroupPointerDown(e){
       el.style.left=sx+"px"; el.style.top=sy+"px";
       setTimeout(()=>el.classList.remove("snap"),300);
       savePosition(code,sx,sy); hap(8);
-    }else{
-      if(Date.now()-dragInitialTapTime<400) openChat(el.dataset.code,el.dataset.name,null);
-    }
+    }else{ if(Date.now()-dragInitialTapTime<400) openChat(el.dataset.code,el.dataset.name,null); }
     dragPointerId=null; dragHasMoved=false; dragLongPress=false;
   };
   document.addEventListener("pointermove",onMove,{passive:false});
   document.addEventListener("pointerup",onUp);
   document.addEventListener("pointercancel",onUp);
 }
-window.addEventListener("resize",()=>{
-  clearTimeout(window._resizeTO);
-  window._resizeTO=setTimeout(()=>{ computeGridMetrics(); renderGroupsGrid(); },250);
-});
+window.addEventListener("resize",()=>{ clearTimeout(window._resizeTO); window._resizeTO=setTimeout(()=>{ computeGridMetrics(); renderGroupsGrid(); },250); });
 
 async function openChat(code,name,owner){
   if(currentGroupCode && currentGroupCode!==code){
-    if(fbReady && currentUser){
-      restReq("DELETE", `presence/${currentGroupCode}/${currentUser.uid}`).catch(()=>{});
-      restReq("DELETE", `typing/${currentGroupCode}/${currentUser.uid}`).catch(()=>{});
-    }
+    if(fbReady && currentUser){ restReq("DELETE", `presence/${currentGroupCode}/${currentUser.uid}`).catch(()=>{}); restReq("DELETE", `typing/${currentGroupCode}/${currentUser.uid}`).catch(()=>{}); }
     closeChat();
   }
   currentGroupCode=code;
@@ -2742,21 +2673,14 @@ async function openChat(code,name,owner){
   currentGroupOwner=owner||null;
   $("chat-title").textContent=currentGroupName;
   show("s-chat");
-  if(!currentGroupOwner && fbReady){
-    restReq("GET", `groups/${code}`).then(g=>{
-      if(g){ currentGroupOwner=g.owner; currentGroupMembers=g.members||{}; }
-    }).catch(()=>{});
-  }
+  if(!currentGroupOwner && fbReady){ restReq("GET", `groups/${code}`).then(g=>{ if(g){ currentGroupOwner=g.owner; currentGroupMembers=g.members||{}; } }).catch(()=>{}); }
   listenMessages(code);
   listenPresence(code);
   listenGroupInfo(code);
   listenGroupTyping(code);
 }
 function closeChat(){
-  if(currentGroupCode && currentUser && fbReady){
-    restReq("DELETE", `presence/${currentGroupCode}/${currentUser.uid}`).catch(()=>{});
-    restReq("DELETE", `typing/${currentGroupCode}/${currentUser.uid}`).catch(()=>{});
-  }
+  if(currentGroupCode && currentUser && fbReady){ restReq("DELETE", `presence/${currentGroupCode}/${currentUser.uid}`).catch(()=>{}); restReq("DELETE", `typing/${currentGroupCode}/${currentUser.uid}`).catch(()=>{}); }
   try{ unsubMessages?.(); }catch{} try{ unsubPresence?.(); }catch{} try{ unsubGroup?.(); }catch{} try{ unsubTyping?.(); }catch{}
   unsubMessages=unsubPresence=unsubGroup=unsubTyping=null;
   currentGroupCode=null; renderMsgDone=false; lastGroupMsgCount=0;
@@ -2797,10 +2721,7 @@ function listenMessages(code){
 }
 function renderMessages(msgs){
   const c=$("chat-msgs");
-  if(!msgs.length){
-    c.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--fg-3);font-size:.875rem"><div style="font-size:36px;margin-bottom:12px;color:var(--accent-bright)">${ic("i-ghost",36)}</div>Aucun chuchotis pour le moment.<br>Sois le premier à chuchoter ✨</div>`;
-    return;
-  }
+  if(!msgs.length){ c.innerHTML = `<div style="text-align:center;padding:60px 20px;color:var(--fg-3);font-size:.875rem"><div style="font-size:36px;margin-bottom:12px;color:var(--accent-bright)">${ic("i-ghost",36)}</div>Aucun chuchotis pour le moment.<br>Sois le premier à chuchoter ✨</div>`; return; }
   const nearBottom = c.scrollHeight-c.scrollTop-c.clientHeight < 140;
   let html="", lastDay=null;
   msgs.forEach(m=>{
@@ -2812,7 +2733,7 @@ function renderMessages(msgs){
     else body=`<div class="msg__text">${esc(m.text||"")}</div>`;
     const chips = Object.entries(m.reactions||{}).filter(([e,u])=>u && Object.keys(u).length).map(([e,u])=>`<button class="rx ${u[currentUser?.uid]?"me":""}" data-rx="${esc(m.id)}|${esc(e)}" type="button">${esc(e)} ${Object.keys(u).length}</button>`).join("");
     const av = mine ? myAvatar : (m.avatar||null);
-    const avHTML = av ? `<img src="${esc(av)}" alt="">` : ic("i-mask",10);
+    const avHTML = av ? `<img src="${safeSrc(av)}" alt="">` : ic("i-mask",10);
     html+=`<div class="msg ${mine?"mine":""}" data-mid="${esc(m.id)}"><div class="msg__body">${!mine?`<div class="msg__name" data-open-profile="${esc(m.uid||"")}" data-name="${esc(m.name||"Anonyme")}" data-mask="${esc(m.mask||"#----")}" data-avatar="${esc(m.avatar||"")}"><span class="av">${avHTML}</span><span class="txt">${esc(m.name||"Anonyme")}</span><span class="mask">${esc(m.mask||"#----")}</span></div>`:""}<div class="msg__bubble" data-longpress="${esc(m.id)}">${body}<span class="msg__time">${fmtTime(m.ts||Date.now())}${mine?' <span class="chk">✓✓</span>':""}</span></div>${chips?`<div class="msg__reacts">${chips}</div>`:""}</div></div>`;
   });
   c.innerHTML=html;
@@ -2838,9 +2759,7 @@ function attachMsgLongPress(el,mid){
     startX=e.clientX; startY=e.clientY; moved=false;
     timer=setTimeout(()=>{ if(moved) return; hap(15); openMsgCtx(el,mid); },450);
   });
-  el.addEventListener("pointermove",e=>{
-    if(Math.abs(e.clientX-startX)>8 || Math.abs(e.clientY-startY)>8){ moved=true; clearTimeout(timer); }
-  });
+  el.addEventListener("pointermove",e=>{ if(Math.abs(e.clientX-startX)>8 || Math.abs(e.clientY-startY)>8){ moved=true; clearTimeout(timer); } });
   el.addEventListener("pointerup",()=>clearTimeout(timer));
   el.addEventListener("pointercancel",()=>clearTimeout(timer));
   el.addEventListener("pointerleave",()=>clearTimeout(timer));
@@ -2910,11 +2829,8 @@ async function toggleReaction(msgId,emo){
   if(!fbReady || !currentGroupCode) return;
   const msg=chatMessages.find(m=>m.id===msgId); if(!msg) return;
   const path = `messages/${currentGroupCode}/${msgId}/reactions/${emo}/${currentUser.uid}`;
-  try{
-    if(msg.reactions?.[emo]?.[currentUser.uid]) await restReq("DELETE", path);
-    else await restReq("PUT", path, true);
-    hap(6);
-  }catch{ toast("Réaction impossible","danger"); }
+  try{ if(msg.reactions?.[emo]?.[currentUser.uid]) await restReq("DELETE", path); else await restReq("PUT", path, true); hap(6); }
+  catch{ toast("Réaction impossible","danger"); }
 }
 async function votePollMessage(msgId,opt){
   if(!fbReady || !currentGroupCode) return;
@@ -2940,6 +2856,7 @@ async function sendChat(){
   try{
     const key = "-M" + Date.now().toString(36) + Math.random().toString(36).slice(2,10);
     await restReq("PUT", `messages/${currentGroupCode}/${key}`, {uid:currentUser.uid, name:myName, mask:myMask, avatar:myAvatar, text:txt, type:"text", ts:now()});
+    pollNow(`messages/${currentGroupCode}`);
     bumpScore(SCORE.CHUCHOTIS); registerDailyActivity();
   }catch(e){
     console.error(e);
@@ -2978,10 +2895,7 @@ function listenGroupTyping(code){
       clearTimeout(groupTypingTimeout);
       groupTypingTimeout=setTimeout(()=>{ restReq("DELETE", `typing/${currentGroupCode}/${currentUser.uid}`).catch(()=>{}); },3000);
     });
-    inp.addEventListener("blur",()=>{
-      if(!currentGroupCode || !fbReady) return;
-      restReq("DELETE", `typing/${currentGroupCode}/${currentUser.uid}`).catch(()=>{});
-    });
+    inp.addEventListener("blur",()=>{ if(!currentGroupCode || !fbReady) return; restReq("DELETE", `typing/${currentGroupCode}/${currentUser.uid}`).catch(()=>{}); });
   }
 }
 function updateTypingIndicator(target,show,count=1){
@@ -3031,11 +2945,7 @@ async function leaveGroup(){
   if(!currentGroupCode) return;
   if(!confirm("Quitter cette meute ?")) return;
   try{
-    if(fbReady){
-      await restReq("DELETE", `groups/${currentGroupCode}/members/${currentUser.uid}`);
-      await restReq("DELETE", `presence/${currentGroupCode}/${currentUser.uid}`).catch(()=>{});
-      await restReq("DELETE", `typing/${currentGroupCode}/${currentUser.uid}`).catch(()=>{});
-    }
+    if(fbReady){ await restReq("DELETE", `groups/${currentGroupCode}/members/${currentUser.uid}`); await restReq("DELETE", `presence/${currentGroupCode}/${currentUser.uid}`).catch(()=>{}); await restReq("DELETE", `typing/${currentGroupCode}/${currentUser.uid}`).catch(()=>{}); }
     await removeGroupFromUser(currentGroupCode);
     toast("Tu as quitté la meute.");
     show("s-home");
@@ -3058,12 +2968,7 @@ async function deleteGroup(){
     show("s-home");
   }catch{ toast("Erreur.","danger"); }
 }
-function openGroupInfo(){
-  if(!currentGroupCode) return;
-  renderGroupInfo();
-  $("sheet-group-info").classList.add("on");
-  document.body.classList.add("no-scroll");
-}
+function openGroupInfo(){ if(!currentGroupCode) return; renderGroupInfo(); $("sheet-group-info").classList.add("on"); document.body.classList.add("no-scroll"); }
 function closeGroupInfo(){ $("sheet-group-info").classList.remove("on"); document.body.classList.remove("no-scroll"); }
 $("gi-close")?.addEventListener("click",closeGroupInfo);
 $("chat-info")?.addEventListener("click",openGroupInfo);
@@ -3078,7 +2983,7 @@ function renderGroupInfo(){
   Promise.all(ordered.map(uid=>fbGet(`users/${uid}`,{name:"Anonyme",mask:"#----"}))).then(profiles=>{
     list.innerHTML = ordered.map((uid,i)=>{
       const p=profiles[i]||{};
-      const av = p.avatar ? `<img src="${esc(p.avatar)}" alt="">` : ic("i-mask",18);
+      const av = p.avatar ? `<img src="${safeSrc(p.avatar)}" alt="">` : ic("i-mask",18);
       const isMe = uid===currentUser.uid;
       const isOwner = uid===currentGroupOwner;
       const score = Number(p.score)||0;
@@ -3117,7 +3022,7 @@ async function openUserProfile({uid,name,mask,avatar}){
   const isVerified = verifiedUsers[uid]===true || prof.verified===true;
   const isFollowed = myFollowing.includes(uid);
   const theirStories = storyIds.map(id=>stories[id]).filter(s=>s && s.uid===uid && !s.isDraft).length;
-  body.innerHTML = `<div class="up-head"><div class="up-av">${avatar_?`<img src="${esc(avatar_)}" alt="">`:ic("i-mask",48)}</div><div class="up-name">${esc(name_)}${isVerified?` <span style="color:var(--accent-bright);font-size:.7em">✓</span>`:""}</div><div class="up-handle">@${esc(name_.toLowerCase().replace(/\s+/g,"."))} · ${esc(mask_)}</div><div class="up-score"><div class="score-badge"><div class="score-badge__paw"><svg class="ic" viewBox="0 0 24 24" style="width:22px;height:22px"><use href="#i-paw"/></svg></div><div class="score-badge__num" id="up-score">${fmtScore(score_)}</div><div class="score-badge__lbl">Marque</div></div></div></div><div class="up-actions"><button class="primary" type="button" id="up-msg">${ic("i-chat-plus",17)} Chuchoter</button><button class="secondary" type="button" id="up-follow">${ic("i-user",17)} ${isFollowed?"Lié":"Suivre"}</button></div><div class="up-stats"><div class="up-stat"><b>${postCount}</b><small>Traces</small></div><div class="up-stat"><b>${theirStories}</b><small>Récits</small></div><div class="up-stat"><b>${likesReceived}</b><small>Hurlements</small></div></div><div class="up-bio">Âme anonyme sur AnonyBoX.<br><span style="color:var(--fg-3);font-size:.75rem">Touche « Chuchoter » pour lui parler à l'oreille.</span></div>`;
+  body.innerHTML = `<div class="up-head"><div class="up-av">${avatar_?`<img src="${safeSrc(avatar_)}" alt="">`:ic("i-mask",48)}</div><div class="up-name">${esc(name_)}${isVerified?` <span style="color:var(--accent-bright);font-size:.7em">✓</span>`:""}</div><div class="up-handle">@${esc(name_.toLowerCase().replace(/\s+/g,"."))} · ${esc(mask_)}</div><div class="up-score"><div class="score-badge"><div class="score-badge__paw"><svg class="ic" viewBox="0 0 24 24" style="width:22px;height:22px"><use href="#i-paw"/></svg></div><div class="score-badge__num" id="up-score">${fmtScore(score_)}</div><div class="score-badge__lbl">Marque</div></div></div></div><div class="up-actions"><button class="primary" type="button" id="up-msg">${ic("i-chat-plus",17)} Chuchoter</button><button class="secondary" type="button" id="up-follow">${ic("i-user",17)} ${isFollowed?"Lié":"Suivre"}</button></div><div class="up-stats"><div class="up-stat"><b>${postCount}</b><small>Traces</small></div><div class="up-stat"><b>${theirStories}</b><small>Récits</small></div><div class="up-stat"><b>${likesReceived}</b><small>Hurlements</small></div></div><div class="up-bio">Âme anonyme sur AnonyBoX.<br><span style="color:var(--fg-3);font-size:.75rem">Touche « Chuchoter » pour lui parler à l'oreille.</span></div>`;
   $("up-msg")?.addEventListener("click",()=>{ closeUserProfile(); openDm({uid,name:name_,mask:mask_,avatar:avatar_}); });
   $("up-follow")?.addEventListener("click", async ()=>{
     const i=myFollowing.indexOf(uid);
@@ -3141,7 +3046,7 @@ async function openDm(peer){
   $("dm-sub").textContent=peer.mask||"Chuchotis privé";
   $("dm-sub").style.color="";
   const av=$("dm-av");
-  if(peer.avatar) av.innerHTML=`<img src="${esc(peer.avatar)}" alt="">`; else av.innerHTML=ic("i-user",20);
+  if(peer.avatar) av.innerHTML=`<img src="${safeSrc(peer.avatar)}" alt="">`; else av.innerHTML=ic("i-user",20);
   show("s-dm");
   listenDm(peer.uid);
   markDmAsRead(peer.uid);
@@ -3192,19 +3097,12 @@ function listenDm(peerUid){
       clearTimeout(dmTypingTimeout);
       dmTypingTimeout=setTimeout(()=>{ restReq("DELETE", `dmTyping/${pairId}/${currentUser.uid}`).catch(()=>{}); },3000);
     });
-    inp.addEventListener("blur",()=>{
-      if(!currentDmPeer || !fbReady) return;
-      const pairId=dmPairId(currentUser.uid,currentDmPeer.uid);
-      restReq("DELETE", `dmTyping/${pairId}/${currentUser.uid}`).catch(()=>{});
-    });
+    inp.addEventListener("blur",()=>{ if(!currentDmPeer || !fbReady) return; const pairId=dmPairId(currentUser.uid,currentDmPeer.uid); restReq("DELETE", `dmTyping/${pairId}/${currentUser.uid}`).catch(()=>{}); });
   }
 }
 function renderDmMessages(){
   const c=$("dm-msgs");
-  if(!dmMessages.length){
-    c.innerHTML=`<div style="text-align:center;padding:60px 20px;color:var(--fg-3);font-size:.875rem"><div style="font-size:36px;margin-bottom:12px;color:var(--accent-bright)">${ic("i-chat-plus",36)}</div>Aucun chuchotis pour le moment.<br>Démarre la conversation ✨</div>`;
-    renderMsgDone=true; return;
-  }
+  if(!dmMessages.length){ c.innerHTML=`<div style="text-align:center;padding:60px 20px;color:var(--fg-3);font-size:.875rem"><div style="font-size:36px;margin-bottom:12px;color:var(--accent-bright)">${ic("i-chat-plus",36)}</div>Aucun chuchotis pour le moment.<br>Démarre la conversation ✨</div>`; renderMsgDone=true; return; }
   const nearBottom = c.scrollHeight-c.scrollTop-c.clientHeight<140;
   let html="", lastDay=null;
   dmMessages.forEach(m=>{
@@ -3225,9 +3123,7 @@ function attachDmLongPress(el,mid){
     startX=e.clientX; startY=e.clientY; moved=false;
     timer=setTimeout(()=>{ if(moved) return; hap(15); openDmMsgCtx(el,mid); },450);
   });
-  el.addEventListener("pointermove",e=>{
-    if(Math.abs(e.clientX-startX)>8 || Math.abs(e.clientY-startY)>8){ moved=true; clearTimeout(timer); }
-  });
+  el.addEventListener("pointermove",e=>{ if(Math.abs(e.clientX-startX)>8 || Math.abs(e.clientY-startY)>8){ moved=true; clearTimeout(timer); } });
   el.addEventListener("pointerup",()=>clearTimeout(timer));
   el.addEventListener("pointercancel",()=>clearTimeout(timer));
   el.addEventListener("contextmenu",e=>e.preventDefault());
@@ -3273,6 +3169,7 @@ async function sendDm(){
     const lastMsgPreview = txt.length>50 ? txt.slice(0,50)+"…" : txt;
     await restReq("PATCH", `inbox/${currentUser.uid}/${peerUid}`, {uid:peerUid, name:currentDmPeer.name||"Anonyme", mask:currentDmPeer.mask||"#----", avatar:currentDmPeer.avatar||null, lastMsg:lastMsgPreview, lastTs:now(), unread:false});
     await restReq("PATCH", `inbox/${peerUid}/${currentUser.uid}`, {uid:currentUser.uid, name:myName, mask:myMask, avatar:myAvatar, lastMsg:lastMsgPreview, lastTs:now(), unread:true});
+    pollNow(`dms/${pair}`);
     bumpScore(SCORE.MURMURE_PRIVE); registerDailyActivity();
   }catch(e){
     console.error("DM send error:", e);
@@ -3374,9 +3271,10 @@ function startFeedListener(){
     feedItems = Object.entries(d).map(([id,v])=>({id,...v})).sort((a,b)=>b.createdAt-a.createdAt);
     renderFeed();
     if($("s-profile").classList.contains("active")) updateProfile();
+    if(currentCommentsPostId && $("ov-comment").classList.contains("on")) renderComments();
   }, err=>{ console.error(err); });
 }
-function todayKey(){ return new Date().toISOString().slice(0,10); }
+function todayKey(){ return dayKey(Date.now()); }
 async function trackView(postId){
   if(!fbReady || !currentUser || !postId) return;
   if(String(postId).startsWith("tmp_")) return;
@@ -3497,7 +3395,7 @@ function renderPost(p, opts={}){
   const rtCount = Object.keys(p.reposts||{}).length;
   const verified = verifiedUsers[p.uid];
   const isPoll = p.mediaType==="poll";
-  const av = p.avatar ? `<img src="${esc(p.avatar)}" alt="">` : ic("i-mask",18);
+  const av = p.avatar ? `<img src="${safeSrc(p.avatar)}" alt="">` : ic("i-mask",18);
   const isFav = myFavorites.includes(p.id);
   const cmtCount = Object.keys(p.comments||{}).length;
   const fresh = (Date.now()-(p.createdAt||0)<3000) ? "fresh" : "";
@@ -3527,9 +3425,7 @@ function attachPostFocusHandlers(el){
     clearTimeout(focusTimer);
     focusTimer=setTimeout(()=>{ if(focusMoved) return; enterPostFocus(el); },450);
   });
-  el.addEventListener("pointermove",e=>{
-    if(Math.abs(e.clientX-focusStartX)>8 || Math.abs(e.clientY-focusStartY)>8){ focusMoved=true; clearTimeout(focusTimer); }
-  });
+  el.addEventListener("pointermove",e=>{ if(Math.abs(e.clientX-focusStartX)>8 || Math.abs(e.clientY-focusStartY)>8){ focusMoved=true; clearTimeout(focusTimer); } });
   el.addEventListener("pointerup",()=>clearTimeout(focusTimer));
   el.addEventListener("pointercancel",()=>clearTimeout(focusTimer));
   el.addEventListener("pointerleave",()=>clearTimeout(focusTimer));
@@ -3581,8 +3477,7 @@ async function toggleLike(id){
   const p=feedItems.find(x=>x.id===id); if(!p) return;
   const wasLiked = !!p.likes?.[currentUser.uid];
   p.likes = p.likes || {};
-  if(wasLiked) delete p.likes[currentUser.uid];
-  else p.likes[currentUser.uid]=true;
+  if(wasLiked) delete p.likes[currentUser.uid]; else p.likes[currentUser.uid]=true;
   const repaint = ()=>{
     [$("feed-list"),$("profile-posts")].forEach(root=>{
       if(!root) return;
@@ -3616,11 +3511,8 @@ async function toggleRepost(id){
     if(btn){ btn.classList.toggle("on", !reposted); const span=btn.querySelector("span"); if(span) span.textContent=Object.keys(p.reposts).length||""; }
   });
   hap(6);
-  try{
-    const path = `posts/${id}/reposts/${currentUser.uid}`;
-    if(reposted) await restReq("DELETE", path);
-    else await restReq("PUT", path, {at:now()});
-  }catch(e){ console.error(e); }
+  try{ const path = `posts/${id}/reposts/${currentUser.uid}`; if(reposted) await restReq("DELETE", path); else await restReq("PUT", path, {at:now()}); }
+  catch(e){ console.error(e); }
 }
 async function votePollFeed(id,opt){
   if(!fbReady) return;
@@ -3634,9 +3526,7 @@ async function votePollFeed(id,opt){
   hap(8);
   try{
     const updates={};
-    Object.keys(before).forEach(i=>{
-      if(i!==String(opt) && before[i]?.[currentUser.uid]) updates[`posts/${id}/pollVotes/${i}/${currentUser.uid}`]=null;
-    });
+    Object.keys(before).forEach(i=>{ if(i!==String(opt) && before[i]?.[currentUser.uid]) updates[`posts/${id}/pollVotes/${i}/${currentUser.uid}`]=null; });
     updates[`posts/${id}/pollVotes/${opt}/${currentUser.uid}`]=true;
     await restReq("PATCH", "", updates);
   }catch(e){
@@ -3716,7 +3606,7 @@ function renderComments(){
   const cs = Object.entries(p.comments||{}).map(([id,v])=>({id,...v})).sort((a,b)=>a.ts-b.ts);
   if(!cs.length){ list.innerHTML=`<div style="text-align:center;padding:20px;color:var(--fg-3);font-size:.875rem">Aucun grondement. Sois le premier !</div>`; return; }
   list.innerHTML = cs.map(c=>{
-    const av=c.avatar?`<img src="${esc(c.avatar)}" alt="">`:ic("i-mask",12);
+    const av=c.avatar?`<img src="${safeSrc(c.avatar)}" alt="">`:ic("i-mask",12);
     return `<div class="comment"><div class="comment__av">${av}</div><div class="comment__body"><div class="comment__name">${esc(c.name||"Anonyme")}<span class="mask">${esc(c.mask||"#----")}</span></div><div class="comment__text">${esc(c.text||"")}</div></div></div>`;
   }).join("");
   list.scrollTop=list.scrollHeight;
@@ -3730,7 +3620,7 @@ async function submitComment(){
   const cid=genId();
   const comment={uid:currentUser.uid, name:myName, mask:myMask, avatar:myAvatar, text:txt, ts:now()};
   input.value="";
-  try{ await restReq("PUT", `posts/${p.id}/comments/${cid}`, comment); hap(6); bumpScore(SCORE.GRONDEMENT); registerDailyActivity(); }
+  try{ await restReq("PUT", `posts/${p.id}/comments/${cid}`, comment); hap(6); pollNow("posts"); bumpScore(SCORE.GRONDEMENT); registerDailyActivity(); }
   catch{ toast("Erreur.","danger"); input.value=txt; }
 }
 $("comment-send")?.addEventListener("click",submitComment);
@@ -3789,11 +3679,7 @@ function updatePublishState(){
   const w=words(cap);
   let ok = w<=MAX_WORDS;
   if(editorMode==="text") ok = ok && cap.length>0;
-  if(editorMode==="poll"){
-    const q=$("ed-poll-q").value.trim();
-    const opts=[...$("ed-poll-opts").querySelectorAll("input")].map(i=>i.value.trim()).filter(Boolean);
-    ok = ok && q.length>0 && opts.length>=2;
-  }
+  if(editorMode==="poll"){ const q=$("ed-poll-q").value.trim(); const opts=[...$("ed-poll-opts").querySelectorAll("input")].map(i=>i.value.trim()).filter(Boolean); ok = ok && q.length>0 && opts.length>=2; }
   $("ed-publish").disabled = !ok;
 }
 $("ed-publish")?.addEventListener("click",publishPost);
@@ -3814,6 +3700,7 @@ async function publishPost(){
   try{
     const key = "-M" + Date.now().toString(36) + Math.random().toString(36).slice(2,10);
     await withTimeout(restReq("PUT", `posts/${key}`, payload), 8000, "publish");
+    pollNow("posts");
     bumpScore(SCORE.TRACE); registerDailyActivity();
   }catch(e){
     dbg("ERR", "Publish error:", e);
@@ -3821,9 +3708,7 @@ async function publishPost(){
     const l2=$("feed-list"); if(l2) l2.dataset.sig="";
     renderFeed();
     toast("Échec : "+(e?.message||e?.code||"inconnu"),"danger");
-  }finally{
-    btn.disabled=false; btn.textContent="Marquer";
-  }
+  }finally{ btn.disabled=false; btn.textContent="Marquer"; }
 }
 
 const EMOJI_DATA={ emoji:["😀","😁","😂","🤣","😃","😄","😅","😆","😉","😊","😋","😎","😍","😘","🥰","😗","😙","😚","🙂","🤗","🤩","🤔","🤨","😐","😑","😶","🙄","😏","😣","😥","😮","🤐","😯","😪","😫","🥱","😴","😌","😛","😜","😝","🤤","😒","😓","😔","😕","🙃","🤑","😲","☹️","🙁","😖","😞","😟","😤","😢","😭","😦","😧","😨","😩","🤯","😬","😰","😱","🥵","🥶","😳","🤪","😵","🥴","😠","😡","🤬","😷","🤒","🤕","🤢","🤮","🤧","😇","🥳","🥺","🤠","🤡","🤥","🤫","🤭","🧐","🤓","😈","👿","👹","👺","💀","☠️","👻","👽","👾","🤖","💩"], love:["❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❣️","💕","💞","💓","💗","💖","💘","💝","💟","♥️","😍","😘","🥰","😻","💋","💐","🌹","🌷","🌺","🌸"], gesture:["👍","👎","👌","✌️","🤞","🤟","🤘","🤙","👈","👉","👆","👇","☝️","✋","🤚","🖐️","🖖","👋","🤝","🙏","💪","👏","🙌","👐","🤲","✊","👊","🤛","🤜"], food:["🍕","🍔","🍟","🌭","🍿","🍩","🍪","🎂","🍰","🧁","🥧","🍫","🍬","🍭","🍮","🍯","🥛","☕","🍵","🍶","🍾","🍷","🍸","🍹","🍺","🍻","🥂","🥃","🥤","🧃","🍽️"] };
@@ -3877,10 +3762,197 @@ $("verify-ok")?.addEventListener("click",submitVerify);
 $("premium-cancel")?.addEventListener("click",()=>$("ov-premium").classList.remove("on"));
 $("premium-ok")?.addEventListener("click",submitPremium);
 $("btn-premium")?.addEventListener("click",openPremiumModal);
-$("btn-security")?.addEventListener("click",()=>toast("Chiffrement HMAC-SHA256 actif"));
+$("btn-security")?.addEventListener("click",()=>toast("Connexion HTTPS · pas de chiffrement de bout en bout","warn"));
 $("ov-comment")?.addEventListener("click",e=>{ if(e.target===$("ov-comment")){ $("ov-comment").classList.remove("on"); currentCommentsPostId=null; } });
 $("sheet-share")?.addEventListener("click",e=>{ if(e.target===$("sheet-share")) closeShareSheet(); });
 $("sheet-group-info")?.addEventListener("click",e=>{ if(e.target===$("sheet-group-info")) closeGroupInfo(); });
+
+/* ═══════════ MASCOTTE v5 — module ES avec SVG ═══════════ */
+(() => {
+const $ = id => document.getElementById(id);
+const LS = { get:(k,d)=>{ try{ const v=localStorage.getItem(k); return v===null?d:v; }catch{ return d; } }, set:(k,v)=>{ try{ localStorage.setItem(k,v); }catch{} } };
+const toast = (m,t) => { try{ window.abx?.toast?.(m,t); }catch{} };
+
+const SHAPES = {
+orb:{label:"Plasma",svg:`<svg viewBox="0 0 64 64"><defs><radialGradient id="g-orb" cx="38%" cy="32%"><stop offset="0" stop-color="#e6fff5"/><stop offset=".45" stop-color="#4ADEA7"/><stop offset="1" stop-color="#075a40"/></radialGradient></defs><circle class="m-pulse" cx="32" cy="32" r="22" fill="url(#g-orb)"/><ellipse class="m-spin" cx="32" cy="32" rx="30" ry="10" fill="none" stroke="#4ADEA7" stroke-opacity=".75" stroke-width="1.6"/><g transform="rotate(60 32 32)"><ellipse class="m-spin-r" cx="32" cy="32" rx="30" ry="10" fill="none" stroke="#a8ffd9" stroke-opacity=".6" stroke-width="1.2"/></g><g class="m-spin"><circle cx="32" cy="3" r="2.6" fill="#fff"/></g><g class="m-spin-r"><circle cx="61" cy="32" r="2" fill="#4ADEA7"/></g></svg>`},
+galaxy:{label:"Galaxie",svg:`<svg viewBox="0 0 64 64"><defs><radialGradient id="g-gal"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#7dffc8"/><stop offset="1" stop-color="#4ADEA7" stop-opacity="0"/></radialGradient></defs><circle cx="32" cy="32" r="30" fill="#06231a" opacity=".85"/><g class="m-spin" style="animation-duration:12s"><path d="M32 32C32 23 41 19 47 24 55 31 50 43 39 47 26 51 14 42 14 29 14 15 29 7 44 11" fill="none" stroke="#9bffd6" stroke-width="3" stroke-linecap="round" opacity=".9"/><g transform="rotate(180 32 32)"><path d="M32 32C32 23 41 19 47 24 55 31 50 43 39 47 26 51 14 42 14 29 14 15 29 7 44 11" fill="none" stroke="#4ADEA7" stroke-width="3" stroke-linecap="round" opacity=".8"/></g></g><circle class="m-pulse" cx="32" cy="32" r="9" fill="url(#g-gal)"/><circle class="m-twinkle" cx="10" cy="14" r="1.3" fill="#fff"/><circle class="m-twinkle" style="animation-delay:.6s" cx="55" cy="52" r="1.3" fill="#fff"/><circle class="m-twinkle" style="animation-delay:1.1s" cx="52" cy="12" r="1" fill="#fff"/></svg>`},
+spider:{label:"Araignée",svg:`<svg viewBox="0 0 64 64"><g class="m-leg-a" fill="none" stroke="#c9ffe9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M26 30 10 18 5 26"/><path d="M26 35 8 37 4 47"/><path d="M38 30 54 18 59 26"/><path d="M38 35 56 37 60 47"/></g><g class="m-leg-b" fill="none" stroke="#7dffc8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M27 27 17 8 9 10"/><path d="M27 39 16 55 8 57"/><path d="M37 27 47 8 55 10"/><path d="M37 39 48 55 56 57"/></g><ellipse cx="32" cy="39" rx="9" ry="11" fill="#0F3A2C" stroke="#4ADEA7" stroke-width="1.6"/><path d="M32 31v16" stroke="#4ADEA7" opacity=".5"/><circle cx="32" cy="26" r="7" fill="#12503c" stroke="#4ADEA7" stroke-width="1.6"/><circle class="m-twinkle" cx="29" cy="25" r="1.9" fill="#ff5d73"/><circle class="m-twinkle" cx="35" cy="25" r="1.9" fill="#ff5d73"/></svg>`},
+ghost:{label:"Fantôme",svg:`<svg viewBox="0 0 64 64"><circle class="m-pulse" cx="32" cy="32" r="29" fill="#4ADEA7" opacity=".14"/><g class="m-float"><path d="M32 8c-11 0-19 8-19 19v27l6-5 6 5 7-6 7 6 6-5 6 5V27C51 16 43 8 32 8Z" fill="#effff9"/><g class="m-blink"><ellipse cx="25" cy="28" rx="3" ry="4.3" fill="#0F3A2C"/><ellipse cx="39" cy="28" rx="3" ry="4.3" fill="#0F3A2C"/></g><ellipse cx="32" cy="38" rx="3" ry="4.2" fill="#0F3A2C"/><circle cx="20" cy="35" r="3" fill="#ff9ab8" opacity=".5"/><circle cx="44" cy="35" r="3" fill="#ff9ab8" opacity=".5"/></g></svg>`},
+star:{label:"Étoile",svg:`<svg viewBox="0 0 64 64"><defs><linearGradient id="g-star" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff6b8"/><stop offset="1" stop-color="#4ADEA7"/></linearGradient></defs><circle class="m-pulse" cx="32" cy="32" r="27" fill="#4ADEA7" opacity=".16"/><g class="m-spin"><path d="M32 2 38 26 62 32 38 38 32 62 26 38 2 32 26 26Z" fill="url(#g-star)"/></g><g class="m-spin-r"><path d="M32 13 35 29 51 32 35 35 32 51 29 35 13 32 29 29Z" fill="#fff" opacity=".9" transform="rotate(45 32 32)"/></g><circle cx="32" cy="32" r="4" fill="#fff"/></svg>`},
+moon:{label:"Lune",svg:`<svg viewBox="0 0 64 64"><defs><linearGradient id="g-moon" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fffbe6"/><stop offset="1" stop-color="#9bffd6"/></linearGradient></defs><circle class="m-pulse" cx="32" cy="32" r="29" fill="#4ADEA7" opacity=".12"/><g class="m-float"><path d="M40 6A26 26 0 1 0 58 44 21 21 0 0 1 40 6Z" fill="url(#g-moon)"/><circle cx="24" cy="38" r="3.2" fill="#0F3A2C" opacity=".18"/><circle cx="33" cy="48" r="2.2" fill="#0F3A2C" opacity=".18"/></g><circle class="m-twinkle" cx="50" cy="14" r="2" fill="#fff"/><circle class="m-twinkle" style="animation-delay:.7s" cx="56" cy="30" r="1.4" fill="#fff"/><circle class="m-twinkle" style="animation-delay:1.2s" cx="46" cy="52" r="1.3" fill="#fff"/></svg>`},
+portal:{label:"Portail",svg:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#031a13" opacity=".8"/><circle class="m-spin" cx="32" cy="32" r="28" fill="none" stroke="#4ADEA7" stroke-width="2.2" stroke-dasharray="9 6" stroke-linecap="round"/><circle class="m-spin-r" cx="32" cy="32" r="21" fill="none" stroke="#a8ffd9" stroke-width="2" stroke-dasharray="4 5" stroke-linecap="round"/><circle class="m-spin" style="animation-duration:3s" cx="32" cy="32" r="14" fill="none" stroke="#4ADEA7" stroke-width="2.4" stroke-dasharray="12 5" stroke-linecap="round"/><circle class="m-pulse" cx="32" cy="32" r="6" fill="#e6fff5"/></svg>`},
+heart:{label:"Cœur",svg:`<svg viewBox="0 0 64 64"><defs><linearGradient id="g-heart" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9ab8"/><stop offset="1" stop-color="#ff2d75"/></linearGradient></defs><circle class="m-ripple" cx="32" cy="34" r="16" fill="none" stroke="#ff5d8f" stroke-width="2"/><g class="m-beat"><path d="M32 55C10 39 6 25 14 16 21 9 29 13 32 20 35 13 43 9 50 16 58 25 54 39 32 55Z" fill="url(#g-heart)"/><path d="M18 22c2-4 6-5 9-3" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="2.4" stroke-linecap="round"/></g></svg>`}
+};
+const KEYS = Object.keys(SHAPES);
+let uid = 0;
+const svgUnique = k => { const n=++uid; return SHAPES[k].svg.replace(/(id="|url\(#)(g-[a-z]+)/g,`$1$2_${n}`); };
+
+let enabled = LS.get("abx_m2_enabled","true") !== "false";
+let shape = LS.get("abx_m2_shape","orb"); if(!SHAPES[shape]) shape = "orb";
+let cur = null;
+try{ const p = JSON.parse(LS.get("abx_m2_pos","null")); if(p && Number.isFinite(p.x) && Number.isFinite(p.y)) cur = p; }catch{}
+
+const css = document.createElement("style");
+css.textContent = `
+#abx-mascot.m2{position:fixed;top:0;left:0;width:72px;height:72px;z-index:855;display:none;background:transparent;border:0;box-shadow:none;backdrop-filter:none;border-radius:0;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;will-change:transform}
+#abx-mascot.m2::after{display:none}
+#abx-mascot.m2.m2-on{display:block}
+#abx-mascot.m2.m2-snap{transition:transform .38s cubic-bezier(.34,1.56,.64,1)}
+.m2-body{width:100%;height:100%;filter:drop-shadow(0 0 10px rgba(74,222,167,.55)) drop-shadow(0 6px 10px rgba(0,0,0,.5));animation:m2Idle 3.4s ease-in-out infinite;pointer-events:none}
+.m2-shape,.m2-shape svg{width:100%;height:100%;display:block}
+.m2-in .m2-body{animation:m2In .55s cubic-bezier(.34,1.56,.64,1) both}
+.m2-out .m2-body{animation:m2Out .28s ease forwards}
+.m2-drag .m2-body{animation:none;transform:scale(1.2);filter:drop-shadow(0 0 18px rgba(74,222,167,.95)) drop-shadow(0 12px 16px rgba(0,0,0,.55))}
+.m2-burst .m2-body{animation:m2Burst .8s cubic-bezier(.34,1.56,.64,1)}
+@keyframes m2Idle{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-5px) rotate(2deg)}}
+@keyframes m2Burst{0%{transform:scale(1) rotate(0)}40%{transform:scale(1.35) rotate(180deg)}100%{transform:scale(1) rotate(360deg)}}
+@keyframes m2In{0%{transform:scale(0) rotate(-180deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes m2Out{to{transform:scale(0) rotate(120deg);opacity:0}}
+.m-spin,.m-spin-r,.m-pulse,.m-beat,.m-ripple,.m-leg-a,.m-leg-b{transform-box:view-box;transform-origin:32px 32px}
+.m-spin{animation:mSpin 6s linear infinite}
+.m-spin-r{animation:mSpin 9s linear infinite reverse}
+.m-pulse{animation:mPulse 2.2s ease-in-out infinite}
+.m-beat{transform-origin:32px 36px;animation:mBeat 1.1s ease-in-out infinite}
+.m-ripple{transform-origin:32px 34px;animation:mRipple 1.1s ease-out infinite}
+.m-float{animation:mFloat 2.6s ease-in-out infinite}
+.m-twinkle{animation:mTwinkle 1.6s ease-in-out infinite}
+.m-blink{transform-box:fill-box;transform-origin:center;animation:mBlink 4s infinite}
+.m-leg-a{transform-origin:32px 36px;animation:mLegA .45s ease-in-out infinite alternate}
+.m-leg-b{transform-origin:32px 36px;animation:mLegB .45s ease-in-out infinite alternate}
+@keyframes mSpin{to{transform:rotate(360deg)}}
+@keyframes mPulse{0%,100%{transform:scale(.92)}50%{transform:scale(1.08)}}
+@keyframes mBeat{0%,100%{transform:scale(1)}15%{transform:scale(1.14)}30%{transform:scale(1)}45%{transform:scale(1.1)}}
+@keyframes mRipple{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.9);opacity:0}}
+@keyframes mFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes mTwinkle{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes mBlink{0%,92%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+@keyframes mLegA{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+@keyframes mLegB{from{transform:rotate(5deg)}to{transform:rotate(-5deg)}}
+#spinner-choices .m2-choice{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 2px 8px;border-radius:var(--r-md);background:var(--bg-input);border:2px solid transparent;transition:border-color .18s,background .18s}
+#spinner-choices .m2-choice.selected{border-color:var(--accent);background:rgba(74,222,167,.14)}
+#spinner-choices .m2-choice svg{width:44px;height:44px;display:block}
+#spinner-choices .m2-choice small{font-size:10px;font-weight:600;color:var(--fg-2)}
+@media(prefers-reduced-motion:reduce){.m2-body,.m2-body *,#spinner-choices *{animation:none!important}}
+`;
+document.head.appendChild(css);
+
+try{ window.abxMascot?.off?.(); }catch{}
+const old = $("abx-mascot"); if(!old) return;
+const el = old.cloneNode(false);
+el.className = "m2"; el.removeAttribute("style");
+el.innerHTML = '<div class="m2-body"><div class="m2-shape"></div></div>';
+old.replaceWith(el);
+const body = el.firstChild, shapeEl = el.querySelector(".m2-shape");
+const SIZE = 72;
+let hideT = null;
+
+const paintShape = () => { shapeEl.innerHTML = svgUnique(shape); };
+function place(x,y,snap){
+  cur = { x:Math.max(6,Math.min(innerWidth-SIZE-6,x)), y:Math.max(6,Math.min(innerHeight-SIZE-6,y)) };
+  el.classList.toggle("m2-snap",!!snap);
+  el.style.transform = `translate3d(${cur.x}px,${cur.y}px,0)`;
+}
+const savePos = () => LS.set("abx_m2_pos",JSON.stringify(cur));
+function burst(){ el.classList.remove("m2-burst"); void el.offsetWidth; el.classList.add("m2-burst"); setTimeout(()=>el.classList.remove("m2-burst"),850); navigator.vibrate?.(12); }
+
+function setEnabled(v,opts={}){
+  enabled = v; LS.set("abx_m2_enabled",String(v));
+  const sw = $("spinner-enabled"); if(sw) sw.checked = v;
+  clearTimeout(hideT);
+  if(v){
+    if(!cur) cur = { x:innerWidth-SIZE-12, y:innerHeight-190 };
+    place(cur.x,cur.y);
+    el.classList.remove("m2-out"); el.classList.add("m2-on","m2-in");
+    setTimeout(()=>el.classList.remove("m2-in"),650);
+  }else{
+    el.classList.add("m2-out");
+    hideT = setTimeout(()=>el.classList.remove("m2-on","m2-out"),290);
+  }
+  if(!opts.silent) toast(v ? "Mascotte activée ✨" : "Mascotte masquée");
+}
+
+let drag = null, lastTap = 0;
+el.addEventListener("pointerdown", e => {
+  if(e.button) return;
+  try{ el.setPointerCapture(e.pointerId); }catch{}
+  drag = { id:e.pointerId, sx:e.clientX, sy:e.clientY, ox:cur.x, oy:cur.y, moved:false };
+  el.classList.remove("m2-snap"); e.preventDefault();
+});
+el.addEventListener("pointermove", e => {
+  if(!drag || e.pointerId!==drag.id) return;
+  const dx=e.clientX-drag.sx, dy=e.clientY-drag.sy;
+  if(!drag.moved && Math.hypot(dx,dy)>6){ drag.moved=true; el.classList.add("m2-drag"); navigator.vibrate?.(10); }
+  if(drag.moved) place(drag.ox+dx,drag.oy+dy);
+});
+function end(e){
+  if(!drag || e.pointerId!==drag.id) return;
+  const d = drag; drag = null;
+  el.classList.remove("m2-drag");
+  try{ el.releasePointerCapture(e.pointerId); }catch{}
+  if(d.moved){
+    place(cur.x+SIZE/2 < innerWidth/2 ? 8 : innerWidth-SIZE-8, cur.y, true); savePos();
+  }else{
+    const t = performance.now();
+    if(t-lastTap < 320){ lastTap = 0; setEnabled(false); }
+    else{ lastTap = t; burst(); }
+  }
+}
+el.addEventListener("pointerup", end);
+el.addEventListener("pointercancel", end);
+window.addEventListener("resize", () => { if(enabled && cur) place(cur.x,cur.y); });
+
+/* ── Feuille de réglages ── */
+const markChoice = () => document.querySelectorAll("#spinner-choices .m2-choice").forEach(b => b.classList.toggle("selected", b.dataset.shape===shape));
+const box = $("spinner-choices");
+if(box){
+  const fresh = box.cloneNode(false);
+  fresh.style.cssText = "display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px";
+  fresh.innerHTML = KEYS.map(k => `<button type="button" class="m2-choice" data-shape="${k}"><span>${svgUnique(k)}</span><small>${SHAPES[k].label}</small></button>`).join("");
+  box.replaceWith(fresh);
+  fresh.addEventListener("click", ev => {
+    const b = ev.target.closest(".m2-choice"); if(!b) return;
+    shape = b.dataset.shape; LS.set("abx_m2_shape",shape);
+    paintShape(); markChoice();
+    if(!enabled) setEnabled(true,{silent:true}); else burst();
+    toast("Mascotte : "+SHAPES[shape].label);
+  });
+}
+const sw = $("spinner-enabled");
+if(sw){ const n = sw.cloneNode(true); sw.replaceWith(n); n.addEventListener("change",()=>setEnabled(n.checked)); }
+const dBtn = $("d-spinner");
+if(dBtn){
+  const n = dBtn.cloneNode(true); dBtn.replaceWith(n);
+  n.addEventListener("click", () => {
+    $("drawer-bg")?.classList.remove("on"); $("drawer")?.classList.remove("on");
+    markChoice(); const s=$("spinner-enabled"); if(s) s.checked = enabled;
+    $("sheet-spinner")?.classList.add("on"); document.body.classList.add("no-scroll");
+  });
+}
+const cBtn = $("spinner-close");
+if(cBtn){ const n = cBtn.cloneNode(true); cBtn.replaceWith(n); n.addEventListener("click",()=>{ $("sheet-spinner")?.classList.remove("on"); document.body.classList.remove("no-scroll"); }); }
+const hint = document.querySelector("#sheet-spinner .sheet__body > div:last-child");
+if(hint) hint.textContent = "Touche : elle tourne · glisse : elle se déplace · double-tape : elle se masque.";
+
+paintShape(); markChoice();
+if(!cur) cur = { x:innerWidth-SIZE-12, y:innerHeight-190 };
+place(cur.x,cur.y);
+if(enabled) setEnabled(true,{silent:true});
+window.abxMascot = { on:()=>setEnabled(true), off:()=>setEnabled(false), setShape:k=>{ if(SHAPES[k]){ shape=k; LS.set("abx_m2_shape",k); paintShape(); markChoice(); } }, shapes:()=>KEYS };
+})();
+/* ═══════════ FIN MASCOTTE ═══════════ */
+
+/* Redéfinitions globales pour compatibilité */
+function openSpinnerSettings(){
+  document.querySelectorAll("#spinner-choices .m2-choice").forEach(b => b.classList.toggle("selected", b.dataset.shape === localStorage.getItem("abx_m2_shape")));
+  const s = document.getElementById("spinner-enabled");
+  if(s) s.checked = localStorage.getItem("abx_m2_enabled") !== "false";
+  document.getElementById("sheet-spinner")?.classList.add("on");
+  document.body.classList.add("no-scroll");
+}
+function closeSpinnerSettings(){
+  document.getElementById("sheet-spinner")?.classList.remove("on");
+  document.body.classList.remove("no-scroll");
+}
 
 $("btn-edit-profile")?.addEventListener("click",()=>{ $("sheet-edit").classList.add("on"); $("edit-name").value=myName; applyAvatar(); });
 $("edit-close")?.addEventListener("click",()=>$("sheet-edit").classList.remove("on"));
@@ -3910,42 +3982,20 @@ async function propagateIdentityChange({name=false, avatar=false, mask=false}={}
   const updates={};
   const put=(path,val)=>{ updates[path]=val; };
   feedItems.forEach(p=>{
-    if(p.uid===myUid){
-      if(name) put(`posts/${p.id}/author`, myName);
-      if(mask) put(`posts/${p.id}/mask`, myMask);
-      if(avatar) put(`posts/${p.id}/avatar`, myAvatar);
-    }
-    if(p.comments) Object.entries(p.comments).forEach(([cid,c])=>{
-      if(c.uid===myUid){
-        if(name) put(`posts/${p.id}/comments/${cid}/name`, myName);
-        if(mask) put(`posts/${p.id}/comments/${cid}/mask`, myMask);
-        if(avatar) put(`posts/${p.id}/comments/${cid}/avatar`, myAvatar);
-      }
-    });
+    if(p.uid===myUid){ if(name) put(`posts/${p.id}/author`, myName); if(mask) put(`posts/${p.id}/mask`, myMask); if(avatar) put(`posts/${p.id}/avatar`, myAvatar); }
+    if(p.comments) Object.entries(p.comments).forEach(([cid,c])=>{ if(c.uid===myUid){ if(name) put(`posts/${p.id}/comments/${cid}/name`, myName); if(mask) put(`posts/${p.id}/comments/${cid}/mask`, myMask); if(avatar) put(`posts/${p.id}/comments/${cid}/avatar`, myAvatar); } });
   });
   const groupsSnapshot=[...myGroups];
   await Promise.all(groupsSnapshot.map(async g=>{
     const msgs=await fbGet(`messages/${g.code}`, null);
     if(!msgs) return;
-    Object.entries(msgs).forEach(([mid,m])=>{
-      if(m.uid===myUid){
-        if(name) put(`messages/${g.code}/${mid}/name`, myName);
-        if(mask) put(`messages/${g.code}/${mid}/mask`, myMask);
-        if(avatar) put(`messages/${g.code}/${mid}/avatar`, myAvatar);
-      }
-    });
+    Object.entries(msgs).forEach(([mid,m])=>{ if(m.uid===myUid){ if(name) put(`messages/${g.code}/${mid}/name`, myName); if(mask) put(`messages/${g.code}/${mid}/mask`, myMask); if(avatar) put(`messages/${g.code}/${mid}/avatar`, myAvatar); } });
   }));
   const peers=Object.keys(dmConversations||{});
   await Promise.all(peers.map(async peerUid=>{
     const pair=[myUid,peerUid].sort().join("__");
     const msgs=await fbGet(`dms/${pair}`, null);
-    if(msgs) Object.entries(msgs).forEach(([mid,m])=>{
-      if(m.uid===myUid){
-        if(name) put(`dms/${pair}/${mid}/name`, myName);
-        if(mask) put(`dms/${pair}/${mid}/mask`, myMask);
-        if(avatar) put(`dms/${pair}/${mid}/avatar`, myAvatar);
-      }
-    });
+    if(msgs) Object.entries(msgs).forEach(([mid,m])=>{ if(m.uid===myUid){ if(name) put(`dms/${pair}/${mid}/name`, myName); if(mask) put(`dms/${pair}/${mid}/mask`, myMask); if(avatar) put(`dms/${pair}/${mid}/avatar`, myAvatar); } });
     if(name) put(`inbox/${peerUid}/${myUid}/name`, myName);
     if(mask) put(`inbox/${peerUid}/${myUid}/mask`, myMask);
     if(avatar) put(`inbox/${peerUid}/${myUid}/avatar`, myAvatar);
@@ -3998,6 +4048,7 @@ document.addEventListener("keydown",e=>{
     $("ov-chatpoll").classList.remove("on");
     $("ov-comment").classList.remove("on");
     $("sheet-edit").classList.remove("on");
+    $("sheet-spinner").classList.remove("on");
     closeGroupInfo(); closeUserProfile();
     const cm=$("chat-menu"); if(cm) cm.style.display="none";
     closePostMenu(); closeReactPicker(); closeMsgCtx(); closeEmojiPanel(); exitPostFocus();
@@ -4005,16 +4056,11 @@ document.addEventListener("keydown",e=>{
   }
 });
 
-/* Share image (placeholder — la logique reste) */
 async function openShareImageSheet(postId){
   const p = feedItems.find(x=>x.id===postId);
   if(!p){ toast("Trace introuvable.","danger"); return; }
-  if(navigator.share){
-    try{ await navigator.share({title:"AnonyBoX", text:`${p.author||"Anonyme"}: ${p.caption||p.pollQuestion||""}`}); }
-    catch{}
-  }else{
-    navigator.clipboard?.writeText(`${p.author||"Anonyme"}: ${p.caption||""}`).then(()=>toast("Copié")).catch(()=>{});
-  }
+  if(navigator.share){ try{ await navigator.share({title:"AnonyBoX", text:`${p.author||"Anonyme"}: ${p.caption||p.pollQuestion||""}`}); }catch{} }
+  else{ navigator.clipboard?.writeText(`${p.author||"Anonyme"}: ${p.caption||""}`).then(()=>toast("Copié")).catch(()=>{}); }
 }
 function closeShareImageSheet(){ $("sheet-share-image")?.classList.remove("on"); }
 
@@ -4025,61 +4071,16 @@ window.abx={
   registerDailyActivity, getEffectiveStreak,
   openStoryDetail, openReader, openRecitEditor, closeRecitEditor, switchRecitsView,
   stories:()=>stories, storyIds:()=>storyIds,
-  debug:()=>({
-    fbReady, uid:currentUser?.uid, userReady, score:myScore, streak:myStreak,
-    streakEffective:getEffectiveStreak(), postsCount:feedItems.length,
-    storiesCount:storyIds.length,
-    groups:myGroups, conversations:Object.keys(dmConversations||{}).length,
-    name:myName, mask:myMask, mode:"REST"
-  }),
+  debug:()=>({ fbReady, uid:currentUser?.uid, userReady, score:myScore, streak:myStreak, streakEffective:getEffectiveStreak(), postsCount:feedItems.length, storiesCount:storyIds.length, groups:myGroups, conversations:Object.keys(dmConversations||{}).length, name:myName, mask:myMask, mode:"REST" }),
   testFirebase: async ()=>{
     dbg("—", "Test Firebase REST start");
-    try{
-      const t0=Date.now();
-      await restReq("PUT", `test/${Date.now()}`, {ok:true, at:Date.now()});
-      dbg("OK", "Écriture REST OK en", Date.now()-t0, "ms");
-    }catch(e){
-      dbg("ERR", "Écriture FAIL:", e.code, e.message);
-    }
+    try{ const t0=Date.now(); await restReq("PUT", `test/${Date.now()}`, {ok:true, at:Date.now()}); dbg("OK", "Écriture REST OK en", Date.now()-t0, "ms"); }
+    catch(e){ dbg("ERR", "Écriture FAIL:", e.code, e.message); }
   }
 };
-console.log("[AnonyBoX] v53 — mode REST + polling activé");
-</script>
 
-<script>
-/* ═══ ABX SPINNER ═══ */
-(() => {
-'use strict';
-const el=document.getElementById('abx-spinner');if(!el)return;
-const canvas=el.querySelector('canvas');const ctx=canvas.getContext('2d',{alpha:true});
-const SIZE_CSS=parseInt(getComputedStyle(el).width,10)||92;
-const DPR=Math.min(window.devicePixelRatio||1,3);const SIZE_PX=Math.round(SIZE_CSS*DPR);
-canvas.width=SIZE_PX;canvas.height=SIZE_PX;
-let gravityTarget=0,gravityCalibration=null,gravityActive=false,gyroPermissionAsked=false;
-function onDeviceOrientation(e){if(e.gamma===null||e.gamma===undefined)return;const gamma=e.gamma;if(gravityCalibration===null)gravityCalibration=gamma;gravityTarget=(gamma-gravityCalibration)*Math.PI/180;gravityActive=true;el.classList.add('is-gravity');}
-async function enableGyro(){if(gyroPermissionAsked)return;gyroPermissionAsked=true;if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){try{const perm=await DeviceOrientationEvent.requestPermission();if(perm==='granted'){window.addEventListener('deviceorientation',onDeviceOrientation,{passive:true});}}catch(err){}}else if(typeof DeviceOrientationEvent!=='undefined'){window.addEventListener('deviceorientation',onDeviceOrientation,{passive:true});}}
-el.addEventListener('pointerdown',enableGyro,{once:true});
-function createTriPath(c,R,r){const angles=[0,(2*Math.PI)/3,(4*Math.PI)/3];const innerR=R*0.42;c.beginPath();for(let i=0;i<3;i++){const a=angles[i],nextA=angles[(i+1)%3];const midA=(a+nextA)/2+(i===2?Math.PI:0);const px=Math.cos(a)*R,py=Math.sin(a)*R;const midX=Math.cos(midA)*innerR,midY=Math.sin(midA)*innerR;const nextPx=Math.cos(nextA)*R,nextPy=Math.sin(nextA)*R;c.arc(px,py,r,a-Math.PI/2,a+Math.PI/2,false);c.quadraticCurveTo(midX,midY,Math.cos(nextA-Math.PI/2)*r+nextPx,Math.sin(nextA-Math.PI/2)*r+nextPy);}c.closePath();}
-function createGoogleConic(c,startAngle){const g=c.createConicGradient(startAngle,0,0);g.addColorStop(0.000,'#4285F4');g.addColorStop(0.249,'#4285F4');g.addColorStop(0.250,'#EA4335');g.addColorStop(0.499,'#EA4335');g.addColorStop(0.500,'#FBBC05');g.addColorStop(0.749,'#FBBC05');g.addColorStop(0.750,'#34A853');g.addColorStop(1.000,'#34A853');return g;}
-function drawBearing(c,x,y,outerR,holeR){c.save();c.translate(x,y);const g=c.createRadialGradient(0,0,0,0,0,outerR);g.addColorStop(0.00,'#16181d');g.addColorStop(0.15,'#24282f');g.addColorStop(0.32,'#363b44');g.addColorStop(0.50,'#4c525d');g.addColorStop(0.66,'#3a3f48');g.addColorStop(0.82,'#23262c');g.addColorStop(1.00,'#0b0d10');c.beginPath();c.arc(0,0,outerR,0,Math.PI*2);c.fillStyle=g;c.fill();const seal=c.createRadialGradient(0,0,holeR*1.05,0,0,outerR*0.80);seal.addColorStop(0.00,'rgba(0,0,0,0.85)');seal.addColorStop(0.40,'rgba(10,12,15,0.45)');seal.addColorStop(0.75,'rgba(20,22,26,0.10)');seal.addColorStop(1.00,'rgba(20,22,26,0)');c.beginPath();c.arc(0,0,outerR*0.80,0,Math.PI*2);c.fillStyle=seal;c.fill();const reflet=c.createRadialGradient(0,0,outerR*0.60,0,0,outerR*1.00);reflet.addColorStop(0.55,'rgba(255,255,255,0)');reflet.addColorStop(0.82,'rgba(255,255,255,0.14)');reflet.addColorStop(1.00,'rgba(255,255,255,0)');c.beginPath();c.arc(0,0,outerR,0,Math.PI*2);c.fillStyle=reflet;c.fill();c.beginPath();c.arc(0,0,holeR,0,Math.PI*2);c.fillStyle='#0F1A22';c.fill();c.restore();}
-function paintSpinner(c,S){const R=S*0.290,armR=S*0.150,bearingR=S*0.116,holeR=S*0.050,capR=S*0.118;c.lineJoin='round';c.lineCap='round';c.save();c.shadowColor='rgba(74,222,167,0.35)';c.shadowBlur=S*0.06;c.shadowOffsetY=S*0.012;c.fillStyle='#000';c.beginPath();createTriPath(c,R,armR);c.fill();c.restore();c.save();c.beginPath();createTriPath(c,R,armR);c.clip();c.fillStyle=createGoogleConic(c,-Math.PI/2);c.fillRect(-R*2,-R*2,R*4,R*4);const depth=c.createRadialGradient(0,0,0,0,0,R+armR);depth.addColorStop(0.00,'rgba(255,255,255,0.42)');depth.addColorStop(0.22,'rgba(255,255,255,0.16)');depth.addColorStop(0.48,'rgba(255,255,255,0)');depth.addColorStop(0.72,'rgba(0,0,0,0.10)');depth.addColorStop(0.88,'rgba(0,0,0,0.28)');depth.addColorStop(0.97,'rgba(0,0,0,0.42)');depth.addColorStop(1.00,'rgba(0,0,0,0.55)');c.fillStyle=depth;c.fillRect(-R*2,-R*2,R*4,R*4);c.restore();c.save();c.beginPath();createTriPath(c,R,armR);c.clip();const rim=c.createRadialGradient(0,0,0,0,0,R+armR);rim.addColorStop(0.86,'rgba(255,255,255,0)');rim.addColorStop(0.96,'rgba(255,255,255,0.22)');rim.addColorStop(1.00,'rgba(255,255,255,0)');c.fillStyle=rim;c.fillRect(-R*2,-R*2,R*4,R*4);c.restore();for(let i=0;i<3;i++){const a=(i*2*Math.PI)/3;const lx=Math.cos(a)*R,ly=Math.sin(a)*R;const lg=c.createRadialGradient(lx,ly,armR*0.55,lx,ly,armR*0.95);lg.addColorStop(0.72,'rgba(255,255,255,0.05)');lg.addColorStop(0.94,'rgba(255,255,255,0.18)');lg.addColorStop(1.00,'rgba(255,255,255,0)');c.beginPath();c.arc(lx,ly,armR*0.95,0,Math.PI*2);c.fillStyle=lg;c.fill();}for(let i=0;i<3;i++){const a=(i*2*Math.PI)/3;drawBearing(c,Math.cos(a)*R,Math.sin(a)*R,bearingR,holeR);}const capShadow=c.createRadialGradient(0,0,capR*0.9,0,0,capR*1.18);capShadow.addColorStop(0.70,'rgba(0,0,0,0.22)');capShadow.addColorStop(1.00,'rgba(0,0,0,0)');c.beginPath();c.arc(0,0,capR*1.18,0,Math.PI*2);c.fillStyle=capShadow;c.fill();const capGrad=c.createRadialGradient(0,0,0,0,0,capR);capGrad.addColorStop(0.00,'#5a606b');capGrad.addColorStop(0.20,'#41464f');capGrad.addColorStop(0.42,'#2c3037');capGrad.addColorStop(0.62,'#1e2126');capGrad.addColorStop(0.80,'#2a2e34');capGrad.addColorStop(0.92,'#1a1d22');capGrad.addColorStop(1.00,'#0a0c0f');c.beginPath();c.arc(0,0,capR,0,Math.PI*2);c.fillStyle=capGrad;c.fill();const capInner=c.createRadialGradient(0,0,capR*0.45,0,0,capR);capInner.addColorStop(0.70,'rgba(0,0,0,0)');capInner.addColorStop(0.92,'rgba(0,0,0,0.30)');capInner.addColorStop(1.00,'rgba(255,255,255,0.10)');c.beginPath();c.arc(0,0,capR,0,Math.PI*2);c.fillStyle=capInner;c.fill();}
-ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,SIZE_PX,SIZE_PX);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.save();ctx.translate(SIZE_PX/2,SIZE_PX/2);paintSpinner(ctx,SIZE_PX);ctx.restore();
-const PAD=6;let x,y;
-try{const s=JSON.parse(localStorage.getItem('abx_spinner_pos')||'null');if(s&&Number.isFinite(s.x)&&Number.isFinite(s.y)){x=s.x;y=s.y;}}catch{}
-if(!Number.isFinite(x)||!Number.isFinite(y)){x=window.innerWidth-SIZE_CSS-14;y=window.innerHeight-SIZE_CSS-110;}
-function clamp(){x=Math.max(PAD,Math.min(window.innerWidth-SIZE_CSS-PAD,x));y=Math.max(PAD,Math.min(window.innerHeight-SIZE_CSS-PAD,y));}
-function applyPos(){el.style.transform=`translate3d(${x}px,${y}px,0)`;}
-clamp();applyPos();
-let angle=0,vel=0;const MAX_V=38,AUTO_V=0.55,STOP_T=0.02;let autoSpin=true;let pointerId=null,mode=null;let downT=0,downPt={x:0,y:0};let lastA=0,dragHistory=[],moveOffset={x:0,y:0};let longPressTO=null,moved=false;
-const pt=e=>({x:e.clientX,y:e.clientY});const centerStage=()=>({x:x+SIZE_CSS/2,y:y+SIZE_CSS/2});
-function onDown(e){if(pointerId!==null)return;pointerId=e.pointerId;try{el.setPointerCapture(e.pointerId);}catch{}downT=performance.now();downPt=pt(e);moved=false;const c=centerStage();lastA=Math.atan2(downPt.y-c.y,downPt.x-c.x);dragHistory=[{a:lastA,t:downT,u:lastA}];mode='rotate';vel*=0.05;clearTimeout(longPressTO);longPressTO=setTimeout(()=>{if(moved)return;mode='move';moveOffset.x=downPt.x-x;moveOffset.y=downPt.y-y;el.classList.add('is-moving');try{navigator.vibrate?.(20);}catch{}},320);e.preventDefault();}
-function onMove(e){if(e.pointerId!==pointerId)return;const p=pt(e);if(Math.hypot(p.x-downPt.x,p.y-downPt.y)>6)moved=true;if(mode==='rotate'){const c=centerStage();const a=Math.atan2(p.y-c.y,p.x-c.x);let d=a-lastA;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;angle+=d;lastA=a;const now=performance.now();const prev=dragHistory[dragHistory.length-1];const u=prev.u+d;dragHistory.push({a,t:now,u});while(dragHistory.length>2&&(now-dragHistory[0].t)>90)dragHistory.shift();}else if(mode==='move'){x=p.x-moveOffset.x;y=p.y-moveOffset.y;clamp();applyPos();}e.preventDefault();}
-function onUp(e){if(e.pointerId!==pointerId)return;try{el.releasePointerCapture(e.pointerId);}catch{}clearTimeout(longPressTO);const wasMode=mode;mode=null;pointerId=null;el.classList.remove('is-moving');if(wasMode==='move'){try{localStorage.setItem('abx_spinner_pos',JSON.stringify({x,y}));}catch{}return;}const now=performance.now();const recent=dragHistory.filter(p=>(now-p.t)<130);if(recent.length>=2){const f=recent[0],l=recent[recent.length-1];const dt=(l.t-f.t)/1000;if(dt>0.004){let v=(l.u-f.u)/dt;v=Math.max(-MAX_V,Math.min(MAX_V,v*1.6));vel=v;autoSpin=false;}}if(!moved&&(now-downT)<240&&Math.abs(vel)<0.6){vel=14*(Math.random()>0.5?1:-1);}}
-el.addEventListener('pointerdown',onDown,{passive:false});el.addEventListener('pointermove',onMove,{passive:false});el.addEventListener('pointerup',onUp);el.addEventListener('pointercancel',onUp);el.addEventListener('contextmenu',e=>e.preventDefault());window.addEventListener('resize',()=>{clamp();applyPos();},{passive:true});
-let lastT=0;
-function loop(now){if(!lastT)lastT=now;let dt=(now-lastT)/1000;lastT=now;if(dt>0.1)dt=0.1;if(mode!=='rotate'){angle+=vel*dt;if(gravityActive){let d=gravityTarget-angle;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;vel+=Math.sin(d)*15*dt;vel*=Math.exp(-4*dt);}else{vel*=Math.exp(-1.2*dt);}const settled=!gravityActive||Math.abs(gravityTarget-angle)<0.005;if(Math.abs(vel)<STOP_T&&settled){vel=0;if(autoSpin&&!gravityActive)angle+=AUTO_V*dt;}}canvas.style.transform=`rotate(${angle}rad)`;el.classList.toggle('is-spinning',Math.abs(vel)>2);requestAnimationFrame(loop);}
-requestAnimationFrame(t=>{lastT=t;requestAnimationFrame(loop);});
-})();
+Object.entries({"messages-refresh":"Actualiser","feed-refresh":"Actualiser","feed-plus":"Nouvelle trace","recits-search-btn":"Rechercher","recits-write-btn":"Écrire un récit","chat-back":"Retour","dm-back":"Retour","chat-menu-btn":"Menu","chat-send":"Envoyer","dm-send":"Envoyer","chat-poll":"Sondage","emoji-toggle":"Emojis","dm-emoji-toggle":"Emojis","drawer-close":"Fermer","reader-back":"Retour","recit-detail-more":"Options"}).forEach(([id,l])=>$(id)?.setAttribute("aria-label",l));
+document.querySelectorAll("[data-home]").forEach(b=>b.setAttribute("aria-label","Retour"));
 </script>
 
 <script>
@@ -4088,98 +4089,56 @@ requestAnimationFrame(t=>{lastT=t;requestAnimationFrame(loop);});
   'use strict';
   const nav = document.querySelector('.nav');
   if (!nav) return;
-
   const STORAGE_KEY = 'abx_nav_positions';
-  const LONG_PRESS_MS = 350;
-  const PRE_MOVE_CANCEL = 15;
-  const DRAG_START = 4;
-  const NAV_SNAP_ZONE = 90;
-  const MIN_EDGE = 6;
-  const BTN_SIZE = 60;
-  const DRAG_SCALE = 1.08;
+  const LONG_PRESS_MS = 350, PRE_MOVE_CANCEL = 15, DRAG_START = 4, NAV_SNAP_ZONE = 90, MIN_EDGE = 6, BTN_SIZE = 60, DRAG_SCALE = 1.08;
   const hap = (ms = 8) => { try { navigator.vibrate?.(ms); } catch {} };
-
   let positions = {};
   try { positions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch {}
   const savePositions = () => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(positions)); } catch {} };
-
   const ORDER = ['nav-home','nav-messages','nav-groups','nav-feed','nav-recits'];
   const buttons = ORDER.map(id => document.getElementById(id)).filter(Boolean);
-
   if (!localStorage.getItem('abx_nav_hint_shown')){
     document.body.classList.add('nav-hint');
-    setTimeout(() => {
-      document.body.classList.remove('nav-hint');
-      try { localStorage.setItem('abx_nav_hint_shown', '1'); } catch {}
-    }, 6000);
+    setTimeout(() => { document.body.classList.remove('nav-hint'); try { localStorage.setItem('abx_nav_hint_shown', '1'); } catch {} }, 6000);
   }
-
   const clampX = v => Math.max(MIN_EDGE, Math.min(window.innerWidth - BTN_SIZE - MIN_EDGE, v));
   const clampY = v => Math.max(MIN_EDGE, Math.min(window.innerHeight - BTN_SIZE - MIN_EDGE, v));
-  const setFloatPos = (btn, x, y, scale = 1) => {
-    btn._fx = x; btn._fy = y;
-    btn.style.transform = `translate3d(${x}px,${y}px,0)` + (scale !== 1 ? ` scale(${scale})` : '');
-  };
-
+  const setFloatPos = (btn, x, y, scale = 1) => { btn._fx = x; btn._fy = y; btn.style.transform = `translate3d(${x}px,${y}px,0)` + (scale !== 1 ? ` scale(${scale})` : ''); };
   buttons.forEach(attachDrag);
-  buttons.forEach(btn => {
-    const s = positions[btn.id];
-    if (s && Number.isFinite(s.x) && Number.isFinite(s.y)){
-      setTimeout(() => activateFloating(btn, s.x, s.y, false), 40);
-    }
-  });
-
+  buttons.forEach(btn => { const s = positions[btn.id]; if (s && Number.isFinite(s.x) && Number.isFinite(s.y)){ setTimeout(() => activateFloating(btn, s.x, s.y, false), 40); } });
   function attachDrag(btn){
     let pressTimer = null, active = false, armed = false, dragging = false, suppressClick = false;
-    let startX = 0, startY = 0, anchorX = 0, anchorY = 0;
-    let dragBaseX = 0, dragBaseY = 0, pendingX = 0, pendingY = 0, rafId = null, pointerId = null;
+    let startX = 0, startY = 0, anchorX = 0, anchorY = 0, dragBaseX = 0, dragBaseY = 0, pendingX = 0, pendingY = 0, rafId = null, pointerId = null;
     const clearPress = () => { if (pressTimer){ clearTimeout(pressTimer); pressTimer = null; } };
-
     btn.addEventListener('pointerdown', (e) => {
       if (e.button !== undefined && e.button !== 0) return;
       if (active) return;
       active = true; pointerId = e.pointerId;
-      startX = e.clientX; startY = e.clientY;
-      anchorX = startX; anchorY = startY;
+      startX = e.clientX; startY = e.clientY; anchorX = startX; anchorY = startY;
       armed = false; dragging = false; suppressClick = false;
       clearPress();
       pressTimer = setTimeout(() => {
         pressTimer = null; if (!active) return;
         armed = true;
-        if (!btn.classList.contains('is-floating')){
-          const rect = btn.getBoundingClientRect();
-          activateFloating(btn, rect.left, rect.top, true);
-          dragBaseX = rect.left; dragBaseY = rect.top;
-        } else { dragBaseX = btn._fx ?? 0; dragBaseY = btn._fy ?? 0; }
+        if (!btn.classList.contains('is-floating')){ const rect = btn.getBoundingClientRect(); activateFloating(btn, rect.left, rect.top, true); dragBaseX = rect.left; dragBaseY = rect.top; }
+        else { dragBaseX = btn._fx ?? 0; dragBaseY = btn._fy ?? 0; }
         btn.classList.add('armed'); hap(15);
       }, LONG_PRESS_MS);
     });
-
     btn.addEventListener('pointermove', (e) => {
       if (!active || e.pointerId !== pointerId) return;
       if (!dragging){
         const d = Math.hypot(e.clientX - startX, e.clientY - startY);
-        if (!armed){
-          if (d > PRE_MOVE_CANCEL){ clearPress(); active = false; pointerId = null; return; }
-        } else { if (d > DRAG_START) beginDrag(e); }
+        if (!armed){ if (d > PRE_MOVE_CANCEL){ clearPress(); active = false; pointerId = null; return; } }
+        else { if (d > DRAG_START) beginDrag(e); }
         return;
       }
       e.preventDefault();
       const dx = e.clientX - anchorX, dy = e.clientY - anchorY;
       pendingX = clampX(dragBaseX + dx); pendingY = clampY(dragBaseY + dy);
-      if (rafId == null){
-        rafId = requestAnimationFrame(() => { rafId = null; setFloatPos(btn, pendingX, pendingY, DRAG_SCALE); });
-      }
+      if (rafId == null){ rafId = requestAnimationFrame(() => { rafId = null; setFloatPos(btn, pendingX, pendingY, DRAG_SCALE); }); }
     }, { passive: false });
-
-    function beginDrag(e){
-      dragging = true; btn.classList.remove('armed');
-      try { btn.setPointerCapture(e.pointerId); } catch {}
-      anchorX = e.clientX; anchorY = e.clientY;
-      pendingX = dragBaseX; pendingY = dragBaseY;
-      btn.classList.add('dragging'); hap(20);
-    }
-
+    function beginDrag(e){ dragging = true; btn.classList.remove('armed'); try { btn.setPointerCapture(e.pointerId); } catch {} anchorX = e.clientX; anchorY = e.clientY; pendingX = dragBaseX; pendingY = dragBaseY; btn.classList.add('dragging'); hap(20); }
     const finish = (e) => {
       clearPress();
       if (rafId != null){ cancelAnimationFrame(rafId); rafId = null; }
@@ -4187,27 +4146,21 @@ requestAnimationFrame(t=>{lastT=t;requestAnimationFrame(loop);});
       dragging = false; armed = false; active = false; pointerId = null;
       btn.classList.remove('armed');
       if (wasDragging){
-        suppressClick = true;
-        btn.classList.remove('dragging');
+        suppressClick = true; btn.classList.remove('dragging');
         try { btn.releasePointerCapture(e.pointerId); } catch {}
         const finalX = pendingX, finalY = pendingY;
         const centerY = finalY + BTN_SIZE / 2;
-        if (centerY > window.innerHeight - NAV_SNAP_ZONE){
-          deactivateFloating(btn); delete positions[btn.id]; savePositions();
-        } else {
-          positions[btn.id] = { x: finalX, y: finalY }; savePositions(); setFloatPos(btn, finalX, finalY, 1);
-        }
+        if (centerY > window.innerHeight - NAV_SNAP_ZONE){ deactivateFloating(btn); delete positions[btn.id]; savePositions(); }
+        else { positions[btn.id] = { x: finalX, y: finalY }; savePositions(); setFloatPos(btn, finalX, finalY, 1); }
         hap(12);
         setTimeout(() => { suppressClick = false; }, 400);
       } else if (wasArmed){ setTimeout(() => { suppressClick = false; }, 200); }
     };
-
     btn.addEventListener('pointerup', (e) => { if (e.pointerId !== pointerId) return; finish(e); });
     btn.addEventListener('pointercancel', (e) => { if (e.pointerId !== pointerId) return; finish(e); });
     btn.addEventListener('contextmenu', e => e.preventDefault());
     btn.addEventListener('click', (e) => { if (suppressClick || dragging){ e.stopImmediatePropagation(); e.preventDefault(); } }, true);
   }
-
   function activateFloating(btn, x, y, animate){
     if (btn.parentElement !== document.body) document.body.appendChild(btn);
     btn.classList.add('is-floating');
@@ -4221,36 +4174,22 @@ requestAnimationFrame(t=>{lastT=t;requestAnimationFrame(loop);});
     btn._fx = null; btn._fy = null;
     const myIndex = ORDER.indexOf(btn.id);
     let refNode = null;
-    for (let i = myIndex + 1; i < ORDER.length; i++){
-      const next = document.getElementById(ORDER[i]);
-      if (next && next.parentElement === nav){ refNode = next; break; }
-    }
+    for (let i = myIndex + 1; i < ORDER.length; i++){ const next = document.getElementById(ORDER[i]); if (next && next.parentElement === nav){ refNode = next; break; } }
     if (refNode) nav.insertBefore(btn, refNode); else nav.appendChild(btn);
   }
-
   let resizeTO = null;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTO);
     resizeTO = setTimeout(() => {
-      buttons.forEach(btn => {
-        if (!btn.classList.contains('is-floating')) return;
-        const nx = clampX(btn._fx ?? 0), ny = clampY(btn._fy ?? 0);
-        setFloatPos(btn, nx, ny, 1); positions[btn.id] = { x: nx, y: ny };
-      });
+      buttons.forEach(btn => { if (!btn.classList.contains('is-floating')) return; const nx = clampX(btn._fx ?? 0), ny = clampY(btn._fy ?? 0); setFloatPos(btn, nx, ny, 1); positions[btn.id] = { x: nx, y: ny }; });
       savePositions();
     }, 180);
   }, { passive: true });
-
   window.abxNav = {
-    reset(){
-      buttons.forEach(btn => { if (btn.classList.contains('is-floating')) deactivateFloating(btn); });
-      try { localStorage.removeItem(STORAGE_KEY); } catch {}
-      positions = {};
-      console.log('[abxNav] reset');
-    },
+    reset(){ buttons.forEach(btn => { if (btn.classList.contains('is-floating')) deactivateFloating(btn); }); try { localStorage.removeItem(STORAGE_KEY); } catch {} positions = {}; console.log('[abxNav] reset'); },
     positions: () => ({ ...positions })
   };
 })();
 </script>
 </body>
-  </html>
+</html>
