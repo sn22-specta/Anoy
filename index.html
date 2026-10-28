@@ -13,10 +13,6 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="preconnect" href="https://www.gstatic.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;600;700&display=swap">
-
-<!-- ═══════════════════════════════════════════════════════════════════════════
-     PARTIE 1 : CSS (STYLES)
-     ═══════════════════════════════════════════════════════════════════════════ -->
 <style>
 :root{
   --accent:#10B981;--accent-light:#34D399;--accent-bright:#4ADEA7;--accent-deep:#047857;
@@ -716,189 +712,310 @@ body.on-recits .fab--story{display:grid}
 #abx-debug-toggle{position:fixed;top:8px;left:56px;z-index:99998;width:36px;height:36px;border-radius:50%;background:#4ADEA7;color:#0B141A;border:0;font-size:16px;font-weight:700;cursor:pointer;display:none;}
 #abx-debug-toggle.on{display:grid;place-items:center}
 
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important}
+/* =========================================
+   SECTION PREMIUM
+   ========================================= */
+.premium-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
 }
-
-/* ═══════════ LAYOUT DESKTOP (Type Twitter/X) ═══════════ */
-.desktop-sidebar {
-  display: none;
+.premium-hero {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+.premium-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(74,222,167,.15), rgba(74,222,167,.05));
+  border: 1px solid rgba(74,222,167,.3);
+  display: grid;
+  place-items: center;
+  color: var(--accent-bright);
+  margin-bottom: 20px;
+  box-shadow: 0 0 30px rgba(74,222,167,.2);
+}
+.premium-title {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-style: italic;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.premium-subtitle {
+  font-size: 1.1rem;
+  color: var(--fg-3);
+  max-width: 500px;
+  line-height: 1.5;
+}
+.premium-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 768px) {
+  .premium-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.premium-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-2);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  transition: transform .2s, border-color .2s;
+}
+.premium-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(74,222,167,.4);
+}
+.premium-card__icon { font-size: 32px; margin-bottom: 16px; }
+.premium-card h3 { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.premium-card p { font-size: 0.9rem; color: var(--fg-3); line-height: 1.5; }
+.premium-action { text-align: center; margin-top: 20px; }
+.premium-input-group {
+  display: flex;
+  gap: 10px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.premium-input-group input {
+  flex: 1;
+  padding: 16px;
+  border-radius: var(--r-md);
+  background: var(--bg-input);
+  border: 1px solid var(--border-2);
+  color: var(--fg);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+.premium-input-group input:focus { border-color: var(--accent-light); outline: none; }
+.premium-input-group button {
+  padding: 0 24px;
+  border-radius: var(--r-md);
+  font-weight: 600;
+  font-size: 1rem;
+}
+.premium-hint { font-size: 0.8rem; color: var(--fg-4); margin-top: 12px; }
 
-@media (min-width: 1000px) {
+/* =========================================
+   ARCHITECTURE DESKTOP (SIDEBAR COMPLÈTE)
+   ========================================= */
+@media (min-width: 1024px) {
   body {
-    background: #000;
-    padding-bottom: 0;
+    background: #090e12;
     display: flex;
     justify-content: center;
+    padding-bottom: 0;
+    overflow: hidden;
   }
 
   .app {
-    max-width: 1280px;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 275px 600px 350px;
-    margin: 0 auto;
-    background: transparent;
-    box-shadow: none;
-    min-height: 100vh;
+    max-width: 100vw;
+    width: 100vw;
+    display: flex;
+    height: 100vh;
   }
 
-  /* 1. Barre latérale gauche (Menu) */
-  .nav {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    width: 100%;
+  /* Cache les éléments mobiles */
+  .nav, .home__top, .drawer-bg, #btn-toggle-sidebar { display: none !important; }
+
+  /* Menu flottant */
+  .drawer {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    bottom: 16px;
+    height: calc(100vh - 32px);
+    width: 300px;
+    border-radius: 24px;
+    border: 1px solid var(--border-2);
+    background: var(--bg-2);
+    box-shadow: 0 12px 48px rgba(0,0,0,0.6);
+    z-index: 4000;
+    transform: translateX(-120%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    padding: 20px 12px;
-    border-right: 1px solid var(--border);
-    border-top: none;
-    background: #000;
+    overflow-y: auto;
+    margin: 0;
   }
 
-  .nav button {
-    flex-direction: row;
-    justify-content: flex-start;
-    padding: 14px 24px;
-    gap: 20px;
-    border-radius: 9999px;
-    margin-bottom: 8px;
-    width: fit-content;
-    background: transparent;
-  }
-  
-  .nav button:hover {
-    background: rgba(255,255,255,0.1);
+  body:not(.menu-hidden) .drawer {
+    transform: translateX(0);
   }
 
-  .nav button span { font-size: 26px; }
-  .nav button small { font-size: 20px; font-weight: 600; display: block; }
-  .nav button::before { display: none; }
-
-  /* 2. Colonne centrale (Contenu) */
-  .screen {
-    border-right: 1px solid var(--border);
-    min-height: 100vh;
-    background: #000;
-    padding-bottom: 0;
+  #menu-trigger-zone {
     display: none;
-  }
-
-  .screen.active {
-    display: block;
-  }
-
-  .home__top { display: none !important; }
-  .fab { display: none !important; }
-
-  .hdr, .home__top {
-    background: rgba(0,0,0,0.65);
-    backdrop-filter: blur(12px);
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 50;
-  }
-
-  .chat-screen {
-    position: relative !important;
+    left: 0;
+    width: 33.33vw;
     height: 100vh;
-    max-width: none;
-    border: none;
-    inset: auto;
+    z-index: 3900;
+    cursor: pointer;
   }
+  body.menu-hidden #menu-trigger-zone { display: block; }
 
-  /* 3. Colonne de droite (Tendances) */
-  .desktop-sidebar {
+  #menu-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 3950;
+    background: transparent;
+  }
+  body:not(.menu-hidden) #menu-backdrop { display: block; }
+
+  /* Bouton toggle */
+  #btn-sidebar-toggle {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 4100;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-2);
+    color: var(--fg-2);
     display: flex;
-    flex-direction: column;
-    padding: 12px 24px;
-    gap: 20px;
-    position: sticky;
-    top: 0;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  #btn-sidebar-toggle:hover { background: var(--bg-elevated); color: #fff; transform: scale(1.05); }
+  body:not(.menu-hidden) #btn-sidebar-toggle { left: 332px; }
+
+  /* Ajustement des écrans */
+  .screen {
+    flex: 1;
     height: 100vh;
     overflow-y: auto;
-    scrollbar-width: none;
+    display: none;
+    transition: padding-left 0.4s ease;
+    padding-left: 0;
   }
-  .desktop-sidebar::-webkit-scrollbar { display: none; }
+  body:not(.menu-hidden) .screen { padding-left: 332px; }
+  .screen.active { display: flex; flex-direction: column; }
 
-  .desktop-search {
-    display: flex;
-    align-items: center;
-    background: #202327;
-    padding: 12px 16px;
-    border-radius: 9999px;
-    gap: 12px;
-    color: var(--fg-3);
+  .chat-screen.active {
+    position: relative;
+    height: 100vh;
+    max-height: 100vh;
+    inset: auto;
+    max-width: none;
+    margin: 0;
   }
-  .desktop-search input {
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 15px;
-    outline: none;
+
+  .hdr, .chat__bar, .dm-bar {
+    padding-top: 0;
+    height: 64px;
+    padding-left: 24px;
+    border-radius: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  
+  body.menu-hidden .hdr, 
+  body.menu-hidden .chat__bar, 
+  body.menu-hidden .dm-bar {
+    padding-left: 76px !important;
+  }
+
+  .feed__list, .messages-list {
+    max-width: 800px;
+    margin: 0 auto;
     width: 100%;
   }
-  .desktop-search .ic { font-size: 18px; }
+  
+  .fab { position: fixed; bottom: 40px; right: 40px; display: none; }
+  body.on-feed .fab { display: grid; }
 
-  .desktop-trends {
-    background: #16181C;
-    border-radius: 16px;
-    padding: 16px;
+  /* Adaptation de la section Mes Meutes */
+  #s-groups.active {
+    height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+  }
+  #s-groups.active .hdr { flex-shrink: 0; width: 100%; height: 70px; }
+  #s-groups.active .groups-help { flex-shrink: 0; margin: 20px auto; max-width: 500px; }
+  #s-groups.active .grid-wrap {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: auto;
+    padding: 30px;
+    background-image: radial-gradient(circle, rgba(255,255,255,.06) 1px, transparent 1.2px);
+    background-size: 40px 40px;
+  }
+  #s-groups.active .gicon__box { width: 80px; height: 80px; font-size: 34px; }
+  #s-groups.active .gicon { width: 100px; }
+
+  /* Adaptation de la section Récits */
+  #s-recits.active { height: 100vh; overflow-y: auto; }
+  #s-recits .recits-banner { height: 380px; border-radius: 0 0 24px 24px; margin-bottom: 20px; }
+  #s-recits .recits-banner__title { font-size: 3.5rem; max-width: 800px; }
+  #s-recits .recits-banner__content { padding: 40px; }
+  #s-recits .recits-tags { padding: 0 40px; margin-bottom: 20px; }
+  #s-recits .recits-section-title { padding: 30px 40px 16px; max-width: 1400px; margin: 0 auto; }
+  
+  #s-recits .recits-carousel {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 24px;
+    padding: 0 40px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    overflow: visible;
+  }
+  #s-recits .recits-carousel__cover { width: 100%; height: 240px; }
+  #s-recits .recits-carousel__item:hover .recits-carousel__cover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(74,222,167,0.2);
+    border-color: rgba(74,222,167,0.5);
+  }
+  #s-recits .recits-ranked {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
+    padding: 0 40px 80px;
+    max-width: 1400px;
+    margin: 0 auto;
   }
-  .desktop-trends h2 {
-    font-size: 20px;
-    font-weight: 800;
-    color: #fff;
-    margin-bottom: 4px;
+  #s-recits .recits-ranked__item {
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 16px;
+    background: var(--bg-card);
   }
-  .trend-item {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    cursor: pointer;
+  #s-recits .recits-ranked__item:hover { background: var(--bg-elevated); }
+  
+  #recits-mesecrits-content { padding: 40px; max-width: 1400px; margin: 0 auto; }
+  .mesecrits-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    align-items: start;
   }
-  .trend-item span { font-size: 13px; color: #71767B; }
-  .trend-item strong { font-size: 15px; font-weight: 700; color: #fff; }
-  .trend-item small { font-size: 13px; color: #71767B; }
-  .show-more {
-    color: var(--accent-bright);
-    text-align: left;
-    font-size: 15px;
-    padding: 8px 0 0 0;
-  }
+  .mesecrits-section__head { grid-column: 1 / -1; padding: 0 0 20px 0; }
+  .mesecrits-card { margin: 0; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+  .mesecrits-empty { grid-column: 1 / -1; margin: 0 auto; }
+}
 
-  .sugg-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-  }
-  .sugg-av { width: 40px; height: 40px; border-radius: 50%; }
-  .sugg-info { display: flex; flex-direction: column; flex: 1; }
-  .sugg-info strong { font-size: 15px; color: #fff; }
-  .sugg-info span { font-size: 14px; color: #71767B; }
-  .sugg-btn {
-    background: #EFF3F4;
-    color: #0F1419;
-    font-weight: 700;
-    font-size: 14px;
-    padding: 6px 16px;
-    border-radius: 9999px;
-  }
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important}
 }
 </style>
 </head>
 <body>
-
-<!-- ═══════════════════════════════════════════════════════════════════════════
-     PARTIE 2 : HTML (STRUCTURE)
-     ═══════════════════════════════════════════════════════════════════════════ -->
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <symbol id="i-ghost" viewBox="0 0 24 24"><path d="M12 2.6c-3.55 0-6.4 2.85-6.4 6.4v10.8l2.05-1.65 1.85 1.65 2.5-1.75 2.5 1.75 1.85-1.65 2.05 1.65V9c0-3.55-2.85-6.4-6.4-6.4Z" fill="currentColor"/><circle cx="9.35" cy="10" r="1.05" fill="#0F3A2C"/><circle cx="14.65" cy="10" r="1.05" fill="#0F3A2C"/></symbol>
@@ -1165,6 +1282,53 @@ body.on-recits .fab--story{display:grid}
   <div class="profile__posts" id="profile-posts"></div>
 </section>
 
+<!-- NOUVELLE SECTION PREMIUM -->
+<section id="s-premium" class="screen">
+  <header class="hdr">
+    <button class="hdr__btn" data-home type="button"><svg class="ic" viewBox="0 0 24 24"><use href="#i-back"/></svg></button>
+    <h2 class="hdr__title">AnonyBoX Premium</h2>
+  </header>
+  
+  <div class="premium-container">
+    <div class="premium-hero">
+      <div class="premium-icon"><svg class="ic" viewBox="0 0 24 24" style="width:48px;height:48px"><use href="#i-crown"/></svg></div>
+      <h1 class="premium-title">Passe au niveau supérieur</h1>
+      <p class="premium-subtitle">Débloque le plein potentiel de ta tanière avec des fonctionnalités exclusives.</p>
+    </div>
+
+    <div class="premium-grid">
+      <div class="premium-card">
+        <div class="premium-card__icon">🎭</div>
+        <h3>Mode Fantôme</h3>
+        <p>Masque ton activité en temps réel. Personne ne saura quand tu es en ligne.</p>
+      </div>
+      <div class="premium-card">
+        <div class="premium-card__icon">⏳</div>
+        <h3>Traces Éphémères</h3>
+        <p>Tes chuchotis et tes traces s'auto-détruisent après lecture.</p>
+      </div>
+      <div class="premium-card">
+        <div class="premium-card__icon">🕵️</div>
+        <h3>Brouillage 100%</h3>
+        <p>Cache ton identité de manière permanente, même dans les conversations privées.</p>
+      </div>
+      <div class="premium-card">
+        <div class="premium-card__icon">🏅</div>
+        <h3>Badge Exclusif</h3>
+        <p>Affiche un badge doré sur ton profil et à côté de toutes tes publications.</p>
+      </div>
+    </div>
+
+    <div class="premium-action">
+      <div class="premium-input-group">
+        <input id="premium-code-desktop" class="mono" type="text" placeholder="CODE PREMIUM" maxlength="60" autocomplete="off">
+        <button class="btn-primary" id="premium-activate-desktop" type="button">Activer</button>
+      </div>
+      <p class="premium-hint">Entre le code fourni par AnonyBoX pour activer ton accès.</p>
+    </div>
+  </div>
+</section>
+
 <section id="s-chat" class="screen chat-screen">
   <header class="chat__bar">
     <button class="hdr__btn" id="chat-back" type="button"><svg class="ic" viewBox="0 0 24 24"><use href="#i-back"/></svg></button>
@@ -1232,53 +1396,6 @@ body.on-recits .fab--story{display:grid}
   </footer>
 </section>
 
-<!-- COLONNE DE DROITE POUR DESKTOP -->
-<aside class="desktop-sidebar">
-  <div class="desktop-search">
-    <svg class="ic" viewBox="0 0 24 24"><use href="#i-search"/></svg>
-    <input type="text" placeholder="Rechercher sur AnonyBoX">
-  </div>
-  
-  <div class="desktop-trends">
-    <h2>Tendances pour vous</h2>
-    <div class="trend-item">
-      <span>Tendance dans la catégorie Sénégal</span>
-      <strong>Lien</strong>
-      <small>12,4 k posts</small>
-    </div>
-    <div class="trend-item">
-      <span>Tendance dans la catégorie Sénégal</span>
-      <strong>Wesh</strong>
-      <small>8 200 posts</small>
-    </div>
-    <div class="trend-item">
-      <span>Sport · Tendance</span>
-      <strong>Flick</strong>
-      <small>3 100 posts</small>
-    </div>
-    <button class="show-more">Afficher plus</button>
-  </div>
-
-  <div class="desktop-trends">
-    <h2>Suggestions</h2>
-    <div class="sugg-item">
-      <div class="sugg-av" style="background:#1DA1F2"></div>
-      <div class="sugg-info"><strong>Micheal Olive</strong><span>@olisefanhg</span></div>
-      <button class="sugg-btn">Suivre</button>
-    </div>
-    <div class="sugg-item">
-      <div class="sugg-av" style="background:#FF4500"></div>
-      <div class="sugg-info"><strong>néné_galé</strong><span>@Marieme_15</span></div>
-      <button class="sugg-btn">Suivre</button>
-    </div>
-    <div class="sugg-item">
-      <div class="sugg-av" style="background:#8A2BE2"></div>
-      <div class="sugg-info"><strong>boundaw mara</strong><span>@salmamari</span></div>
-      <button class="sugg-btn">Suivre</button>
-    </div>
-  </div>
-</aside>
-
 </main>
 
 <div class="emoji-panel" id="emoji-panel">
@@ -1342,6 +1459,14 @@ body.on-recits .fab--story{display:grid}
     </div>
   </div>
 </aside>
+
+<!-- BOUTON TOGGLE SIDEBAR (PETIT CARRE) -->
+<button id="btn-sidebar-toggle" type="button" aria-label="Afficher/Masquer le menu">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+    <line x1="9" y1="3" x2="9" y2="21"></line>
+  </svg>
+</button>
 
 <div class="overlay" id="ov-join">
   <div class="modal">
@@ -1537,6 +1662,7 @@ body.on-recits .fab--story{display:grid}
   </div>
 </div>
 
+<!-- Sheet Mascotte -->
 <div class="sheet" id="sheet-spinner">
   <div class="sheet__grip"></div>
   <div class="sheet__head" style="padding-bottom:14px;flex-direction:row;justify-content:space-between;align-items:center">
@@ -1655,10 +1781,6 @@ body.on-recits .fab--story{display:grid}
   <button id="nav-recits" type="button"><span><svg class="ic" viewBox="0 0 24 24"><use href="#i-book-open"/></svg></span><small>Récits</small></button>
 </nav>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-
-<!-- ═══════════════════════════════════════════════════════════════════════════
-     PARTIE 3 : JAVASCRIPT (LOGIQUE)
-     ═══════════════════════════════════════════════════════════════════════════ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
@@ -1965,7 +2087,7 @@ function toast(msg, tone="success"){
   dbg(tone==="danger"?"ERR":tone==="warn"?"WARN":"OK", "toast:", msg);
 }
 
-const SCREENS=["s-home","s-messages","s-groups","s-feed","s-recits","s-recit-detail","s-reader","s-profile","s-chat","s-dm"];
+const SCREENS=["s-home","s-messages","s-groups","s-feed","s-recits","s-recit-detail","s-reader","s-profile","s-premium","s-chat","s-dm"];
 function currentScreenId(){ return document.querySelector(".screen.active")?.id||"s-home"; }
 function show(id){
   SCREENS.forEach(s=>$(s)?.classList.toggle("active",s===id));
@@ -1975,6 +2097,24 @@ function show(id){
   ["nav-home","nav-messages","nav-groups","nav-feed","nav-recits"].forEach(nid=>{ const b=document.getElementById(nid); if(b) b.classList.remove("on"); });
   const map={"s-home":"nav-home","s-messages":"nav-messages","s-groups":"nav-groups","s-feed":"nav-feed","s-recits":"nav-recits"};
   if(map[id]){ const b=document.getElementById(map[id]); if(b) b.classList.add("on"); }
+  
+  // Highlight sidebar drawer items
+  document.querySelectorAll('.drawer__item').forEach(el => el.style.background = '');
+  const drawerMap = {
+      's-home': '[data-nav="home"]',
+      's-feed': '[data-nav="feed"]',
+      's-groups': '[data-nav="groups"]',
+      's-recits': '[data-nav="recits"]',
+      's-profile': '#d-profile',
+      's-messages': '#d-messages',
+      's-premium': '#d-premium'
+  };
+  if (drawerMap[id]) {
+      document.querySelectorAll(drawerMap[id]).forEach(el => {
+          if(window.innerWidth >= 1024) el.style.background = 'rgba(74, 222, 167, 0.12)';
+      });
+  }
+
   if(id==="s-feed") renderFeed();
   if(id==="s-profile") updateProfile();
   if(id==="s-groups") renderGroupsGrid();
@@ -2222,7 +2362,10 @@ $("d-recits")?.addEventListener("click",()=>{ closeDrawer(); show("s-recits"); s
 $("d-verify")?.addEventListener("click",()=>{ closeDrawer(); setTimeout(openVerifyModal,200); });
 $("d-spinner")?.addEventListener("click",()=>{ closeDrawer(); openSpinnerSettings(); });
 $("d-backend")?.addEventListener("click",()=>{ closeDrawer(); toast("Backend : Firebase REST + polling"); });
-$("d-premium")?.addEventListener("click",()=>{ closeDrawer(); setTimeout(openPremiumModal,200); });
+$("d-premium")?.addEventListener("click",()=>{ 
+  closeDrawer(); 
+  show("s-premium"); 
+});
 $("d-newid")?.addEventListener("click",async()=>{ closeDrawer(); myMask=genMask(); await fbSet(`users/${currentUser.uid}/mask`,myMask); paintSession(); updateDrawer(); updateProfile(); toast("Nouveau pelage : "+myMask); });
 document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>{ closeDrawer(); const k=b.dataset.nav; const target=k==="home"?"s-home":k==="feed"?"s-feed":k==="groups"?"s-groups":k==="recits"?"s-recits":"s-home"; setTimeout(()=>show(target),220); }));
 
@@ -3992,7 +4135,29 @@ $("verify-cancel")?.addEventListener("click",()=>$("ov-verify").classList.remove
 $("verify-ok")?.addEventListener("click",submitVerify);
 $("premium-cancel")?.addEventListener("click",()=>$("ov-premium").classList.remove("on"));
 $("premium-ok")?.addEventListener("click",submitPremium);
-$("btn-premium")?.addEventListener("click",openPremiumModal);
+$("btn-premium")?.addEventListener("click",()=>show("s-premium"));
+
+// Activation Premium Desktop
+$("premium-activate-desktop")?.addEventListener("click", async () => {
+  const code = $("premium-code-desktop").value.trim().toUpperCase();
+  if(!code) return;
+  if(!currentUser || currentUser.isLocal || !fbReady){ toast("Connexion requise.","danger"); return; }
+  
+  const btn = $("premium-activate-desktop");
+  const oldText = btn.textContent;
+  btn.disabled = true; btn.textContent = "…";
+  
+  try {
+    await restReq("PUT", `redemption/${currentUser.uid}/premium`, {code, at:now()});
+    toast("Code envoyé, activation en cours…");
+    $("premium-code-desktop").value = "";
+  } catch(e) {
+    toast("Code Premium invalide.", "danger");
+  } finally {
+    btn.disabled = false; btn.textContent = oldText;
+  }
+});
+
 $("btn-security")?.addEventListener("click",()=>toast("Connexion HTTPS · pas de chiffrement de bout en bout","warn"));
 $("ov-comment")?.addEventListener("click",e=>{ if(e.target===$("ov-comment")){ $("ov-comment").classList.remove("on"); currentCommentsPostId=null; } });
 $("sheet-share")?.addEventListener("click",e=>{ if(e.target===$("sheet-share")) closeShareSheet(); });
@@ -4172,7 +4337,6 @@ window.abxMascot = { on:()=>setEnabled(true), off:()=>setEnabled(false), setShap
 })();
 /* ═══════════ FIN MASCOTTE ═══════════ */
 
-/* Redéfinitions globales pour compatibilité */
 function openSpinnerSettings(){
   document.querySelectorAll("#spinner-choices .m2-choice").forEach(b => b.classList.toggle("selected", b.dataset.shape === localStorage.getItem("abx_m2_shape")));
   const s = document.getElementById("spinner-enabled");
@@ -4312,6 +4476,36 @@ window.abx={
 
 Object.entries({"messages-refresh":"Actualiser","feed-refresh":"Actualiser","feed-plus":"Nouvelle trace","recits-search-btn":"Rechercher","recits-write-btn":"Écrire un récit","chat-back":"Retour","dm-back":"Retour","chat-menu-btn":"Menu","chat-send":"Envoyer","dm-send":"Envoyer","chat-poll":"Sondage","emoji-toggle":"Emojis","dm-emoji-toggle":"Emojis","drawer-close":"Fermer","reader-back":"Retour","recit-detail-more":"Options"}).forEach(([id,l])=>$(id)?.setAttribute("aria-label",l));
 document.querySelectorAll("[data-home]").forEach(b=>b.setAttribute("aria-label","Retour"));
+
+/* ═══ GESTION DU MENU DESKTOP (SIDEBAR TOGGLE) ═══ */
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.innerWidth >= 1024) {
+    const wasHidden = localStorage.getItem("abx_menu_hidden");
+    if (wasHidden === null || wasHidden === "true") {
+      document.body.classList.add("menu-hidden");
+    }
+  }
+
+  const btnToggle = document.getElementById("btn-sidebar-toggle");
+  if (btnToggle) {
+    btnToggle.addEventListener("click", () => {
+      if (window.innerWidth < 1024) return; // Ne s'applique pas sur mobile
+      const isHidden = document.body.classList.toggle("menu-hidden");
+      localStorage.setItem("abx_menu_hidden", isHidden);
+    });
+  }
+});
+
+window.addEventListener("resize", () => {
+  if (window.innerWidth >= 1024) {
+    if (localStorage.getItem("abx_menu_hidden") !== "false") {
+      document.body.classList.add("menu-hidden");
+    }
+  } else {
+    document.body.classList.remove("menu-hidden");
+  }
+});
+
 </script>
 
 <script>
@@ -4338,6 +4532,7 @@ document.querySelectorAll("[data-home]").forEach(b=>b.setAttribute("aria-label",
   buttons.forEach(attachDrag);
   buttons.forEach(btn => { const s = positions[btn.id]; if (s && Number.isFinite(s.x) && Number.isFinite(s.y)){ setTimeout(() => activateFloating(btn, s.x, s.y, false), 40); } });
   function attachDrag(btn){
+    if (window.innerWidth > 1024) return;
     let pressTimer = null, active = false, armed = false, dragging = false, suppressClick = false;
     let startX = 0, startY = 0, anchorX = 0, anchorY = 0, dragBaseX = 0, dragBaseY = 0, pendingX = 0, pendingY = 0, rafId = null, pointerId = null;
     const clearPress = () => { if (pressTimer){ clearTimeout(pressTimer); pressTimer = null; } };
