@@ -825,7 +825,7 @@ body.on-recits .fab--story{display:grid}
   /* Cache les éléments mobiles */
   .nav, .home__top, .drawer-bg, #btn-toggle-sidebar { display: none !important; }
 
-  /* Menu flottant */
+  /* --- MENU FLOTTANT --- */
   .drawer {
     position: fixed;
     top: 16px;
@@ -871,7 +871,7 @@ body.on-recits .fab--story{display:grid}
   }
   body:not(.menu-hidden) #menu-backdrop { display: block; }
 
-  /* Bouton toggle */
+  /* --- BOUTON TOGGLE (PETIT CARRÉ) --- */
   #btn-sidebar-toggle {
     position: fixed;
     top: 16px;
@@ -893,7 +893,7 @@ body.on-recits .fab--story{display:grid}
   #btn-sidebar-toggle:hover { background: var(--bg-elevated); color: #fff; transform: scale(1.05); }
   body:not(.menu-hidden) #btn-sidebar-toggle { left: 332px; }
 
-  /* Ajustement des écrans */
+  /* --- CONTENU PRINCIPAL --- */
   .screen {
     flex: 1;
     height: 100vh;
@@ -901,43 +901,123 @@ body.on-recits .fab--story{display:grid}
     display: none;
     transition: padding-left 0.4s ease;
     padding-left: 0;
+    background: var(--bg-2);
   }
   body:not(.menu-hidden) .screen { padding-left: 332px; }
   .screen.active { display: flex; flex-direction: column; }
 
-  .chat-screen.active {
-    position: relative;
-    height: 100vh;
-    max-height: 100vh;
-    inset: auto;
-    max-width: none;
+  /* --- SECTION TANIÈRE (HOME) --- */
+  .home {
+    max-width: 600px;
+    margin: 0 auto;
+    padding-top: 40px;
+  }
+  .home__actions {
+    max-width: 400px;
+    margin: 30px auto 0;
+  }
+
+  /* --- SECTION FIL / TRACES (STYLE X/TWITTER) --- */
+  #s-feed.active {
+    align-items: center; /* Centre la colonne */
+    padding-top: 16px; /* Un peu d'espace en haut */
+  }
+  
+  #s-feed .hdr,
+  #s-feed .feed__tabs,
+  #s-feed .feed__list {
+    width: 100%;
+    max-width: 650px; /* Largeur typique d'un fil X */
+    background: var(--bg-2);
     margin: 0;
   }
 
-  .hdr, .chat__bar, .dm-bar {
-    padding-top: 0;
-    height: 64px;
-    padding-left: 24px;
-    border-radius: 0;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  }
-  
-  body.menu-hidden .hdr, 
-  body.menu-hidden .chat__bar, 
-  body.menu-hidden .dm-bar {
-    padding-left: 76px !important;
+  /* Bordures latérales du fil */
+  #s-feed .feed__list {
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    min-height: calc(100vh - 150px);
+    padding-bottom: 40px;
   }
 
-  .feed__list, .messages-list {
-    max-width: 800px;
-    margin: 0 auto;
-    width: 100%;
+  /* Header du fil collé en haut */
+  #s-feed .hdr {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    padding-left: 20px !important; 
+    border-bottom: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-radius: 16px 16px 0 0;
+    backdrop-filter: blur(12px);
+    background: rgba(15, 23, 30, 0.85);
   }
-  
-  .fab { position: fixed; bottom: 40px; right: 40px; display: none; }
+
+  /* Onglets du fil (Toutes les traces, Suivies...) */
+  #s-feed .feed__tabs {
+    position: sticky;
+    top: 64px; /* Hauteur du header */
+    z-index: 49;
+    padding: 0;
+    border-bottom: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    background: rgba(15, 23, 30, 0.85);
+    backdrop-filter: blur(12px);
+    justify-content: space-between;
+    overflow: visible;
+  }
+  #s-feed .feed__tabs button {
+    flex: 1;
+    text-align: center;
+    padding: 16px 0;
+    border-radius: 0;
+    border: none;
+    font-size: 0.95rem;
+    background: transparent;
+  }
+  #s-feed .feed__tabs button.on {
+    border-bottom: 3px solid var(--accent-bright);
+    background: transparent;
+  }
+  #s-feed .feed__tab-plus { display: none; } /* On cache le + dans les onglets, on garde le FAB */
+
+  /* Style des posts dans le fil desktop */
+  #s-feed .post {
+    padding: 16px 20px;
+    background: transparent;
+  }
+  #s-feed .post:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+  #s-feed .post__head {
+    padding: 0 0 12px 0;
+  }
+  #s-feed .post__text {
+    padding: 0 0 16px 0;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  #s-feed .post__actions {
+    padding: 12px 0 0 0;
+    max-width: 100%;
+    border-top: 1px solid var(--border);
+  }
+
+  /* FAB (Nouvelle trace) sur le fil */
+  .fab {
+    position: fixed;
+    bottom: 40px;
+    right: calc((100vw - 650px) / 2 - 80px); /* Placé à droite du fil */
+    display: none;
+    width: 60px;
+    height: 60px;
+    box-shadow: 0 8px 24px rgba(74,222,167,0.4);
+  }
   body.on-feed .fab { display: grid; }
 
-  /* Adaptation de la section Mes Meutes */
+  /* --- SECTION MES MEUTES --- */
   #s-groups.active {
     height: 100vh;
     display: flex;
@@ -959,7 +1039,7 @@ body.on-recits .fab--story{display:grid}
   #s-groups.active .gicon__box { width: 80px; height: 80px; font-size: 34px; }
   #s-groups.active .gicon { width: 100px; }
 
-  /* Adaptation de la section Récits */
+  /* --- SECTION RÉCITS --- */
   #s-recits.active { height: 100vh; overflow-y: auto; }
   #s-recits .recits-banner { height: 380px; border-radius: 0 0 24px 24px; margin-bottom: 20px; }
   #s-recits .recits-banner__title { font-size: 3.5rem; max-width: 800px; }
