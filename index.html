@@ -13,6 +13,10 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="preconnect" href="https://www.gstatic.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500;600;700&display=swap">
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     PARTIE 1 : CSS (STYLES)
+     ═══════════════════════════════════════════════════════════════════════════ -->
 <style>
 :root{
   --accent:#10B981;--accent-light:#34D399;--accent-bright:#4ADEA7;--accent-deep:#047857;
@@ -715,9 +719,186 @@ body.on-recits .fab--story{display:grid}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important}
 }
+
+/* ═══════════ LAYOUT DESKTOP (Type Twitter/X) ═══════════ */
+.desktop-sidebar {
+  display: none;
+}
+
+@media (min-width: 1000px) {
+  body {
+    background: #000;
+    padding-bottom: 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .app {
+    max-width: 1280px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 275px 600px 350px;
+    margin: 0 auto;
+    background: transparent;
+    box-shadow: none;
+    min-height: 100vh;
+  }
+
+  /* 1. Barre latérale gauche (Menu) */
+  .nav {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 20px 12px;
+    border-right: 1px solid var(--border);
+    border-top: none;
+    background: #000;
+  }
+
+  .nav button {
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 14px 24px;
+    gap: 20px;
+    border-radius: 9999px;
+    margin-bottom: 8px;
+    width: fit-content;
+    background: transparent;
+  }
+  
+  .nav button:hover {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .nav button span { font-size: 26px; }
+  .nav button small { font-size: 20px; font-weight: 600; display: block; }
+  .nav button::before { display: none; }
+
+  /* 2. Colonne centrale (Contenu) */
+  .screen {
+    border-right: 1px solid var(--border);
+    min-height: 100vh;
+    background: #000;
+    padding-bottom: 0;
+    display: none;
+  }
+
+  .screen.active {
+    display: block;
+  }
+
+  .home__top { display: none !important; }
+  .fab { display: none !important; }
+
+  .hdr, .home__top {
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .chat-screen {
+    position: relative !important;
+    height: 100vh;
+    max-width: none;
+    border: none;
+    inset: auto;
+  }
+
+  /* 3. Colonne de droite (Tendances) */
+  .desktop-sidebar {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 24px;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .desktop-sidebar::-webkit-scrollbar { display: none; }
+
+  .desktop-search {
+    display: flex;
+    align-items: center;
+    background: #202327;
+    padding: 12px 16px;
+    border-radius: 9999px;
+    gap: 12px;
+    color: var(--fg-3);
+  }
+  .desktop-search input {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+    width: 100%;
+  }
+  .desktop-search .ic { font-size: 18px; }
+
+  .desktop-trends {
+    background: #16181C;
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .desktop-trends h2 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .trend-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    cursor: pointer;
+  }
+  .trend-item span { font-size: 13px; color: #71767B; }
+  .trend-item strong { font-size: 15px; font-weight: 700; color: #fff; }
+  .trend-item small { font-size: 13px; color: #71767B; }
+  .show-more {
+    color: var(--accent-bright);
+    text-align: left;
+    font-size: 15px;
+    padding: 8px 0 0 0;
+  }
+
+  .sugg-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+  }
+  .sugg-av { width: 40px; height: 40px; border-radius: 50%; }
+  .sugg-info { display: flex; flex-direction: column; flex: 1; }
+  .sugg-info strong { font-size: 15px; color: #fff; }
+  .sugg-info span { font-size: 14px; color: #71767B; }
+  .sugg-btn {
+    background: #EFF3F4;
+    color: #0F1419;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 6px 16px;
+    border-radius: 9999px;
+  }
+}
 </style>
 </head>
 <body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     PARTIE 2 : HTML (STRUCTURE)
+     ═══════════════════════════════════════════════════════════════════════════ -->
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <symbol id="i-ghost" viewBox="0 0 24 24"><path d="M12 2.6c-3.55 0-6.4 2.85-6.4 6.4v10.8l2.05-1.65 1.85 1.65 2.5-1.75 2.5 1.75 1.85-1.65 2.05 1.65V9c0-3.55-2.85-6.4-6.4-6.4Z" fill="currentColor"/><circle cx="9.35" cy="10" r="1.05" fill="#0F3A2C"/><circle cx="14.65" cy="10" r="1.05" fill="#0F3A2C"/></symbol>
@@ -1051,6 +1232,53 @@ body.on-recits .fab--story{display:grid}
   </footer>
 </section>
 
+<!-- COLONNE DE DROITE POUR DESKTOP -->
+<aside class="desktop-sidebar">
+  <div class="desktop-search">
+    <svg class="ic" viewBox="0 0 24 24"><use href="#i-search"/></svg>
+    <input type="text" placeholder="Rechercher sur AnonyBoX">
+  </div>
+  
+  <div class="desktop-trends">
+    <h2>Tendances pour vous</h2>
+    <div class="trend-item">
+      <span>Tendance dans la catégorie Sénégal</span>
+      <strong>Lien</strong>
+      <small>12,4 k posts</small>
+    </div>
+    <div class="trend-item">
+      <span>Tendance dans la catégorie Sénégal</span>
+      <strong>Wesh</strong>
+      <small>8 200 posts</small>
+    </div>
+    <div class="trend-item">
+      <span>Sport · Tendance</span>
+      <strong>Flick</strong>
+      <small>3 100 posts</small>
+    </div>
+    <button class="show-more">Afficher plus</button>
+  </div>
+
+  <div class="desktop-trends">
+    <h2>Suggestions</h2>
+    <div class="sugg-item">
+      <div class="sugg-av" style="background:#1DA1F2"></div>
+      <div class="sugg-info"><strong>Micheal Olive</strong><span>@olisefanhg</span></div>
+      <button class="sugg-btn">Suivre</button>
+    </div>
+    <div class="sugg-item">
+      <div class="sugg-av" style="background:#FF4500"></div>
+      <div class="sugg-info"><strong>néné_galé</strong><span>@Marieme_15</span></div>
+      <button class="sugg-btn">Suivre</button>
+    </div>
+    <div class="sugg-item">
+      <div class="sugg-av" style="background:#8A2BE2"></div>
+      <div class="sugg-info"><strong>boundaw mara</strong><span>@salmamari</span></div>
+      <button class="sugg-btn">Suivre</button>
+    </div>
+  </div>
+</aside>
+
 </main>
 
 <div class="emoji-panel" id="emoji-panel">
@@ -1309,7 +1537,6 @@ body.on-recits .fab--story{display:grid}
   </div>
 </div>
 
-<!-- Sheet Mascotte : les boutons n'ont PAS de border inline → le JS gère border+bg -->
 <div class="sheet" id="sheet-spinner">
   <div class="sheet__grip"></div>
   <div class="sheet__head" style="padding-bottom:14px;flex-direction:row;justify-content:space-between;align-items:center">
@@ -1428,6 +1655,10 @@ body.on-recits .fab--story{display:grid}
   <button id="nav-recits" type="button"><span><svg class="ic" viewBox="0 0 24 24"><use href="#i-book-open"/></svg></span><small>Récits</small></button>
 </nav>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     PARTIE 3 : JAVASCRIPT (LOGIQUE)
+     ═══════════════════════════════════════════════════════════════════════════ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
